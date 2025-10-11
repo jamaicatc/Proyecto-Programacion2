@@ -1,7 +1,6 @@
-package co.edu.uniquindio.envio.model.builder;
+package co.edu.uniquindio.envio.model;
 
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Pago {

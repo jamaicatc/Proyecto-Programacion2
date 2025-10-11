@@ -1,4 +1,4 @@
-package co.edu.uniquindio.envio.model.builder;
+package co.edu.uniquindio.envio.model;
 
 public class ServicioAdicional {
     private String idServicio;
