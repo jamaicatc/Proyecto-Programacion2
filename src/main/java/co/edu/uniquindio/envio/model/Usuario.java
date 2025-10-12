@@ -26,4 +26,60 @@ public class Usuario {
         this.correo = correo;
         this.telefono = telefono;
     }
+
+    public String getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(String idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
+
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public HashMap<String, Direccion> getDireccionesFrecuentes() {
+        return direccionesFrecuentes;
+    }
+
+    public void setDireccionesFrecuentes(HashMap<String, Direccion> direccionesFrecuentes) {
+        this.direccionesFrecuentes = direccionesFrecuentes;
+    }
+
+    public HashMap<String, MetodoPago> getMetodosPago() {
+        return metodosPago;
+    }
+
+    public void setMetodosPago(HashMap<String, MetodoPago> metodosPago) {
+        this.metodosPago = metodosPago;
+    }
+
+    public List<Envio> getEnvios() {
+        return envios;
+    }
+
+    public void setEnvios(List<Envio> envios) {
+        this.envios = envios;
+    }
 }

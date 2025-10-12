@@ -24,7 +24,15 @@
                 </Tab>
                 <Tab text="Repartidor">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="321.0" prefWidth="395.0">
+                            <children>
+                                <SplitPane layoutX="14.0" layoutY="7.0" orientation="VERTICAL" prefHeight="458.0" prefWidth="692.0">
+                                    <items>
+                                        <fx:include source="Repartidor.fxml" />
+                                    </items>
+                                </SplitPane>
+                            </children>
+                        </AnchorPane>
                     </content>
                 </Tab>
             </tabs>

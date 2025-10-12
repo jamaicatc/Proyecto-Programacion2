@@ -2,8 +2,6 @@ package co.edu.uniquindio.envio.viewcontroller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import co.edu.uniquindio.envio.model.Usuario;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,7 +9,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-public class UsuarioViewController {
+public class RepartidorViewController {
 
     @FXML
     private ResourceBundle resources;
@@ -32,39 +30,39 @@ public class UsuarioViewController {
     private Button btnNuevo;
 
     @FXML
-    private TableView<Usuario> tableUsuario;
+    private TableView<?> tableUsuario;
 
     @FXML
-    private TableColumn<Usuario, String> tcCorreo;
+    private TableColumn<?, ?> tcCorreo;
 
     @FXML
-    private TableColumn<Usuario, String> tcIdUsuario;
+    private TableColumn<?, ?> tcIdUsuario;
 
     @FXML
-    private TableColumn<Usuario, String> tcNombreCompleto;
+    private TableColumn<?, ?> tcNombreCompleto;
 
     @FXML
-    private TableColumn<Usuario, String> tcTelefono;
+    private TableColumn<?, ?> tcTelefono;
 
     @FXML
-    private TextField txtCorreo;
+    private TextField txtDocumento;
 
     @FXML
-    private TextField txtIdUsuario;
+    private TextField txtIdRepartidor;
 
     @FXML
-    private TextField txtNombreCompleto;
+    private TextField txtNombre;
 
     @FXML
     private TextField txtTelefono;
 
     @FXML
-    void onActualizarUsuario(ActionEvent event) {
+    void onActualizarRepartidor(ActionEvent event) {
 
     }
 
     @FXML
-    void onAgregarUsuario(ActionEvent event) {
+    void onAgregarRepartidor(ActionEvent event) {
 
     }
 
@@ -74,7 +72,7 @@ public class UsuarioViewController {
     }
 
     @FXML
-    void onNuevoUsuario(ActionEvent event) {
+    void onNuevoRepartidor(ActionEvent event) {
 
     }
 
@@ -82,6 +80,4 @@ public class UsuarioViewController {
     void initialize() {
 
     }
-
 }
-
