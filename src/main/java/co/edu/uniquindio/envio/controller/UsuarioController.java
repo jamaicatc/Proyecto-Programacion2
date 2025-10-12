@@ -15,11 +15,11 @@ public class UsuarioController {
         return modelFactory.obtenerUsuarios();
     }
 
-//    public boolean agregarUsuario(UsuarioDto usuarioDto) {
-//        return modelFactory.agregarUsuario(usuarioDto);
-//    }
-//
-//    public boolean eliminarUsuario(String idUsuario) {
-//        return modelFactory.eliminarUsuario(idUsuario);
-//    }
+    public boolean agregarUsuario(UsuarioDto usuarioDto) {
+        return modelFactory.agregarUsuario(usuarioDto);
+    }
+
+    public boolean eliminarUsuario(String idUsuario) {
+        return modelFactory.eliminarUsuario(idUsuario);
+    }
 }

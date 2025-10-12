@@ -1,9 +1,9 @@
 package co.edu.uniquindio.envio.factory;
 
+import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import co.edu.uniquindio.envio.mapping.mappers.EmpresaLogisticaMappingImpl;
 import co.edu.uniquindio.envio.model.EmpresaLogistica;
-import co.edu.uniquindio.envio.model.Usuario;
 import co.edu.uniquindio.envio.services.IModelFactory;
 import co.edu.uniquindio.envio.services.IEmpresaLogisticaMapping;
 import co.edu.uniquindio.envio.utils.DataUtil;
@@ -32,14 +32,28 @@ public class ModelFactory implements IModelFactory {
         return mapper.getUsuariosDto(empresaLogistica.getListaUsuarios());
     }
 
-//    @Override
-//    public boolean agregarUsuario(UsuarioDto usuarioDto) {
-//        Usuario usuario = mapper.usuarioDtoToUsuario(usuarioDto);
-//        return empresaLogistica.agregarUsuario(usuario);
-//    }
-//
-//    @Override
-//    public boolean eliminarUsuario(String idUsuario) {
-//        return empresaLogistica.eliminarUsuario(idUsuario);
-//    }
+    @Override
+    public boolean agregarUsuario(UsuarioDto usuarioDto) {
+        return empresaLogistica.agregarUsuario(mapper.usuarioDtoToUsuario(usuarioDto));
+    }
+
+    @Override
+    public boolean eliminarUsuario(String idUsuario) {
+        return empresaLogistica.eliminarUsuario(idUsuario);
+    }
+
+    @Override
+    public List<RepartidorDto> obtenerRepartidores() {
+        return mapper.getRepartidoresDto(empresaLogistica.getListaRepartidores());
+    }
+
+    @Override
+    public boolean agregarRepartidor(RepartidorDto repartidorDto) {
+        return empresaLogistica.agregarRepartidor(mapper.repartidorDtoToRepartidor(repartidorDto));
+    }
+
+    @Override
+    public boolean eliminarRepartidor(String idRepartidor) {
+        return empresaLogistica.eliminarRepartidor(idRepartidor);
+    }
 }

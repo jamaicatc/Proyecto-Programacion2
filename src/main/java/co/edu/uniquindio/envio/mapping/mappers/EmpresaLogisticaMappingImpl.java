@@ -1,6 +1,8 @@
 package co.edu.uniquindio.envio.mapping.mappers;
 
+import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
+import co.edu.uniquindio.envio.model.Repartidor;
 import co.edu.uniquindio.envio.model.Usuario;
 import co.edu.uniquindio.envio.services.IEmpresaLogisticaMapping;
 
@@ -41,5 +43,39 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 usuarioDto.correo(),
                 usuarioDto.telefono()
         );
+    }
+
+    @Override
+    public List<RepartidorDto> getRepartidoresDto(List<Repartidor> listaRepartidores) {
+        if (listaRepartidores == null) {
+            return null;
+        }
+        List<RepartidorDto> listaRepartidoresDto = new ArrayList<>(listaRepartidores.size());
+        for (Repartidor repartidor : listaRepartidores) {
+            listaRepartidoresDto.add(repartidorToRepartidorDto(repartidor));
+        }
+        return listaRepartidoresDto;
+    }
+
+    @Override
+    public RepartidorDto repartidorToRepartidorDto(Repartidor repartidor) {
+        if (repartidor == null) return null;
+        return new RepartidorDto(
+                repartidor.getIdRepartidor(),
+                repartidor.getNombre(),
+                repartidor.getDocumento(),
+                repartidor.getTelefono()
+        );
+    }
+
+    @Override
+    public Repartidor repartidorDtoToRepartidor(RepartidorDto repartidorDto) {
+        if (repartidorDto == null) return null;
+        return Repartidor.builder()
+                .setIdRepartidor(repartidorDto.idRepartidor())
+                .setNombre(repartidorDto.nombre())
+                .setDocumento(repartidorDto.documento())
+                .setTelefono(repartidorDto.telefono())
+                .build();
     }
 }

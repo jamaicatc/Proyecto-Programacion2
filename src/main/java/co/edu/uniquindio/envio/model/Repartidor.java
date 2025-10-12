@@ -1,5 +1,8 @@
 package co.edu.uniquindio.envio.model;
 
+import co.edu.uniquindio.envio.model.builder.DireccionBuilder;
+import co.edu.uniquindio.envio.model.builder.RepartidorBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,5 +27,37 @@ public class Repartidor {
         this.telefono = telefono;
         this.disponibilidad = disponibilidad;
         this.zonaCobertura = zonaCobertura;
+    }
+
+    public static RepartidorBuilder builder(){
+        return new RepartidorBuilder();
+    }
+
+    public String getIdRepartidor() {
+        return idRepartidor;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public EstadoDisponibilidad getDisponibilidad() {
+        return disponibilidad;
+    }
+
+    public String getZonaCobertura() {
+        return zonaCobertura;
+    }
+
+    public List<Envio> getEnviosAsignados() {
+        return enviosAsignados;
     }
 }

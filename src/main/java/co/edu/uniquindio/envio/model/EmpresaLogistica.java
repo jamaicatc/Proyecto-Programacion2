@@ -55,4 +55,66 @@ public class EmpresaLogistica  {
     public List<Incidencia> getListaIncidencias() {
         return listaIncidencias;
     }
+
+    public boolean agregarUsuario(Usuario nuevoUsuario){
+        Usuario usuarioEncontrado = obtenerUsuario(nuevoUsuario.getIdUsuario());
+        if(usuarioEncontrado == null){
+            getListaUsuarios().add(nuevoUsuario);
+            return true;
+        }else{
+            return  false;
+        }
+    }
+
+    private Usuario obtenerUsuario(String idUsuario) {
+        Usuario usuario = null;
+        for (Usuario usuario1: getListaUsuarios()) {
+            if(usuario1.getIdUsuario().equalsIgnoreCase(idUsuario)){
+                usuario = usuario1;
+                break;
+            }
+        }
+        return usuario;
+    }
+
+    public boolean eliminarUsuario(String idUsuario) {
+        Usuario usuarioEncontrado = obtenerUsuario(idUsuario);
+        if(usuarioEncontrado !=null){
+            getListaUsuarios().remove(usuarioEncontrado);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean agregarRepartidor(Repartidor nuevoRepartidor){
+        Repartidor repartidorEncontrado = obtenerRepartidor(nuevoRepartidor.getIdRepartidor());
+        if(repartidorEncontrado == null){
+            getListaRepartidores().add(nuevoRepartidor);
+            return true;
+        }else{
+            return  false;
+        }
+    }
+
+    private Repartidor obtenerRepartidor(String idRepartidor) {
+        Repartidor repartidor = null;
+        for (Repartidor repartidor1: getListaRepartidores()) {
+            if(repartidor1.getIdRepartidor().equalsIgnoreCase(idRepartidor)){
+                repartidor = repartidor1;
+                break;
+            }
+        }
+        return repartidor;
+    }
+
+    public boolean eliminarRepartidor(String idRepartidor) {
+        Repartidor repartidorEncontrado = obtenerRepartidor(idRepartidor);
+        if(repartidorEncontrado !=null){
+            getListaRepartidores().remove(repartidorEncontrado);
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

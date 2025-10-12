@@ -2,14 +2,29 @@ package co.edu.uniquindio.envio.viewcontroller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import co.edu.uniquindio.envio.controller.RepartidorController;
+import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
+import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+
+import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
+import static co.edu.uniquindio.envio.utils.EmpresaConstantes.BODY_INCOMPLETO;
+import static co.edu.uniquindio.envio.utils.EmpresaConstantes.BODY_USUARIO_NO_AGREGADO;
+import static co.edu.uniquindio.envio.utils.EmpresaConstantes.HEADER;
+import static co.edu.uniquindio.envio.utils.EmpresaConstantes.TITULO_INCOMPLETO;
+import static co.edu.uniquindio.envio.utils.EmpresaConstantes.TITULO_USUARIO_NO_AGREGADO;
 
 public class RepartidorViewController {
+
+    RepartidorController repartidorController;
+    ObservableList<RepartidorDto> listaRepartidores = FXCollections.observableArrayList();
+    RepartidorDto repartidorSeleccionado;
 
     @FXML
     private ResourceBundle resources;
@@ -30,19 +45,19 @@ public class RepartidorViewController {
     private Button btnNuevo;
 
     @FXML
-    private TableView<?> tableUsuario;
+    private TableView<RepartidorDto> tableRepartidor;
 
     @FXML
-    private TableColumn<?, ?> tcCorreo;
+    private TableColumn<RepartidorDto, String> tcDocumento;
 
     @FXML
-    private TableColumn<?, ?> tcIdUsuario;
+    private TableColumn<RepartidorDto, String> tcIdRepartidor;
 
     @FXML
-    private TableColumn<?, ?> tcNombreCompleto;
+    private TableColumn<RepartidorDto, String> tcNombre;
 
     @FXML
-    private TableColumn<?, ?> tcTelefono;
+    private TableColumn<RepartidorDto, String> tcTelefono;
 
     @FXML
     private TextField txtDocumento;
@@ -57,27 +72,130 @@ public class RepartidorViewController {
     private TextField txtTelefono;
 
     @FXML
+    void initialize() {
+        repartidorController = new RepartidorController();
+        initView();
+    }
+
+    @FXML
     void onActualizarRepartidor(ActionEvent event) {
 
     }
 
     @FXML
     void onAgregarRepartidor(ActionEvent event) {
-
+        agregarRepartidor();
     }
 
     @FXML
-    void onEliminarUsuario(ActionEvent event) {
-
+    void onEliminarRepartidor(ActionEvent event) {
+        eliminarRepartidor();
     }
 
     @FXML
     void onNuevoRepartidor(ActionEvent event) {
-
+        nuevoRepartidor();
     }
 
-    @FXML
-    void initialize() {
+    private void initView() {
+        initDataBinding();
+        obtenerRepartidores();
+        tableRepartidor.getItems().clear();
+        tableRepartidor.setItems(listaRepartidores);
+        listenerSelection();
+    }
 
+    private void obtenerRepartidores() {
+        listaRepartidores.addAll(repartidorController.obtenerRepartidores());
+    }
+
+    private void initDataBinding() {
+        tcIdRepartidor.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().idRepartidor()));
+        tcNombre.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().nombre()));
+        tcDocumento.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().documento()));
+        tcTelefono.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().telefono()));
+    }
+
+    private void listenerSelection() {
+        tableRepartidor.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            repartidorSeleccionado = newSelection;
+            mostrarInformacionRepartidor(repartidorSeleccionado);
+        });
+    }
+
+    private void agregarRepartidor() {
+        RepartidorDto repartidorDto = crearRepartidorDto();
+        if(datosValidos(repartidorDto)){
+            if(repartidorController.agregarRepartidor(repartidorDto)){
+                listaRepartidores.addAll(repartidorDto);
+                limpiarCampos();
+                mostrarMensaje(TITULO_REPARTIDOR_AGREGADO, HEADER, BODY_REPARTIDOR_AGREGADO, Alert.AlertType.INFORMATION);
+            }else{
+                mostrarMensaje(TITULO_REPARTIDOR_NO_AGREGADO, HEADER, BODY_REPARTIDOR_NO_AGREGADO ,Alert.AlertType.ERROR);
+            }
+        }else{
+            mostrarMensaje(TITULO_INCOMPLETO, HEADER, BODY_INCOMPLETO,Alert.AlertType.WARNING);
+        }
+    }
+
+    private void eliminarRepartidor() {
+        if(repartidorSeleccionado != null){
+            if(repartidorController.eliminarRepartidor(repartidorSeleccionado.idRepartidor())){
+                listaRepartidores.remove(repartidorSeleccionado);
+                limpiarCampos();
+                mostrarMensaje(TITULO_REPARTIDOR_ELIMINADO, HEADER, REPARTIDOR_ELIMINADO,Alert.AlertType.INFORMATION);
+            }else{
+                mostrarMensaje(TITULO_REPARTIDOR_NO_AGREGADO, HEADER, BODY_REPARTIDOR_NO_AGREGADO,Alert.AlertType.ERROR);
+            }
+        }
+    }
+
+    private void nuevoRepartidor() {
+        limpiarCampos();
+        txtIdRepartidor.setText("Ingrese un id para el repartidor");
+    }
+
+    private void limpiarCampos() {
+        txtIdRepartidor.setText("");
+        txtNombre.setText("");
+        txtDocumento.setText("");
+        txtTelefono.setText("");
+    }
+
+    private RepartidorDto crearRepartidorDto() {
+        return new RepartidorDto(
+                txtIdRepartidor.getText(),
+                txtNombre.getText(),
+                txtDocumento.getText(),
+                txtTelefono.getText());
+    }
+
+    private boolean datosValidos(RepartidorDto repartidorDto) {
+        if(repartidorDto.idRepartidor().isBlank() ||
+                repartidorDto.nombre().isBlank() ||
+                repartidorDto.documento().isBlank() ||
+                repartidorDto.telefono().isBlank()
+        ){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    private void mostrarInformacionRepartidor(RepartidorDto repartidorSeleccionado) {
+        if(repartidorSeleccionado != null){
+            txtIdRepartidor.setText(repartidorSeleccionado.idRepartidor());
+            txtNombre.setText(repartidorSeleccionado.nombre());
+            txtDocumento.setText(repartidorSeleccionado.documento());
+            txtTelefono.setText(repartidorSeleccionado.telefono());
+        }
+    }
+
+    private void mostrarMensaje(String titulo, String header, String contenido, Alert.AlertType alertType) {
+        Alert aler = new Alert(alertType);
+        aler.setTitle(titulo);
+        aler.setHeaderText(header);
+        aler.setContentText(contenido);
+        aler.showAndWait();
     }
 }

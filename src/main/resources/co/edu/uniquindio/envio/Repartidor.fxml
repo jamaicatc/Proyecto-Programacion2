@@ -31,15 +31,15 @@
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="289.0" prefWidth="695.0">
                     <children>
-                        <TableView fx:id="tableUsuario" layoutX="14.0" layoutY="14.0" prefHeight="228.0" prefWidth="660.0">
+                        <TableView fx:id="tableRepartidor" layoutX="14.0" layoutY="14.0" prefHeight="228.0" prefWidth="660.0">
                             <columns>
-                                <TableColumn fx:id="tcIdUsuario" prefWidth="110.0" text="ID Repartidor" />
-                                <TableColumn fx:id="tcNombreCompleto" prefWidth="214.0" text="Nombre" />
-                                <TableColumn fx:id="tcCorreo" prefWidth="177.0" text="Documento" />
+                                <TableColumn fx:id="tcIdRepartidor" prefWidth="110.0" text="ID Repartidor" />
+                                <TableColumn fx:id="tcNombre" prefWidth="214.0" text="Nombre" />
+                                <TableColumn fx:id="tcDocumento" prefWidth="177.0" text="Documento" />
                                 <TableColumn fx:id="tcTelefono" prefWidth="158.0" text="Teléfono" />
                             </columns>
                         </TableView>
-                        <Button fx:id="btnEliminar" layoutX="579.0" layoutY="258.0" mnemonicParsing="false" onAction="#onEliminarUsuario" prefHeight="25.0" prefWidth="95.0" text="Eliminar" />
+                        <Button fx:id="btnEliminar" layoutX="579.0" layoutY="258.0" mnemonicParsing="false" onAction="#onEliminarRepartidor" prefHeight="25.0" prefWidth="95.0" text="Eliminar" />
                     </children>
                 </AnchorPane>
             </items>
