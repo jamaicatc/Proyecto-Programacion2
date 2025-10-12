@@ -1,4 +1,12 @@
 package co.edu.uniquindio.envio.services;
 
-public interface IModelFactory extends IEmpresaLogistica{
+import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
+
+import java.util.List;
+
+public interface IModelFactory {
+    List<UsuarioDto> obtenerUsuarios();
+//    boolean agregarUsuario(UsuarioDto usuarioDto);
+//    boolean eliminarUsuario(String idUsuario);
+
 }

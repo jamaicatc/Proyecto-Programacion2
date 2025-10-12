@@ -2,12 +2,12 @@ package co.edu.uniquindio.envio.mapping.mappers;
 
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import co.edu.uniquindio.envio.model.Usuario;
-import co.edu.uniquindio.envio.services.IUsuarioMapping;
+import co.edu.uniquindio.envio.services.IEmpresaLogisticaMapping;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsuarioMappingImpl implements IUsuarioMapping {
+public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
 
     @Override
     public List<UsuarioDto> getUsuariosDto(List<Usuario> listaUsuarios) {
