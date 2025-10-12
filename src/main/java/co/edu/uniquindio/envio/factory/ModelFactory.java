@@ -43,6 +43,16 @@ public class ModelFactory implements IModelFactory {
     }
 
     @Override
+    public boolean actualizarUsuario(UsuarioDto usuarioDto) {
+        return empresaLogistica.actualizarUsuario(
+                usuarioDto.idUsuario(),
+                usuarioDto.nombreCompleto(),
+                usuarioDto.correo(),
+                usuarioDto.telefono()
+        );
+    }
+
+    @Override
     public List<RepartidorDto> obtenerRepartidores() {
         return mapper.getRepartidoresDto(empresaLogistica.getListaRepartidores());
     }
@@ -55,5 +65,15 @@ public class ModelFactory implements IModelFactory {
     @Override
     public boolean eliminarRepartidor(String idRepartidor) {
         return empresaLogistica.eliminarRepartidor(idRepartidor);
+    }
+
+    @Override
+    public boolean actualizarRepartidor(RepartidorDto repartidorDto) {
+        return empresaLogistica.actualizarRepartidor(
+                repartidorDto.idRepartidor(),
+                repartidorDto.nombre(),
+                repartidorDto.documento(),
+                repartidorDto.telefono()
+        );
     }
 }

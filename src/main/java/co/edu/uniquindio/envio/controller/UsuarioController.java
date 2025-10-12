@@ -22,4 +22,9 @@ public class UsuarioController {
     public boolean eliminarUsuario(String idUsuario) {
         return modelFactory.eliminarUsuario(idUsuario);
     }
+
+    public boolean actualizarUsuario(UsuarioDto usuarioDto) {
+        return modelFactory.actualizarUsuario(usuarioDto);
+    }
+
 }

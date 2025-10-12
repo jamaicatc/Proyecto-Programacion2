@@ -9,8 +9,11 @@ public interface IModelFactory {
     List<UsuarioDto> obtenerUsuarios();
     boolean agregarUsuario(UsuarioDto usuarioDto);
     boolean eliminarUsuario(String idUsuario);
+    boolean actualizarUsuario(UsuarioDto usuarioDto);
+
     List<RepartidorDto> obtenerRepartidores();
     boolean agregarRepartidor(RepartidorDto repartidorDto);
     boolean eliminarRepartidor(String idRepartidor);
+    boolean actualizarRepartidor(RepartidorDto repartidorDto);
 
 }

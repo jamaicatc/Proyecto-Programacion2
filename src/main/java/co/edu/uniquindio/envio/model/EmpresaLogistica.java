@@ -87,6 +87,17 @@ public class EmpresaLogistica  {
         }
     }
 
+    public boolean actualizarUsuario(String idUsuario, String nuevoNombre, String nuevoCorreo, String nuevoTelefono) {
+        Usuario usuarioEncontrado = obtenerUsuario(idUsuario);
+        if(usuarioEncontrado != null){
+            usuarioEncontrado.setNombreCompleto(nuevoNombre);
+            usuarioEncontrado.setCorreo(nuevoCorreo);
+            usuarioEncontrado.setTelefono(nuevoTelefono);
+            return true;
+        }
+        return false;
+    }
+
     public boolean agregarRepartidor(Repartidor nuevoRepartidor){
         Repartidor repartidorEncontrado = obtenerRepartidor(nuevoRepartidor.getIdRepartidor());
         if(repartidorEncontrado == null){
@@ -116,5 +127,16 @@ public class EmpresaLogistica  {
         }else{
             return false;
         }
+    }
+
+    public boolean actualizarRepartidor(String idRepartidor, String nuevoNombre, String nuevoDocumento, String nuevoTelefono) {
+        Repartidor repartidorEncontrado = obtenerRepartidor(idRepartidor);
+        if(repartidorEncontrado != null){
+            repartidorEncontrado.setNombre(nuevoNombre);
+            repartidorEncontrado.setDocumento(nuevoDocumento);
+            repartidorEncontrado.setTelefono(nuevoTelefono);
+            return true;
+        }
+        return false;
     }
 }

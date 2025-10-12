@@ -14,11 +14,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
-import static co.edu.uniquindio.envio.utils.EmpresaConstantes.BODY_INCOMPLETO;
-import static co.edu.uniquindio.envio.utils.EmpresaConstantes.BODY_USUARIO_NO_AGREGADO;
-import static co.edu.uniquindio.envio.utils.EmpresaConstantes.HEADER;
-import static co.edu.uniquindio.envio.utils.EmpresaConstantes.TITULO_INCOMPLETO;
-import static co.edu.uniquindio.envio.utils.EmpresaConstantes.TITULO_USUARIO_NO_AGREGADO;
 
 public class RepartidorViewController {
 
@@ -79,7 +74,7 @@ public class RepartidorViewController {
 
     @FXML
     void onActualizarRepartidor(ActionEvent event) {
-
+        actualizarRepartidor();
     }
 
     @FXML
@@ -143,11 +138,33 @@ public class RepartidorViewController {
             if(repartidorController.eliminarRepartidor(repartidorSeleccionado.idRepartidor())){
                 listaRepartidores.remove(repartidorSeleccionado);
                 limpiarCampos();
-                mostrarMensaje(TITULO_REPARTIDOR_ELIMINADO, HEADER, REPARTIDOR_ELIMINADO,Alert.AlertType.INFORMATION);
+                mostrarMensaje(TITULO_REPARTIDOR_ELIMINADO, HEADER, BODY_REPARTIDOR_ELIMINADO,Alert.AlertType.INFORMATION);
             }else{
-                mostrarMensaje(TITULO_REPARTIDOR_NO_AGREGADO, HEADER, BODY_REPARTIDOR_NO_AGREGADO,Alert.AlertType.ERROR);
+                mostrarMensaje(TITULO_REPARTIDOR_NO_ELIMINADO, HEADER, BODY_REPARTIDOR_NO_ELIMINADO,Alert.AlertType.ERROR);
             }
         }
+    }
+
+    private void actualizarRepartidor() {
+        if(repartidorSeleccionado != null){
+            RepartidorDto repartidorDto = crearRepartidorDto();
+            if(datosValidos(repartidorDto)){
+                if(repartidorController.actualizarRepartidor(repartidorDto)){
+                    actualizarTabla();
+                    limpiarCampos();
+                    mostrarMensaje(TITULO_REPARTIDOR_ACTUALIZADO, HEADER, BODY_REPARTIDOR_ACTUALIZADO, Alert.AlertType.INFORMATION);
+                }else{
+                    mostrarMensaje(TITULO_REPARTIDOR_NO_ACTUALIZADO, HEADER, BODY_REPARTIDOR_NO_ACTUALIZADO, Alert.AlertType.ERROR);
+                }
+            }else{
+                mostrarMensaje(TITULO_INCOMPLETO, HEADER, BODY_INCOMPLETO, Alert.AlertType.WARNING);
+            }
+        }
+    }
+
+    private void actualizarTabla() {
+        listaRepartidores.clear();
+        listaRepartidores.addAll(repartidorController.obtenerRepartidores());
     }
 
     private void nuevoRepartidor() {

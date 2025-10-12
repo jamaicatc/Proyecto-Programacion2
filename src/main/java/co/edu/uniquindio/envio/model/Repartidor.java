@@ -60,4 +60,32 @@ public class Repartidor {
     public List<Envio> getEnviosAsignados() {
         return enviosAsignados;
     }
+
+    public void setIdRepartidor(String idRepartidor) {
+        this.idRepartidor = idRepartidor;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public void setDisponibilidad(EstadoDisponibilidad disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+
+    public void setZonaCobertura(String zonaCobertura) {
+        this.zonaCobertura = zonaCobertura;
+    }
+
+    public void setEnviosAsignados(List<Envio> enviosAsignados) {
+        this.enviosAsignados = enviosAsignados;
+    }
 }
