@@ -9,15 +9,15 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="545.0" prefWidth="722.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.envio.viewcontroller.RepartidorViewController">
+<AnchorPane prefHeight="545.0" prefWidth="722.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.envio.viewcontroller.AdminRepartidoresViewController">
     <children>
         <SplitPane dividerPositions="0.42738589211618255" layoutX="14.0" layoutY="14.0" orientation="VERTICAL" prefHeight="519.0" prefWidth="697.0">
             <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="203.0" prefWidth="695.0">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="155.0" prefWidth="605.0">
                     <children>
                         <Label layoutX="14.0" layoutY="14.0" text="ID Repartidor:" />
-                        <Label layoutX="384.0" layoutY="14.0" text="Nombre: " />
-                        <Label layoutX="22.0" layoutY="61.0" text="Documento:" />
+                        <Label layoutX="336.0" layoutY="14.0" text="Nombre: " />
+                        <Label layoutX="32.0" layoutY="61.0" text="Documento:" />
                         <Label layoutX="387.0" layoutY="61.0" text="Teléfono:" />
                         <TextField fx:id="txtIdRepartidor" layoutX="95.0" layoutY="10.0" prefHeight="25.0" prefWidth="236.0" />
                         <TextField fx:id="txtDocumento" layoutX="95.0" layoutY="57.0" prefHeight="25.0" prefWidth="236.0" />

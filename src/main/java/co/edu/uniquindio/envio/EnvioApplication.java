@@ -1,19 +1,35 @@
 package co.edu.uniquindio.envio;
 
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+public class EnvioApplication extends javafx.application.Application{
+    public static Stage mainStage;
+    public static Scene sceneLogin;
+    public static Scene sceneAdministrador;
+    public static Scene sceneUsuario;
 
-public class EnvioApplication extends Application {
+
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(EnvioApplication.class.getResource("EnvioApp.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Administrador");
-        stage.setScene(scene);
-        stage.show();
+    public void start(Stage primaryStage) throws Exception {
+        mainStage = primaryStage;
+
+        FXMLLoader login = new FXMLLoader(getClass().getResource("Login.fxml"));
+        sceneLogin = new Scene(login.load());
+
+        FXMLLoader Admin = new FXMLLoader(getClass().getResource("Administrador.fxml"));
+        sceneAdministrador = new Scene(Admin.load());
+
+        FXMLLoader User = new FXMLLoader(getClass().getResource("Usuario.fxml"));
+        sceneUsuario = new Scene(User.load());
+
+        primaryStage.setScene(sceneLogin);
+        primaryStage.setTitle("Incio de Sesión");
+        primaryStage.show();
+    }
+
+    private static void main(String[] args) {
+        launch(args);
     }
 }

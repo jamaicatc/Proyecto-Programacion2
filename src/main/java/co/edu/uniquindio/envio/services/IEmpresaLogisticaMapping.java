@@ -11,6 +11,7 @@ public interface IEmpresaLogisticaMapping {
     List<UsuarioDto> getUsuariosDto(List<Usuario> listaUsuarios);
     UsuarioDto usuarioToUsuarioDto(Usuario usuario);
     Usuario usuarioDtoToUsuario(UsuarioDto usuarioDto);
+
     List<RepartidorDto> getRepartidoresDto(List<Repartidor> listaRepartidores);
     RepartidorDto repartidorToRepartidorDto(Repartidor repartidor);
     Repartidor repartidorDtoToRepartidor(RepartidorDto repartidorDto);

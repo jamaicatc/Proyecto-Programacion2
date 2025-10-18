@@ -8,6 +8,14 @@ import co.edu.uniquindio.envio.model.Usuario;
 import static co.edu.uniquindio.envio.model.Repartidor.builder;
 
 public class DataUtil {
+    public static final String ADMIN_USUARIO = "santiago";
+    public static final String ADMIN_CONTRASENA = "admin123";
+    public static final String ADMIN_ROL = "Administrador";
+    public static final String USUARIO_USUARIO = "juan";
+    public static final String USUARIO_CONTRASENA = "user123";
+    public static final String USUARIO_ROL = "Usuario";
+
+
     public static EmpresaLogistica inicializarDatos() {
         EmpresaLogistica empresaLogistica = new EmpresaLogistica();
         Usuario usuario1 = new Usuario("1234","Santiago Trujillo","santi@gmail.com","3145822540");

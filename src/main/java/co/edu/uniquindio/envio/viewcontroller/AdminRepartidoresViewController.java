@@ -5,7 +5,6 @@ import java.util.ResourceBundle;
 
 import co.edu.uniquindio.envio.controller.RepartidorController;
 import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
-import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,7 +14,7 @@ import javafx.scene.control.*;
 
 import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
 
-public class RepartidorViewController {
+public class AdminRepartidoresViewController {
 
     RepartidorController repartidorController;
     ObservableList<RepartidorDto> listaRepartidores = FXCollections.observableArrayList();
