@@ -1,10 +1,12 @@
 package co.edu.uniquindio.envio.model;
 
 
+import co.edu.uniquindio.envio.services.IEmpresaLogisticaServices;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmpresaLogistica  {
+public class EmpresaLogistica  implements IEmpresaLogisticaServices {
     private String nombre;
     private List<Usuario> listaUsuarios;
     private List<Repartidor> listaRepartidores;
@@ -56,6 +58,12 @@ public class EmpresaLogistica  {
         return listaIncidencias;
     }
 
+    @Override
+    public List<Usuario> obtenerUsuarios() {
+        return getListaUsuarios();
+    }
+
+    @Override
     public boolean agregarUsuario(Usuario nuevoUsuario){
         Usuario usuarioEncontrado = obtenerUsuario(nuevoUsuario.getIdUsuario());
         if(usuarioEncontrado == null){
@@ -77,6 +85,7 @@ public class EmpresaLogistica  {
         return usuario;
     }
 
+    @Override
     public boolean eliminarUsuario(String idUsuario) {
         Usuario usuarioEncontrado = obtenerUsuario(idUsuario);
         if(usuarioEncontrado !=null){
@@ -87,17 +96,26 @@ public class EmpresaLogistica  {
         }
     }
 
-    public boolean actualizarUsuario(String idUsuario, String nuevoNombre, String nuevoCorreo, String nuevoTelefono) {
-        Usuario usuarioEncontrado = obtenerUsuario(idUsuario);
+
+    @Override
+    public boolean actualizarUsuario(Usuario usuario) {
+        if (usuario == null) return false;
+        Usuario usuarioEncontrado = obtenerUsuario(usuario.getIdUsuario());
         if(usuarioEncontrado != null){
-            usuarioEncontrado.setNombreCompleto(nuevoNombre);
-            usuarioEncontrado.setCorreo(nuevoCorreo);
-            usuarioEncontrado.setTelefono(nuevoTelefono);
+            usuarioEncontrado.setNombreCompleto(usuario.getNombreCompleto());
+            usuarioEncontrado.setCorreo(usuario.getCorreo());
+            usuarioEncontrado.setTelefono(usuario.getTelefono());
             return true;
         }
         return false;
     }
 
+    @Override
+    public List<Repartidor> obtenerRepartidores() {
+        return getListaRepartidores();
+    }
+
+    @Override
     public boolean agregarRepartidor(Repartidor nuevoRepartidor){
         Repartidor repartidorEncontrado = obtenerRepartidor(nuevoRepartidor.getIdRepartidor());
         if(repartidorEncontrado == null){
@@ -119,6 +137,7 @@ public class EmpresaLogistica  {
         return repartidor;
     }
 
+    @Override
     public boolean eliminarRepartidor(String idRepartidor) {
         Repartidor repartidorEncontrado = obtenerRepartidor(idRepartidor);
         if(repartidorEncontrado !=null){
@@ -129,12 +148,15 @@ public class EmpresaLogistica  {
         }
     }
 
-    public boolean actualizarRepartidor(String idRepartidor, String nuevoNombre, String nuevoDocumento, String nuevoTelefono) {
-        Repartidor repartidorEncontrado = obtenerRepartidor(idRepartidor);
+
+    @Override
+    public boolean actualizarRepartidor(Repartidor repartidor) {
+        if (repartidor == null) return false;
+        Repartidor repartidorEncontrado = obtenerRepartidor(repartidor.getIdRepartidor());
         if(repartidorEncontrado != null){
-            repartidorEncontrado.setNombre(nuevoNombre);
-            repartidorEncontrado.setDocumento(nuevoDocumento);
-            repartidorEncontrado.setTelefono(nuevoTelefono);
+            repartidorEncontrado.setNombre(repartidor.getNombre());
+            repartidorEncontrado.setDocumento(repartidor.getDocumento());
+            repartidorEncontrado.setTelefono(repartidor.getTelefono());
             return true;
         }
         return false;

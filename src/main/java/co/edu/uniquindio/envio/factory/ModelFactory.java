@@ -44,12 +44,7 @@ public class ModelFactory implements IModelFactory {
 
     @Override
     public boolean actualizarUsuario(UsuarioDto usuarioDto) {
-        return empresaLogistica.actualizarUsuario(
-                usuarioDto.idUsuario(),
-                usuarioDto.nombreCompleto(),
-                usuarioDto.correo(),
-                usuarioDto.telefono()
-        );
+        return empresaLogistica.actualizarUsuario(mapper.usuarioDtoToUsuario(usuarioDto));
     }
 
     @Override
@@ -69,11 +64,6 @@ public class ModelFactory implements IModelFactory {
 
     @Override
     public boolean actualizarRepartidor(RepartidorDto repartidorDto) {
-        return empresaLogistica.actualizarRepartidor(
-                repartidorDto.idRepartidor(),
-                repartidorDto.nombre(),
-                repartidorDto.documento(),
-                repartidorDto.telefono()
-        );
+        return empresaLogistica.actualizarRepartidor(mapper.repartidorDtoToRepartidor(repartidorDto));
     }
 }

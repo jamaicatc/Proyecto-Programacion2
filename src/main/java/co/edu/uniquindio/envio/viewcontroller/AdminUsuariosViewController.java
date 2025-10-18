@@ -177,16 +177,16 @@ public class AdminUsuariosViewController {
     private void limpiarCampos() {
         txtIdUsuario.setText("");
         txtNombreCompleto.setText("");
-        txtTelefono.setText("");
         txtCorreo.setText("");
+        txtTelefono.setText("");
     }
 
     private UsuarioDto crearUsuarioDto() {
         return new UsuarioDto(
                 txtIdUsuario.getText(),
                 txtNombreCompleto.getText(),
-                txtTelefono.getText(),
-                txtCorreo.getText());
+                txtCorreo.getText(),
+                txtTelefono.getText());
     }
 
     private boolean datosValidos(UsuarioDto usuarioDto) {
