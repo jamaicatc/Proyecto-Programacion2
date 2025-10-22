@@ -2,8 +2,12 @@ package co.edu.uniquindio.envio.utils;
 
 public class EmpresaConstantes {
     public static final String TITULO_INCOMPLETO = "Campos incompletos";
-    public static final String HEADER= "Notificación";
+    public static final String HEADER_NOTIFICACION= "Notificación";
     public static final String BODY_INCOMPLETO = "Los datos del formulario estan incompletos";
+
+    public static final String TITULO_ERROR_AUTENTICACION = "Error de autenticación";
+    public static final String HEADER_ERROR= "Error";
+    public static final String BODY_AUTENTICACION_INCORRECTA= "Usuario, contraseña o rol incorrectos";
 
     public static final String TITULO_USUARIO_NO_AGREGADO = "Usuario no agregado";
     public static final String TITULO_USUARIO_AGREGADO = "Usuario agregado";

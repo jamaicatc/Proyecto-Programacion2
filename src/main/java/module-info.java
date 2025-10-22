@@ -1,4 +1,4 @@
-module co.edu.uniquindio.envio {
+module envio {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.base;

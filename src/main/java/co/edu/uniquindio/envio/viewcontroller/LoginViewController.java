@@ -13,6 +13,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 
+import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
+
 public class LoginViewController {
 
     ObservableList<String> listaOpciones = FXCollections.observableArrayList("Usuario", "Administrador");
@@ -31,7 +33,7 @@ public class LoginViewController {
     private Button btnIngresar;
 
     @FXML
-    private ComboBox<String> comboRolUsuario;
+    private ComboBox<String> cmbRol;
 
     @FXML
     private PasswordField txtIngresarContrasena;
@@ -48,18 +50,17 @@ public class LoginViewController {
     void OnIngresar(ActionEvent event) {
         String usuario = txtIngresarUsuario.getText();
         String contrasena = txtIngresarContrasena.getText();
-        String rol = comboRolUsuario.getValue();
+        String rol = cmbRol.getValue();
 
         if (AdministradorController.validarCredencialesAdministrador(usuario, contrasena, rol)) {
             EnvioApplication.mainStage.setScene(EnvioApplication.sceneAdministrador);
             EnvioApplication.mainStage.setTitle("Panel Administrador");
             txtIngresarContrasena.clear();
-            comboRolUsuario.getSelectionModel().clearSelection();
         } else if (UsuarioController.validarCredencialesUsuario(usuario, contrasena, rol)){
             EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuario);
             EnvioApplication.mainStage.setTitle("Panel Usuario");
         } else {
-            mostrarMensaje("Error de autenticación", null, "Usuario, contraseña o rol incorrectos", Alert.AlertType.ERROR);
+            mostrarMensaje(TITULO_ERROR_AUTENTICACION, HEADER_ERROR, BODY_AUTENTICACION_INCORRECTA, Alert.AlertType.ERROR);
         }
 
     }
@@ -78,7 +79,7 @@ public class LoginViewController {
     }
 
     private void cargarDatos() {
-        comboRolUsuario.setItems(listaOpciones);
+        cmbRol.setItems(listaOpciones);
         btnIngresar.setCursor(Cursor.HAND);
     }
 

@@ -1,14 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="co.edu.uniquindio.envio.viewcontroller.UsuarioViewController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="503.0" prefWidth="653.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.envio.viewcontroller.UsuarioViewController">
+   <children>
+      <TabPane layoutX="14.0" layoutY="14.0" prefHeight="474.0" prefWidth="631.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Cotizar tarifa">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="392.0" prefWidth="631.0">
+                    <children>
+                        <SplitPane layoutX="24.0" layoutY="42.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL">
+                            <items>
+                                <fx:include source="UsuarioTarifa.fxml" />
+                            </items>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </SplitPane>
+                    </children>
+                </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Solicitudes de envio">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+            <Tab text="Pagar envio">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+            <Tab text="Rastrear envio">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+            <Tab text="Historial de envios">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="342.0" prefWidth="594.0" />
+               </content>
+            </Tab>
+            <Tab text="Reportes">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+      <MenuButton layoutX="599.0" layoutY="16.0" mnemonicParsing="false" text="☰">
+        <items>
+          <MenuItem mnemonicParsing="false" onAction="#onGestionarPerfil" text="Gestionar Perfil" />
+          <MenuItem mnemonicParsing="false" onAction="#onCerrarSesion" text="Cerrar Sesion" />
+        </items>
+      </MenuButton>
+   </children>
 </AnchorPane>

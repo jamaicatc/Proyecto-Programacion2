@@ -20,7 +20,7 @@ public class AdministradorViewController {
     private MenuButton menuOpciones;
 
     @FXML
-    void cerrarSesion(ActionEvent event) {
+    void onCerrarSesion(ActionEvent event) {
         EnvioApplication.mainStage.setScene(EnvioApplication.sceneLogin);
     }
 

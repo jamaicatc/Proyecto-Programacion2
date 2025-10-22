@@ -125,12 +125,12 @@ public class AdminUsuariosViewController {
             if(usuarioController.agregarUsuario(usuarioDto)){
                 listaUsuarios.addAll(usuarioDto);
                 limpiarCampos();
-                mostrarMensaje(TITULO_USUARIO_AGREGADO, HEADER, BODY_USUARIO_AGREGADO, Alert.AlertType.INFORMATION);
+                mostrarMensaje(TITULO_USUARIO_AGREGADO, HEADER_NOTIFICACION, BODY_USUARIO_AGREGADO, Alert.AlertType.INFORMATION);
             }else{
-                mostrarMensaje(TITULO_USUARIO_NO_AGREGADO, HEADER, BODY_USUARIO_NO_AGREGADO ,Alert.AlertType.ERROR);
+                mostrarMensaje(TITULO_USUARIO_NO_AGREGADO, HEADER_NOTIFICACION, BODY_USUARIO_NO_AGREGADO ,Alert.AlertType.ERROR);
             }
         }else{
-            mostrarMensaje(TITULO_INCOMPLETO, HEADER, BODY_INCOMPLETO,Alert.AlertType.WARNING);
+            mostrarMensaje(TITULO_INCOMPLETO, HEADER_NOTIFICACION, BODY_INCOMPLETO,Alert.AlertType.WARNING);
         }
     }
 
@@ -139,9 +139,9 @@ public class AdminUsuariosViewController {
             if(usuarioController.eliminarUsuario(usuarioSeleccionado.idUsuario())){
                 listaUsuarios.remove(usuarioSeleccionado);
                 limpiarCampos();
-                mostrarMensaje(TITULO_USUARIO_ELIMINADO, HEADER, BODY_USUARIO_ELIMINADO,Alert.AlertType.INFORMATION);
+                mostrarMensaje(TITULO_USUARIO_ELIMINADO, HEADER_NOTIFICACION, BODY_USUARIO_ELIMINADO,Alert.AlertType.INFORMATION);
             }else{
-                mostrarMensaje(TITULO_USUARIO_NO_ELIMINADO, HEADER, BODY_USUARIO_NO_ELIMINADO,Alert.AlertType.ERROR);
+                mostrarMensaje(TITULO_USUARIO_NO_ELIMINADO, HEADER_NOTIFICACION, BODY_USUARIO_NO_ELIMINADO,Alert.AlertType.ERROR);
             }
         }
     }
@@ -153,12 +153,12 @@ public class AdminUsuariosViewController {
                 if(usuarioController.actualizarUsuario(usuarioDto)){
                     actualizarTabla();
                     limpiarCampos();
-                    mostrarMensaje(TITULO_USUARIO_ACTUALIZADO, HEADER, BODY_USUARIO_ACTUALIZADO, Alert.AlertType.INFORMATION);
+                    mostrarMensaje(TITULO_USUARIO_ACTUALIZADO, HEADER_NOTIFICACION, BODY_USUARIO_ACTUALIZADO, Alert.AlertType.INFORMATION);
                 }else{
-                    mostrarMensaje(TITULO_USUARIO_NO_ACTUALIZADO, HEADER, BODY_USUARIO_NO_ACTUALIZADO, Alert.AlertType.ERROR);
+                    mostrarMensaje(TITULO_USUARIO_NO_ACTUALIZADO, HEADER_NOTIFICACION, BODY_USUARIO_NO_ACTUALIZADO, Alert.AlertType.ERROR);
                 }
             }else{
-                mostrarMensaje(TITULO_INCOMPLETO, HEADER, BODY_INCOMPLETO, Alert.AlertType.WARNING);
+                mostrarMensaje(TITULO_INCOMPLETO, HEADER_NOTIFICACION, BODY_INCOMPLETO, Alert.AlertType.WARNING);
             }
         }
     }
@@ -190,15 +190,10 @@ public class AdminUsuariosViewController {
     }
 
     private boolean datosValidos(UsuarioDto usuarioDto) {
-        if(usuarioDto.idUsuario().isBlank() ||
-                usuarioDto.nombreCompleto().isBlank() ||
-                usuarioDto.telefono().isBlank() ||
-                usuarioDto.correo().isBlank()
-        ){
-            return false;
-        }else{
-            return true;
-        }
+        return !usuarioDto.idUsuario().isBlank() &&
+                !usuarioDto.nombreCompleto().isBlank() &&
+                !usuarioDto.telefono().isBlank() &&
+                !usuarioDto.correo().isBlank();
     }
 
     private void mostrarInformacionUsuario(UsuarioDto usuarioSeleccionado) {

@@ -123,12 +123,12 @@ public class AdminRepartidoresViewController {
             if(repartidorController.agregarRepartidor(repartidorDto)){
                 listaRepartidores.addAll(repartidorDto);
                 limpiarCampos();
-                mostrarMensaje(TITULO_REPARTIDOR_AGREGADO, HEADER, BODY_REPARTIDOR_AGREGADO, Alert.AlertType.INFORMATION);
+                mostrarMensaje(TITULO_REPARTIDOR_AGREGADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_AGREGADO, Alert.AlertType.INFORMATION);
             }else{
-                mostrarMensaje(TITULO_REPARTIDOR_NO_AGREGADO, HEADER, BODY_REPARTIDOR_NO_AGREGADO ,Alert.AlertType.ERROR);
+                mostrarMensaje(TITULO_REPARTIDOR_NO_AGREGADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_NO_AGREGADO ,Alert.AlertType.ERROR);
             }
         }else{
-            mostrarMensaje(TITULO_INCOMPLETO, HEADER, BODY_INCOMPLETO,Alert.AlertType.WARNING);
+            mostrarMensaje(TITULO_INCOMPLETO, HEADER_NOTIFICACION, BODY_INCOMPLETO,Alert.AlertType.WARNING);
         }
     }
 
@@ -137,9 +137,9 @@ public class AdminRepartidoresViewController {
             if(repartidorController.eliminarRepartidor(repartidorSeleccionado.idRepartidor())){
                 listaRepartidores.remove(repartidorSeleccionado);
                 limpiarCampos();
-                mostrarMensaje(TITULO_REPARTIDOR_ELIMINADO, HEADER, BODY_REPARTIDOR_ELIMINADO,Alert.AlertType.INFORMATION);
+                mostrarMensaje(TITULO_REPARTIDOR_ELIMINADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_ELIMINADO,Alert.AlertType.INFORMATION);
             }else{
-                mostrarMensaje(TITULO_REPARTIDOR_NO_ELIMINADO, HEADER, BODY_REPARTIDOR_NO_ELIMINADO,Alert.AlertType.ERROR);
+                mostrarMensaje(TITULO_REPARTIDOR_NO_ELIMINADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_NO_ELIMINADO,Alert.AlertType.ERROR);
             }
         }
     }
@@ -151,12 +151,12 @@ public class AdminRepartidoresViewController {
                 if(repartidorController.actualizarRepartidor(repartidorDto)){
                     actualizarTabla();
                     limpiarCampos();
-                    mostrarMensaje(TITULO_REPARTIDOR_ACTUALIZADO, HEADER, BODY_REPARTIDOR_ACTUALIZADO, Alert.AlertType.INFORMATION);
+                    mostrarMensaje(TITULO_REPARTIDOR_ACTUALIZADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_ACTUALIZADO, Alert.AlertType.INFORMATION);
                 }else{
-                    mostrarMensaje(TITULO_REPARTIDOR_NO_ACTUALIZADO, HEADER, BODY_REPARTIDOR_NO_ACTUALIZADO, Alert.AlertType.ERROR);
+                    mostrarMensaje(TITULO_REPARTIDOR_NO_ACTUALIZADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_NO_ACTUALIZADO, Alert.AlertType.ERROR);
                 }
             }else{
-                mostrarMensaje(TITULO_INCOMPLETO, HEADER, BODY_INCOMPLETO, Alert.AlertType.WARNING);
+                mostrarMensaje(TITULO_INCOMPLETO, HEADER_NOTIFICACION, BODY_INCOMPLETO, Alert.AlertType.WARNING);
             }
         }
     }
