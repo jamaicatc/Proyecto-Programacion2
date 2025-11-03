@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
@@ -49,6 +50,24 @@ public class AdminGestionAsignacionesViewController {
 
     @FXML
     private TableView<?> tableEnviosAsignaciones;
+
+    @FXML
+    private TableColumn<?, ?> tcDestino;
+
+    @FXML
+    private TableColumn<?, ?> tcEstadoActual;
+
+    @FXML
+    private TableColumn<?, ?> tcFechaCreacion;
+
+    @FXML
+    private TableColumn<?, ?> tcIdEnvio;
+
+    @FXML
+    private TableColumn<?, ?> tcOrigen;
+
+    @FXML
+    private TableColumn<?, ?> tcRepartidorAsignado;
 
     @FXML
     private TextField txtDescripcion;

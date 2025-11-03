@@ -14,6 +14,9 @@ public class DataUtil {
     public static final String USUARIO_USUARIO = "juan";
     public static final String USUARIO_CONTRASENA = "user123";
     public static final String USUARIO_ROL = "Usuario";
+    public static final String REPARTIDOR_USUARIO = "oscar";
+    public static final String REPARTIDOR_CONTRASENA = "repartidor123";
+    public static final String REPARTIDOR_ROL = "Repartidor";
 
 
     public static EmpresaLogistica inicializarDatos() {

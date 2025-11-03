@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import co.edu.uniquindio.envio.EnvioApplication;
 import co.edu.uniquindio.envio.controller.AdministradorController;
+import co.edu.uniquindio.envio.controller.RepartidorController;
 import co.edu.uniquindio.envio.controller.UsuarioController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +18,7 @@ import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
 
 public class LoginViewController {
 
-    ObservableList<String> listaOpciones = FXCollections.observableArrayList("Usuario", "Administrador");
+    ObservableList<String> listaOpciones = FXCollections.observableArrayList("Usuario", "Administrador", "Repartidor");
 
 
     @FXML
@@ -64,6 +65,11 @@ public class LoginViewController {
         } else if (UsuarioController.validarCredencialesUsuario(usuario, contrasena, rol)){
             EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuario);
             EnvioApplication.mainStage.setTitle("Panel Usuario");
+            txtIngresarContrasena.clear();
+        } else if (RepartidorController.validarCredencialesRepartidor(usuario, contrasena, rol)){
+            EnvioApplication.mainStage.setScene(EnvioApplication.sceneRepartidor);
+            EnvioApplication.mainStage.setTitle("Panel Repartidor");
+            txtIngresarContrasena.clear();
         } else {
             mostrarMensaje(TITULO_ERROR_AUTENTICACION, HEADER_ERROR, BODY_AUTENTICACION_INCORRECTA, Alert.AlertType.ERROR);
         }

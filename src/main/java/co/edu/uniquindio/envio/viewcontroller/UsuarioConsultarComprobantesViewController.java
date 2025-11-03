@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 
@@ -36,6 +37,21 @@ public class UsuarioConsultarComprobantesViewController {
     private TableView<?> tableComprobantes;
 
     @FXML
+    private TableColumn<?, ?> tcFecha;
+
+    @FXML
+    private TableColumn<?, ?> tcIdPago;
+
+    @FXML
+    private TableColumn<?, ?> tcMetodo;
+
+    @FXML
+    private TableColumn<?, ?> tcMonto;
+
+    @FXML
+    private TableColumn<?, ?> tcResultado;
+
+    @FXML
     void onFiltrar(ActionEvent event) {
 
     }
@@ -47,7 +63,6 @@ public class UsuarioConsultarComprobantesViewController {
 
     @FXML
     void initialize() {
-
     }
 
 }

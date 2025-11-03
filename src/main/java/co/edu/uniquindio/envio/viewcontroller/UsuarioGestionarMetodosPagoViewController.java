@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
@@ -39,6 +40,18 @@ public class UsuarioGestionarMetodosPagoViewController {
 
     @FXML
     private TableView<?> tableMetodosPago;
+
+    @FXML
+    private TableColumn<?, ?> tcEstado;
+
+    @FXML
+    private TableColumn<?, ?> tcNumeroReferencia;
+
+    @FXML
+    private TableColumn<?, ?> tcSaldo;
+
+    @FXML
+    private TableColumn<?, ?> tcTipo;
 
     @FXML
     private TextField txtReferencia;
@@ -73,7 +86,6 @@ public class UsuarioGestionarMetodosPagoViewController {
 
     @FXML
     void initialize() {
-
     }
 
 }

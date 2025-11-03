@@ -21,7 +21,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
                <children>
                   <Label text="Nombre:" />
                   <TextField fx:id="txtNombre" maxWidth="1.7976931348623157E308" promptText="Ingrese su nombre" HBox.hgrow="ALWAYS" />
@@ -30,6 +30,9 @@
                   <Label text="Telefono:" />
                   <TextField fx:id="txtTelefono" maxWidth="1.7976931348623157E308" promptText="Ingrese su telefono" HBox.hgrow="ALWAYS" />
                </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
             </HBox>
             <Separator maxWidth="1.7976931348623157E308" prefWidth="200.0" VBox.vgrow="ALWAYS" />
             <VBox prefHeight="200.0" prefWidth="100.0" spacing="15.0" VBox.vgrow="ALWAYS">
@@ -37,9 +40,9 @@
                   <Label text="Direcciones frecuentes:" />
                   <TableView fx:id="tableDireccionesFrecuentes" maxWidth="1.7976931348623157E308" minWidth="10.0" VBox.vgrow="ALWAYS">
                     <columns>
-                      <TableColumn fx:id="tcAlias" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Alias" />
-                      <TableColumn fx:id="tcCalleCarrera" prefWidth="321.0" text="Calle/Carrera" />
-                        <TableColumn fx:id="tcCiudad" prefWidth="123.0" text="Ciudad" />
+                      <TableColumn fx:id="tcAlias" maxWidth="100.0" minWidth="100.0" prefWidth="-1.0" text="Alias" />
+                      <TableColumn fx:id="tcCalleCarrera" prefWidth="-1.0" text="Calle/Carrera" />
+                        <TableColumn fx:id="tcCiudad" prefWidth="-1.0" text="Ciudad" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

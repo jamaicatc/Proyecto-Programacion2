@@ -9,6 +9,7 @@ public class EnvioApplication extends javafx.application.Application{
     public static Scene sceneLogin;
     public static Scene sceneAdministrador;
     public static Scene sceneUsuario;
+    public static Scene sceneRepartidor;
     public static Scene sceneUsuarioGestionPerfil;
     public static Scene sceneUsuarioGestionarMetodosPago;
 
@@ -25,6 +26,9 @@ public class EnvioApplication extends javafx.application.Application{
 
         FXMLLoader User = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/envio/usuario/Usuario.fxml"));
         sceneUsuario = new Scene(User.load());
+
+        FXMLLoader Repartidor = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/envio/repartidor/Repartidor.fxml"));
+        sceneRepartidor = new Scene(Repartidor.load());
 
         FXMLLoader UserProfile = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/envio/usuario/UsuarioGestionPerfil.fxml"));
         sceneUsuarioGestionPerfil = new Scene(UserProfile.load());

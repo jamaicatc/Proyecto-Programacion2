@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -21,16 +22,25 @@
             <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
                   <Label text="Seleccione envío:" />
-                  <ComboBox fx:id="cmbEnviosPendientes" prefWidth="150.0" promptText="Seleccionar" HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="cmbEnviosPendientes" prefWidth="150.0" promptText="Seleccionar" HBox.hgrow="ALWAYS">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></ComboBox>
                </children>
             </HBox>
             <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
                   <Label text="Método de pago:" />
-                  <ComboBox fx:id="cmbMetodoPago" prefWidth="150.0" promptText="Seleccionar" HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="cmbMetodoPago" prefWidth="150.0" promptText="Seleccionar" HBox.hgrow="ALWAYS">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></ComboBox>
                </children>
             </HBox>
-            <Button fx:id="btnPagar" maxWidth="-Infinity" mnemonicParsing="false" onAction="#onPagar" text="Pagar" />
+            <Button fx:id="btnPagar" maxWidth="-Infinity" mnemonicParsing="false" onAction="#onPagar" text="Pagar">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
             <TextArea fx:id="taResultado" editable="false" prefWidth="200.0" wrapText="true" VBox.vgrow="ALWAYS" />
          </children>
          <padding>

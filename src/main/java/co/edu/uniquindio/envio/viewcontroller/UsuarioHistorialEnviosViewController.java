@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
 
 public class UsuarioHistorialEnviosViewController {
 
@@ -39,6 +40,24 @@ public class UsuarioHistorialEnviosViewController {
 
     @FXML
     private DatePicker dpFechaHasta;
+
+    @FXML
+    private TableColumn<?, ?> tcCosto;
+
+    @FXML
+    private TableColumn<?, ?> tcDestino;
+
+    @FXML
+    private TableColumn<?, ?> tcEstado;
+
+    @FXML
+    private TableColumn<?, ?> tcFecha;
+
+    @FXML
+    private TableColumn<?, ?> tcIdEnvio;
+
+    @FXML
+    private TableColumn<?, ?> tcOrigen;
 
     @FXML
     void onBuscar(ActionEvent event) {

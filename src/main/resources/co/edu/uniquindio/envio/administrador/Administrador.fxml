@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
@@ -82,6 +83,9 @@
         <items>
           <MenuItem mnemonicParsing="false" onAction="#onCerrarSesion" text="Cerrar Sesion" />
         </items>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </MenuButton>
     </children>
 </AnchorPane>

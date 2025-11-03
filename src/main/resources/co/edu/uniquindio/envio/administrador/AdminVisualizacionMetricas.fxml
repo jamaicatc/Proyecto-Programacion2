@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -14,7 +15,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.envio.viewcontroller.AdminVisualizacionMetricasViewController">
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -27,13 +27,28 @@
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
                   <Label text="Periodo:" />
-                  <DatePicker fx:id="dpPeriodoInicio" />
+                  <DatePicker fx:id="dpPeriodoInicio">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></DatePicker>
                   <Label layoutX="10.0" layoutY="10.0" text="a" />
-                  <DatePicker fx:id="dpPeriodoFin" layoutX="38.0" layoutY="10.0" />
+                  <DatePicker fx:id="dpPeriodoFin" layoutX="38.0" layoutY="10.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></DatePicker>
                   <Label layoutX="212.0" layoutY="10.0" text="Tipo de gráfico:" />
-                  <ComboBox fx:id="cmbTipoGrafico" prefWidth="150.0" promptText="Seleccionar" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="btnGenerarGrafico" mnemonicParsing="false" onAction="#onGenerarGrafico" text="Generar Gráfico" />
-                  <Button fx:id="btnReiniciar" mnemonicParsing="false" onAction="#onReiniciar" text="Reiniciar" />
+                  <ComboBox fx:id="cmbTipoGrafico" prefWidth="150.0" promptText="Seleccionar" HBox.hgrow="ALWAYS">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></ComboBox>
+                  <Button fx:id="btnGenerarGrafico" mnemonicParsing="false" onAction="#onGenerarGrafico" text="Generar Gráfico">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button fx:id="btnReiniciar" mnemonicParsing="false" onAction="#onReiniciar" text="Reiniciar">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" VBox.vgrow="ALWAYS">
@@ -83,8 +98,14 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="btnActualizarGraficos" mnemonicParsing="false" onAction="#onActualizarGraficos" text="Actualizar Gráficos" />
-                  <Button fx:id="btnExportarImagen" mnemonicParsing="false" onAction="#onExportarImagen" text="Exportar Imagen" />
+                  <Button fx:id="btnActualizarGraficos" mnemonicParsing="false" onAction="#onActualizarGraficos" text="Actualizar Gráficos">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button fx:id="btnExportarImagen" mnemonicParsing="false" onAction="#onExportarImagen" text="Exportar Imagen">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                </children>
             </HBox>
          </children>
