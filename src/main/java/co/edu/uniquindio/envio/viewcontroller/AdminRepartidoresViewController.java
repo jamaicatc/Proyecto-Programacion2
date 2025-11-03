@@ -18,6 +18,7 @@ public class AdminRepartidoresViewController {
 
     RepartidorController repartidorController;
     ObservableList<RepartidorDto> listaRepartidores = FXCollections.observableArrayList();
+    ObservableList<String> listaDisponibilidades = FXCollections.observableArrayList("Activo", "Inactivo", "En ruta");
     RepartidorDto repartidorSeleccionado;
 
     @FXML
@@ -30,16 +31,28 @@ public class AdminRepartidoresViewController {
     private Button btnActualizar;
 
     @FXML
+    private Button btnActualizarTabla;
+
+    @FXML
     private Button btnAgregar;
 
     @FXML
     private Button btnEliminar;
 
     @FXML
+    private Button btnExportar;
+
+    @FXML
     private Button btnNuevo;
 
     @FXML
+    private ComboBox<String> cmbDisponibilidad;
+
+    @FXML
     private TableView<RepartidorDto> tableRepartidor;
+
+    @FXML
+    private TableColumn<?, ?> tcDisponibilidad;
 
     @FXML
     private TableColumn<RepartidorDto, String> tcDocumento;
@@ -54,6 +67,9 @@ public class AdminRepartidoresViewController {
     private TableColumn<RepartidorDto, String> tcTelefono;
 
     @FXML
+    private TableColumn<?, ?> tcZona;
+
+    @FXML
     private TextField txtDocumento;
 
     @FXML
@@ -66,14 +82,27 @@ public class AdminRepartidoresViewController {
     private TextField txtTelefono;
 
     @FXML
+    private TextField txtZona;
+
+    @FXML
     void initialize() {
         repartidorController = new RepartidorController();
         initView();
+        cargarDatos();
+    }
+
+    private void cargarDatos() {
+        cmbDisponibilidad.setItems(listaDisponibilidades);
     }
 
     @FXML
     void onActualizarRepartidor(ActionEvent event) {
         actualizarRepartidor();
+    }
+
+    @FXML
+    void onActualizarTabla(ActionEvent event) {
+
     }
 
     @FXML
@@ -84,6 +113,11 @@ public class AdminRepartidoresViewController {
     @FXML
     void onEliminarRepartidor(ActionEvent event) {
         eliminarRepartidor();
+    }
+
+    @FXML
+    void onExportar(ActionEvent event) {
+
     }
 
     @FXML

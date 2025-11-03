@@ -47,6 +47,11 @@ public class LoginViewController {
     }
 
     @FXML
+    void initialize() {
+        cargarDatos();
+    }
+
+    @FXML
     void OnIngresar(ActionEvent event) {
         String usuario = txtIngresarUsuario.getText();
         String contrasena = txtIngresarContrasena.getText();
@@ -73,10 +78,6 @@ public class LoginViewController {
         aler.showAndWait();
     }
 
-    @FXML
-    void initialize() {
-        cargarDatos();
-    }
 
     private void cargarDatos() {
         cmbRol.setItems(listaOpciones);

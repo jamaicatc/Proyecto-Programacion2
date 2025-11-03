@@ -9,7 +9,10 @@ public class Envio {
     private Direccion origen;
     private Direccion destino;
     private double peso;
-    private String dimensiones;
+    private double largo;
+    private double alto;
+    private double ancho;
+    private int cantidad;
     private double costo;
     private EstadoEnvio estado;
     private LocalDateTime fechaCreacion;
@@ -23,13 +26,16 @@ public class Envio {
         this.serviciosAdicionales = new ArrayList<>();
     }
 
-    public Envio(String idEnvio, Direccion origen, Direccion destino, double peso, String dimensiones, double costo, EstadoEnvio estado, LocalDateTime fechaCreacion, LocalDateTime fechaEntregaEstimada, Usuario usuario, Repartidor repartidor, Pago pago) {
+    public Envio(String idEnvio, Direccion origen, Direccion destino, double peso, double largo, double alto, double ancho, int cantidad, double costo, EstadoEnvio estado, LocalDateTime fechaCreacion, LocalDateTime fechaEntregaEstimada, Usuario usuario, Repartidor repartidor, Pago pago) {
         this();
         this.idEnvio = idEnvio;
         this.origen = origen;
         this.destino = destino;
         this.peso = peso;
-        this.dimensiones = dimensiones;
+        this.largo = largo;
+        this.alto = alto;
+        this.ancho = ancho;
+        this.cantidad = cantidad;
         this.costo = costo;
         this.estado = estado;
         this.fechaCreacion = fechaCreacion;

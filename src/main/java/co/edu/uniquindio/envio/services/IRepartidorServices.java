@@ -1,7 +1,5 @@
 package co.edu.uniquindio.envio.services;
 
-import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
-
 import java.util.List;
 
 public interface IRepartidorServices<T> {
