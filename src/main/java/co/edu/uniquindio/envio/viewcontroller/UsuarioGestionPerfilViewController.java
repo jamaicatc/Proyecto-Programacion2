@@ -2,16 +2,28 @@ package co.edu.uniquindio.envio.viewcontroller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 import co.edu.uniquindio.envio.EnvioApplication;
+import co.edu.uniquindio.envio.controller.UsuarioController;
+import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
+import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+
+import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
 
 public class UsuarioGestionPerfilViewController {
+
+    UsuarioController usuarioController;
+    ObservableList<DireccionDto> listaDirecciones = FXCollections.observableArrayList();
+    DireccionDto direccionSeleccionada;
+    UsuarioDto usuarioActual;
 
     @FXML
     private ResourceBundle resources;
@@ -35,16 +47,16 @@ public class UsuarioGestionPerfilViewController {
     private Button btnGuardarCambios;
 
     @FXML
-    private TableView<?> tableDireccionesFrecuentes;
+    private TableView<DireccionDto> tableDireccionesFrecuentes;
 
     @FXML
-    private TableColumn<?, ?> tcAlias;
+    private TableColumn<DireccionDto, String> tcAlias;
 
     @FXML
-    private TableColumn<?, ?> tcCalleCarrera;
+    private TableColumn<DireccionDto, String> tcCalleCarrera;
 
     @FXML
-    private TableColumn<?, ?> tcCiudad;
+    private TableColumn<DireccionDto, String> tcCiudad;
 
     @FXML
     private TextField txtCorreo;
@@ -56,8 +68,164 @@ public class UsuarioGestionPerfilViewController {
     private TextField txtTelefono;
 
     @FXML
-    void onAgregarDireccion(ActionEvent event) {
+    void initialize() {
+        usuarioController = new UsuarioController();
+        initView();
+    }
 
+    private void initView() {
+        initDataBinding();
+        cargarDatosUsuario();
+        obtenerDirecciones();
+        tableDireccionesFrecuentes.getItems().clear();
+        tableDireccionesFrecuentes.setItems(listaDirecciones);
+        listenerSelection();
+    }
+
+    private void initDataBinding() {
+        tcAlias.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().alias()));
+        tcCalleCarrera.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().calleCarrera()));
+        tcCiudad.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().ciudad()));
+    }
+
+    private void cargarDatosUsuario() {
+        // Obtener el usuario Juan David
+        usuarioActual = usuarioController.obtenerUsuarioPorNombre("Juan David");
+        if (usuarioActual != null) {
+            txtNombre.setText(usuarioActual.nombreCompleto());
+            txtCorreo.setText(usuarioActual.correo());
+            txtTelefono.setText(usuarioActual.telefono());
+        }
+    }
+
+    private void obtenerDirecciones() {
+        if (usuarioActual != null) {
+            listaDirecciones.addAll(usuarioController.obtenerDireccionesUsuario(usuarioActual.idUsuario()));
+        }
+    }
+
+    private void listenerSelection() {
+        tableDireccionesFrecuentes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            direccionSeleccionada = newSelection;
+        });
+    }
+
+    @FXML
+    void onAgregarDireccion(ActionEvent event) {
+        TextInputDialog dialogAlias = new TextInputDialog();
+        dialogAlias.setTitle("Nueva Dirección");
+        dialogAlias.setHeaderText("Ingrese el alias de la dirección:");
+        dialogAlias.setContentText("Alias:");
+
+        dialogAlias.showAndWait().ifPresent(alias -> {
+            TextInputDialog dialogDireccion = new TextInputDialog();
+            dialogDireccion.setTitle("Nueva Dirección");
+            dialogDireccion.setHeaderText("Ingrese la dirección:");
+            dialogDireccion.setContentText("Calle/Carrera:");
+
+            dialogDireccion.showAndWait().ifPresent(direccion -> {
+                TextInputDialog dialogCiudad = new TextInputDialog();
+                dialogCiudad.setTitle("Nueva Dirección");
+                dialogCiudad.setHeaderText("Ingrese la ciudad:");
+                dialogCiudad.setContentText("Ciudad:");
+
+                dialogCiudad.showAndWait().ifPresent(ciudad -> {
+                    String idDireccion = "DIR-" + UUID.randomUUID().toString().substring(0, 8);
+                    DireccionDto nuevaDireccion = new DireccionDto(
+                        idDireccion,
+                        alias,
+                        direccion,
+                        ciudad,
+                        "0,0" // Coordenadas por defecto
+                    );
+                    if (usuarioController.agregarDireccion(usuarioActual.idUsuario(), nuevaDireccion)) {
+                        listaDirecciones.add(nuevaDireccion);
+                        mostrarMensaje("Dirección agregada", "Notificación", "La dirección se ha agregado correctamente", AlertType.INFORMATION);
+                    } else {
+                        mostrarMensaje("Error", "Error", "No se pudo agregar la dirección", AlertType.ERROR);
+                    }
+                });
+            });
+        });
+    }
+
+    @FXML
+    void onEditarDireccion(ActionEvent event) {
+        if (direccionSeleccionada != null) {
+            TextInputDialog dialogDireccion = new TextInputDialog(direccionSeleccionada.calleCarrera());
+            dialogDireccion.setTitle("Editar Dirección");
+            dialogDireccion.setHeaderText("Ingrese la nueva dirección:");
+            dialogDireccion.setContentText("Calle/Carrera:");
+
+            dialogDireccion.showAndWait().ifPresent(nuevaDireccion -> {
+                TextInputDialog dialogCiudad = new TextInputDialog(direccionSeleccionada.ciudad());
+                dialogCiudad.setTitle("Editar Dirección");
+                dialogCiudad.setHeaderText("Ingrese la nueva ciudad:");
+                dialogCiudad.setContentText("Ciudad:");
+
+                dialogCiudad.showAndWait().ifPresent(nuevaCiudad -> {
+                    DireccionDto direccionActualizada = new DireccionDto(
+                        direccionSeleccionada.idDireccion(),
+                        direccionSeleccionada.alias(),
+                        nuevaDireccion,
+                        nuevaCiudad,
+                        direccionSeleccionada.coordenadas()
+                    );
+                    if (usuarioController.actualizarDireccion(usuarioActual.idUsuario(), direccionActualizada)) {
+                        actualizarTabla();
+                        mostrarMensaje("Dirección actualizada", "Notificación", "La dirección se ha actualizado correctamente", AlertType.INFORMATION);
+                    } else {
+                        mostrarMensaje("Error", "Error", "No se pudo actualizar la dirección", AlertType.ERROR);
+                    }
+                });
+            });
+        } else {
+            mostrarMensaje("Selección requerida", "Advertencia", "Por favor seleccione una dirección para editar", AlertType.WARNING);
+        }
+    }
+
+    @FXML
+    void onEliminarDireccion(ActionEvent event) {
+        if (direccionSeleccionada != null) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmar eliminación");
+            alert.setHeaderText("¿Está seguro de eliminar esta dirección?");
+            alert.setContentText("Esta acción no se puede deshacer");
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    if (usuarioController.eliminarDireccion(usuarioActual.idUsuario(), direccionSeleccionada.alias())) {
+                        listaDirecciones.remove(direccionSeleccionada);
+                        mostrarMensaje("Dirección eliminada", "Notificación", "La dirección se ha eliminado correctamente", AlertType.INFORMATION);
+                    } else {
+                        mostrarMensaje("Error", "Error", "No se pudo eliminar la dirección", AlertType.ERROR);
+                    }
+                }
+            });
+        } else {
+            mostrarMensaje("Selección requerida", "Advertencia", "Por favor seleccione una dirección para eliminar", AlertType.WARNING);
+        }
+    }
+
+    @FXML
+    void onGuardarCambios(ActionEvent event) {
+        UsuarioDto usuarioActualizado = new UsuarioDto(
+            usuarioActual.idUsuario(),
+            txtNombre.getText(),
+            txtCorreo.getText(),
+            txtTelefono.getText()
+        );
+
+        if (datosValidos(usuarioActualizado)) {
+            if (usuarioController.actualizarUsuario(usuarioActualizado)) {
+                mostrarMensaje("Cambios guardados", "Notificación", "Los cambios se han guardado correctamente", AlertType.INFORMATION);
+                usuarioActual = usuarioActualizado;
+            } else {
+                mostrarMensaje("Error", "Error", "No se pudieron guardar los cambios", AlertType.ERROR);
+            }
+        } else {
+            mostrarMensaje("Datos incompletos", "Advertencia", "Por favor complete todos los campos", AlertType.WARNING);
+        }
     }
 
     @FXML
@@ -65,24 +233,23 @@ public class UsuarioGestionPerfilViewController {
         EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuario);
     }
 
-    @FXML
-    void onEditarDireccion(ActionEvent event) {
-
+    private void actualizarTabla() {
+        listaDirecciones.clear();
+        obtenerDirecciones();
     }
 
-    @FXML
-    void onEliminarDireccion(ActionEvent event) {
-
+    private boolean datosValidos(UsuarioDto usuario) {
+        return !usuario.idUsuario().isBlank() &&
+               !usuario.nombreCompleto().isBlank() &&
+               !usuario.correo().isBlank() &&
+               !usuario.telefono().isBlank();
     }
 
-    @FXML
-    void onGuardarCambios(ActionEvent event) {
-
+    private void mostrarMensaje(String titulo, String header, String contenido, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(titulo);
+        alert.setHeaderText(header);
+        alert.setContentText(contenido);
+        alert.showAndWait();
     }
-
-    @FXML
-    void initialize() {
-
-    }
-
 }

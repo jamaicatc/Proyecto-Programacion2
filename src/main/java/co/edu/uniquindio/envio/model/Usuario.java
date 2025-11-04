@@ -3,13 +3,14 @@ package co.edu.uniquindio.envio.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Usuario {
     private String idUsuario;
     private String nombreCompleto;
     private String correo;
     private String telefono;
-    private HashMap<String, Direccion> direccionesFrecuentes;
+    private Map<String, Direccion> direccionesFrecuentes;
     private HashMap<String, MetodoPago> metodosPago;
     private List<Envio> envios;
 
@@ -59,11 +60,11 @@ public class Usuario {
         this.telefono = telefono;
     }
 
-    public HashMap<String, Direccion> getDireccionesFrecuentes() {
+    public Map<String, Direccion> getDireccionesFrecuentes() {
         return direccionesFrecuentes;
     }
 
-    public void setDireccionesFrecuentes(HashMap<String, Direccion> direccionesFrecuentes) {
+    public void setDireccionesFrecuentes(Map<String, Direccion> direccionesFrecuentes) {
         this.direccionesFrecuentes = direccionesFrecuentes;
     }
 
@@ -81,5 +82,25 @@ public class Usuario {
 
     public void setEnvios(List<Envio> envios) {
         this.envios = envios;
+    }
+
+    public boolean agregarDireccion(String alias, Direccion direccion) {
+        if (!direccionesFrecuentes.containsKey(alias)) {
+            direccionesFrecuentes.put(alias, direccion);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean actualizarDireccion(String alias, Direccion direccion) {
+        if (direccionesFrecuentes.containsKey(alias)) {
+            direccionesFrecuentes.put(alias, direccion);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean eliminarDireccion(String alias) {
+        return direccionesFrecuentes.remove(alias) != null;
     }
 }

@@ -1,15 +1,20 @@
 package co.edu.uniquindio.envio.controller;
 
 import co.edu.uniquindio.envio.factory.ModelFactory;
+import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
+import co.edu.uniquindio.envio.services.IUsuarioServices;
 import co.edu.uniquindio.envio.utils.DataUtil;
 
 import java.util.List;
 
 public class UsuarioController {
     ModelFactory modelFactory;
-    public UsuarioController(){
+    IUsuarioServices usuarioServices;
+
+    public UsuarioController() {
         modelFactory = ModelFactory.getInstance();
+        usuarioServices = modelFactory.getUsuarioServices();
     }
 
     public List<UsuarioDto> obtenerUsuarios() {
@@ -24,8 +29,28 @@ public class UsuarioController {
         return modelFactory.eliminarUsuario(idUsuario);
     }
 
+    public UsuarioDto obtenerUsuarioPorNombre(String nombre) {
+        return usuarioServices.obtenerUsuarioPorNombre(nombre);
+    }
+
     public boolean actualizarUsuario(UsuarioDto usuarioDto) {
-        return modelFactory.actualizarUsuario(usuarioDto);
+        return usuarioServices.actualizarUsuario(usuarioDto);
+    }
+
+    public List<DireccionDto> obtenerDireccionesUsuario(String idUsuario) {
+        return usuarioServices.obtenerDireccionesUsuario(idUsuario);
+    }
+
+    public boolean agregarDireccion(String idUsuario, DireccionDto direccionDto) {
+        return usuarioServices.agregarDireccion(idUsuario, direccionDto);
+    }
+
+    public boolean actualizarDireccion(String idUsuario, DireccionDto direccionDto) {
+        return usuarioServices.actualizarDireccion(idUsuario, direccionDto);
+    }
+
+    public boolean eliminarDireccion(String idUsuario, String aliasDireccion) {
+        return usuarioServices.eliminarDireccion(idUsuario, aliasDireccion);
     }
 
     public static boolean validarCredencialesUsuario(String usuario, String contrasena, String rol){

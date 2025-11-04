@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/src/main/java/co/edu/uniquindio/envio/mapping/mappers/DireccionMapper.java">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/main/java/co/edu/uniquindio/envio/mapping/mappers/DireccionMapper.java" />
+              <option name="updatedContent" value="package co.edu.uniquindio.envio.mapping.mappers;&#10;&#10;import co.edu.uniquindio.envio.mapping.dto.DireccionDto;&#10;import co.edu.uniquindio.envio.model.Direccion;&#10;&#10;public class DireccionMapper {&#10;    &#10;    public static DireccionDto toDto(Direccion direccion) {&#10;        return new DireccionDto(&#10;            direccion.getIdDireccion(),&#10;            direccion.getAlias(),&#10;            direccion.getCalle(),&#10;            direccion.getCiudad(),&#10;            direccion.getCoordenadas()&#10;        );&#10;    }&#10;    &#10;    public static Direccion toEntity(DireccionDto dto) {&#10;        return new Direccion(&#10;            dto.idDireccion(),&#10;            dto.alias(),&#10;            dto.calleCarrera(),&#10;            dto.ciudad(),&#10;            dto.coordenadas()&#10;        );&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
