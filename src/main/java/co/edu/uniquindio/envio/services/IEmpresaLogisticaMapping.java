@@ -9,7 +9,7 @@ import co.edu.uniquindio.envio.model.Usuario;
 
 import java.util.List;
 
-public interface IEmpresaLogisticaMapping extends IUsuarioMapping<Usuario, UsuarioDto>, IRepartidorMapping<Repartidor, RepartidorDto>, IDireccionMapping<Direccion, DireccionDto>{
+public interface IEmpresaLogisticaMapping extends IUsuarioMapping<Usuario, UsuarioDto>, IRepartidorMapping<Repartidor, RepartidorDto>, IDireccionMapping<Direccion, DireccionDto>, IEnvioMapping {
     List<RepartidorDto> getRepartidoresDto(List<Repartidor> listaRepartidores);
     Repartidor repartidorDtoToRepartidor(RepartidorDto repartidorDto);
 }

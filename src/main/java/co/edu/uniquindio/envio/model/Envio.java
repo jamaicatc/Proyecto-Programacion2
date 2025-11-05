@@ -1,47 +1,124 @@
 package co.edu.uniquindio.envio.model;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.time.LocalDate;
 
 public class Envio {
     private String idEnvio;
-    private Direccion origen;
-    private Direccion destino;
+    private LocalDate fecha;
+    private LocalDate fechaEntregaEstimada;
+    private String origen;
+    private String destino;
+    private String estado;
     private double peso;
     private double largo;
     private double alto;
     private double ancho;
-    private int cantidad;
     private double costo;
-    private EstadoEnvio estado;
-    private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaEntregaEstimada;
-    private Usuario usuario;
-    private Repartidor repartidor;
-    private List<ServicioAdicional> serviciosAdicionales;
-    private Pago pago;
 
-    public Envio() {
-        this.serviciosAdicionales = new ArrayList<>();
-    }
-
-    public Envio(String idEnvio, Direccion origen, Direccion destino, double peso, double largo, double alto, double ancho, int cantidad, double costo, EstadoEnvio estado, LocalDateTime fechaCreacion, LocalDateTime fechaEntregaEstimada, Usuario usuario, Repartidor repartidor, Pago pago) {
-        this();
+    public Envio(String idEnvio, LocalDate fecha, LocalDate fechaEntregaEstimada, String origen, String destino, String estado, double peso, double largo, double alto, double ancho, double costo) {
         this.idEnvio = idEnvio;
+        this.fecha = fecha;
+        this.fechaEntregaEstimada = fechaEntregaEstimada;
         this.origen = origen;
         this.destino = destino;
+        this.estado = estado;
         this.peso = peso;
         this.largo = largo;
         this.alto = alto;
         this.ancho = ancho;
-        this.cantidad = cantidad;
         this.costo = costo;
-        this.estado = estado;
-        this.fechaCreacion = fechaCreacion;
+    }
+
+    public String getIdEnvio() {
+        return idEnvio;
+    }
+
+    public void setIdEnvio(String idEnvio) {
+        this.idEnvio = idEnvio;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public LocalDate getFechaEntregaEstimada() {
+        return fechaEntregaEstimada;
+    }
+
+    public void setFechaEntregaEstimada(LocalDate fechaEntregaEstimada) {
         this.fechaEntregaEstimada = fechaEntregaEstimada;
-        this.usuario = usuario;
-        this.repartidor = repartidor;
-        this.pago = pago;
+    }
+
+    public String getOrigen() {
+        return origen;
+    }
+
+    public void setOrigen(String origen) {
+        this.origen = origen;
+    }
+
+    public String getDestino() {
+        return destino;
+    }
+
+    public void setDestino(String destino) {
+        this.destino = destino;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public double getPeso() {
+        return peso;
+    }
+
+    public void setPeso(double peso) {
+        this.peso = peso;
+    }
+
+    public double getLargo() {
+        return largo;
+    }
+
+    public void setLargo(double largo) {
+        this.largo = largo;
+    }
+
+    public double getAlto() {
+        return alto;
+    }
+
+    public void setAlto(double alto) {
+        this.alto = alto;
+    }
+
+    public double getAncho() {
+        return ancho;
+    }
+
+    public void setAncho(double ancho) {
+        this.ancho = ancho;
+    }
+
+    public double getCosto() {
+        return costo;
+    }
+
+    public void setCosto(double costo) {
+        this.costo = costo;
+    }
+
+    public double calcularVolumen() {
+        return largo * alto * ancho;
     }
 }

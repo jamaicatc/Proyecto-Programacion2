@@ -1,9 +1,11 @@
 package co.edu.uniquindio.envio.mapping.mappers;
 
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
+import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
 import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import co.edu.uniquindio.envio.model.Direccion;
+import co.edu.uniquindio.envio.model.Envio;
 import co.edu.uniquindio.envio.model.Repartidor;
 import co.edu.uniquindio.envio.model.Usuario;
 import co.edu.uniquindio.envio.services.IDireccionMapping;
@@ -118,6 +120,52 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping, IU
         if(direccionesDto == null) return new ArrayList<>();
         return direccionesDto.stream()
                 .map(this::direccionDtoToDireccion)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EnvioDto envioToEnvioDto(Envio envio) {
+        if (envio == null) return null;
+        return new EnvioDto(
+                envio.getIdEnvio(),
+                envio.getFecha(),
+                envio.getFechaEntregaEstimada(),
+                envio.getOrigen(),
+                envio.getDestino(),
+                envio.getEstado(),
+                envio.getPeso(),
+                envio.getLargo(),
+                envio.getAncho(),
+                envio.getAlto(),
+                envio.getCosto()
+        );
+    }
+
+    @Override
+    public Envio envioDtoToEnvio(EnvioDto envioDto) {
+        if (envioDto == null) return null;
+        return new Envio(
+                envioDto.idEnvio(),
+                envioDto.fecha(),
+                envioDto.fechaEntregaEstimada(),
+                envioDto.origen(),
+                envioDto.destino(),
+                envioDto.estado(),
+                envioDto.peso(),
+                envioDto.largo(),
+                envioDto.ancho(),
+                envioDto.alto(),
+                envioDto.costo()
+        );
+    }
+
+    @Override
+    public List<EnvioDto> getEnviosDto(List<Envio> listaEnvios) {
+        if (listaEnvios == null) {
+            return null;
+        }
+        return listaEnvios.stream()
+                .map(this::envioToEnvioDto)
                 .collect(Collectors.toList());
     }
 }

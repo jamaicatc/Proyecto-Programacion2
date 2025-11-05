@@ -1,12 +1,8 @@
 package co.edu.uniquindio.envio.utils;
 
-import co.edu.uniquindio.envio.model.EmpresaLogistica;
-import co.edu.uniquindio.envio.model.EstadoDisponibilidad;
-import co.edu.uniquindio.envio.model.Repartidor;
-import co.edu.uniquindio.envio.model.Usuario;
-import co.edu.uniquindio.envio.model.Direccion;
+import co.edu.uniquindio.envio.model.*;
 
-import static co.edu.uniquindio.envio.model.Repartidor.builder;
+import java.time.LocalDate;
 
 public class DataUtil {
     public static final String ADMIN_USUARIO = "santiago";
@@ -35,6 +31,15 @@ public class DataUtil {
         usuario2.getDireccionesFrecuentes().put("Trabajo", direccion2);
         usuario2.getDireccionesFrecuentes().put("Universidad", direccion3);
 
+        // Agregando envíos para Juan David
+        Envio envio1 = new Envio("env1", LocalDate.now(), LocalDate.now().plusDays(3), "Casa", "Trabajo", "Solicitado", 2.5, 30, 20, 10, 13250.0);
+        Envio envio2 = new Envio("env2", LocalDate.now().minusDays(1), LocalDate.now().plusDays(2), "Universidad", "Casa", "Entregado", 1.0, 20, 15, 5, 3500.0);
+        Envio envio3 = new Envio("env3", LocalDate.now().minusDays(2), LocalDate.now().plusDays(1), "Trabajo", "Universidad", "En ruta", 5.0, 50, 40, 20, 82500.0);
+
+        usuario2.getEnvios().add(envio1);
+        usuario2.getEnvios().add(envio2);
+        usuario2.getEnvios().add(envio3);
+
         Repartidor repartidor1 = new Repartidor("1234", "juan", "4455", "311", EstadoDisponibilidad.ACTIVO, "Armenia");
         Repartidor repartidor2 = new Repartidor("7788", "jose", "7610", "314", EstadoDisponibilidad.EN_RUTA, "Calarcá");
         Repartidor repartidor3 = new Repartidor("2971", "isabela", "1098", "350", EstadoDisponibilidad.INACTIVO, "Circasia");
@@ -45,6 +50,12 @@ public class DataUtil {
         empresaLogistica.getListaUsuarios().add(usuario1);
         empresaLogistica.getListaUsuarios().add(usuario2);
         empresaLogistica.getListaUsuarios().add(usuario3);
+
+        // Agregando todos los envíos a la lista general de envíos de la empresa
+        empresaLogistica.getListaEnvios().add(envio1);
+        empresaLogistica.getListaEnvios().add(envio2);
+        empresaLogistica.getListaEnvios().add(envio3);
+
         return empresaLogistica;
     }
 }

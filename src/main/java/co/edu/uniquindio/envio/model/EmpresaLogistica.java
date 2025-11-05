@@ -1,6 +1,7 @@
 package co.edu.uniquindio.envio.model;
 
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
+import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import co.edu.uniquindio.envio.services.IEmpresaLogisticaServices;
 
@@ -11,6 +12,7 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
     private final String nombre;
     private final List<Usuario> listaUsuarios;
     private final List<Repartidor> listaRepartidores;
+    private final List<Envio> listaEnvios;
 
     public EmpresaLogistica() {
         this("Mercado Cerrado");
@@ -20,6 +22,7 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
         this.nombre = nombre;
         this.listaUsuarios = new ArrayList<>();
         this.listaRepartidores = new ArrayList<>();
+        this.listaEnvios = new ArrayList<>();
     }
 
     // Getters
@@ -33,6 +36,10 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
 
     public List<Repartidor> getListaRepartidores() {
         return listaRepartidores;
+    }
+
+    public List<Envio> getListaEnvios() {
+        return listaEnvios;
     }
 
     // Implementación de IUsuarioServices
@@ -190,6 +197,60 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
         return null;
     }
 
+    // Métodos para Envios
+    public boolean agregarEnvio(String idUsuario, EnvioDto envioDto) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        if (usuario == null || envioDto == null) return false;
+        Envio envio = convertirAEnvio(envioDto);
+        Envio envioEncontrado = obtenerEnvio(envio.getIdEnvio());
+        if (envioEncontrado == null) {
+            getListaEnvios().add(envio);
+            usuario.getEnvios().add(envio);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean eliminarEnvio(String idEnvio) {
+        Envio envioEncontrado = obtenerEnvio(idEnvio);
+        if (envioEncontrado != null) {
+            getListaEnvios().remove(envioEncontrado);
+            for (Usuario usuario : listaUsuarios) {
+                usuario.getEnvios().remove(envioEncontrado);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean actualizarEnvio(EnvioDto envioDto) {
+        if (envioDto == null) return false;
+        Envio envioEncontrado = obtenerEnvio(envioDto.idEnvio());
+        if (envioEncontrado != null) {
+            envioEncontrado.setFecha(envioDto.fecha());
+            envioEncontrado.setFechaEntregaEstimada(envioDto.fechaEntregaEstimada());
+            envioEncontrado.setOrigen(envioDto.origen());
+            envioEncontrado.setDestino(envioDto.destino());
+            envioEncontrado.setEstado(envioDto.estado());
+            envioEncontrado.setPeso(envioDto.peso());
+            envioEncontrado.setLargo(envioDto.largo());
+            envioEncontrado.setAncho(envioDto.ancho());
+            envioEncontrado.setAlto(envioDto.alto());
+            envioEncontrado.setCosto(envioDto.costo());
+            return true;
+        }
+        return false;
+    }
+
+    public Envio obtenerEnvio(String idEnvio) {
+        for (Envio envio : getListaEnvios()) {
+            if (envio.getIdEnvio().equalsIgnoreCase(idEnvio)) {
+                return envio;
+            }
+        }
+        return null;
+    }
+
     // Métodos auxiliares de conversión
     private UsuarioDto convertirAUsuarioDto(Usuario usuario) {
         return new UsuarioDto(
@@ -226,6 +287,38 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
             dto.calleCarrera(),
             dto.ciudad(),
             dto.coordenadas()
+        );
+    }
+
+    private EnvioDto convertirAEnvioDto(Envio envio) {
+        return new EnvioDto(
+            envio.getIdEnvio(),
+            envio.getFecha(),
+            envio.getFechaEntregaEstimada(),
+            envio.getOrigen(),
+            envio.getDestino(),
+            envio.getEstado(),
+            envio.getPeso(),
+            envio.getLargo(),
+            envio.getAncho(),
+            envio.getAlto(),
+            envio.getCosto()
+        );
+    }
+
+    private Envio convertirAEnvio(EnvioDto dto) {
+        return new Envio(
+            dto.idEnvio(),
+            dto.fecha(),
+            dto.fechaEntregaEstimada(),
+            dto.origen(),
+            dto.destino(),
+            dto.estado(),
+            dto.peso(),
+            dto.largo(),
+            dto.ancho(),
+            dto.alto(),
+            dto.costo()
         );
     }
 }

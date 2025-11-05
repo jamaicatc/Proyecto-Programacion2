@@ -1,12 +1,13 @@
 package co.edu.uniquindio.envio.factory;
 
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
+import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
 import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import co.edu.uniquindio.envio.mapping.mappers.EmpresaLogisticaMappingImpl;
-import co.edu.uniquindio.envio.model.Direccion;
-import co.edu.uniquindio.envio.model.EmpresaLogistica;
-import co.edu.uniquindio.envio.model.Usuario;
+import co.edu.uniquindio.envio.model.*;
+import co.edu.uniquindio.envio.model.strategy.ITarifaStrategy;
+import co.edu.uniquindio.envio.model.strategy.TarifaBase;
 import co.edu.uniquindio.envio.services.*;
 import co.edu.uniquindio.envio.utils.DataUtil;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ModelFactory implements IModelFactory, IUsuarioServices {
+public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServices {
     private static ModelFactory modelFactory;
     private final EmpresaLogistica empresaLogistica;
     private final IEmpresaLogisticaMapping empresaLogisticaMapping;
@@ -34,6 +35,10 @@ public class ModelFactory implements IModelFactory, IUsuarioServices {
     }
 
     public IUsuarioServices getUsuarioServices() {
+        return this;
+    }
+
+    public IEnvioServices getEnvioServices() {
         return this;
     }
 
@@ -136,5 +141,41 @@ public class ModelFactory implements IModelFactory, IUsuarioServices {
                 .filter(u -> u.getIdUsuario().equals(idUsuario))
                 .findFirst()
                 .orElse(null);
+    }
+
+    // Implementación de IEnvioServices
+    @Override
+    public List<EnvioDto> obtenerEnvios() {
+        return empresaLogisticaMapping.getEnviosDto(empresaLogistica.getListaEnvios());
+    }
+
+    @Override
+    public List<EnvioDto> obtenerEnvios(String idUsuario) {
+        Usuario usuario = obtenerUsuarioPorId(idUsuario);
+        if (usuario != null) {
+            return empresaLogisticaMapping.getEnviosDto(usuario.getEnvios());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public boolean agregarEnvio(String idUsuario, EnvioDto envioDto) {
+        return empresaLogistica.agregarEnvio(idUsuario, envioDto);
+    }
+
+    @Override
+    public boolean actualizarEnvio(EnvioDto envioDto) {
+        return empresaLogistica.actualizarEnvio(envioDto);
+    }
+
+    @Override
+    public boolean eliminarEnvio(String idEnvio) {
+        return empresaLogistica.eliminarEnvio(idEnvio);
+    }
+
+    public double calcularTarifa(Envio envio, ITarifaStrategy estrategia) {
+        TarifaBase tarifaBase = new TarifaBase();
+        tarifaBase.setEstrategia(estrategia);
+        return tarifaBase.calcular(envio);
     }
 }
