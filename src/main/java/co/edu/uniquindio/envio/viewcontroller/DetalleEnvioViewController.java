@@ -67,17 +67,18 @@ public class DetalleEnvioViewController {
     public void init(String nombreUsuario, EnvioDto envioDto) {
         if (envioDto != null) {
             txtIdEnvio.setText(envioDto.idEnvio());
-            txtFechaCreacion.setText(envioDto.fecha().toString());
-            txtFechaEstimada.setText(envioDto.fechaEntregaEstimada().toString());
+            txtUsuario.setText(nombreUsuario);
             txtOrigen.setText(envioDto.origen());
             txtDestino.setText(envioDto.destino());
+            txtPeso.setText(String.format("%.2f kg", envioDto.peso()));
+            txtDimensiones.setText(String.format("%.0fx%.0fx%.0f cm", envioDto.largo(), envioDto.ancho(), envioDto.alto()));
+            txtCostoTotal.setText(String.format("$%,.2f", envioDto.costo()));
             txtEstado.setText(envioDto.estado());
-            txtPeso.setText(String.valueOf(envioDto.peso()));
-            txtUsuario.setText(nombreUsuario);
-            // Los siguientes campos no están en EnvioDto, se dejarán en blanco
-            txtCostoTotal.setText("");
-            txtDimensiones.setText("");
-            txtRepartidor.setText("");
+            txtFechaCreacion.setText(envioDto.fecha().toString());
+            txtFechaEstimada.setText(envioDto.fechaEntregaEstimada().toString());
+
+            // Campo de repartidor (a implementar en el futuro)
+            txtRepartidor.setText("No asignado");
         }
     }
 }

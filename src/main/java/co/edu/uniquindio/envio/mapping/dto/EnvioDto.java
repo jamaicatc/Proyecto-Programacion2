@@ -1,5 +1,7 @@
 package co.edu.uniquindio.envio.mapping.dto;
 
+import co.edu.uniquindio.envio.model.Factura;
+
 import java.time.LocalDate;
 
 public record EnvioDto(
@@ -13,6 +15,7 @@ public record EnvioDto(
         double largo,
         double ancho,
         double alto,
-        double costo
+        double costo,
+        Factura factura
 ) {
 }

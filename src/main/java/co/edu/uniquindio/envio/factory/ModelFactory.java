@@ -1,9 +1,6 @@
 package co.edu.uniquindio.envio.factory;
 
-import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
-import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
-import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
-import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
+import co.edu.uniquindio.envio.mapping.dto.*;
 import co.edu.uniquindio.envio.mapping.mappers.EmpresaLogisticaMappingImpl;
 import co.edu.uniquindio.envio.model.*;
 import co.edu.uniquindio.envio.model.strategy.ITarifaStrategy;
@@ -11,9 +8,11 @@ import co.edu.uniquindio.envio.model.strategy.TarifaBase;
 import co.edu.uniquindio.envio.services.*;
 import co.edu.uniquindio.envio.utils.DataUtil;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServices {
     private static ModelFactory modelFactory;
@@ -136,6 +135,15 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
         return false;
     }
 
+    @Override
+    public List<MetodoPagoDto> obtenerMetodosPago(String idUsuario) {
+        Usuario usuario = obtenerUsuarioPorId(idUsuario);
+        if (usuario != null) {
+            return empresaLogisticaMapping.getMetodosPagoDto(new ArrayList<>(usuario.getMetodosPago().values()));
+        }
+        return new ArrayList<>();
+    }
+
     private Usuario obtenerUsuarioPorId(String idUsuario) {
         return empresaLogistica.getListaUsuarios().stream()
                 .filter(u -> u.getIdUsuario().equals(idUsuario))
@@ -177,5 +185,22 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
         TarifaBase tarifaBase = new TarifaBase();
         tarifaBase.setEstrategia(estrategia);
         return tarifaBase.calcular(envio);
+    }
+
+    public Factura pagarEnvio(String idEnvio, MetodoPagoDto metodoPagoDto) {
+        Envio envio = empresaLogistica.obtenerEnvio(idEnvio);
+        if (envio != null && envio.getFactura() == null) {
+            MetodoPago metodoPago = empresaLogisticaMapping.metodoPagoDtoToMetodoPago(metodoPagoDto);
+            Factura factura = new Factura(
+                    "fact-" + UUID.randomUUID().toString().substring(0, 4),
+                    LocalDateTime.now(),
+                    envio.getCosto(),
+                    metodoPago
+            );
+            envio.setFactura(factura);
+            envio.setEstado("Pagado");
+            return factura;
+        }
+        return null;
     }
 }

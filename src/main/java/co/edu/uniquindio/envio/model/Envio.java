@@ -1,6 +1,5 @@
 package co.edu.uniquindio.envio.model;
 
-
 import java.time.LocalDate;
 
 public class Envio {
@@ -15,8 +14,12 @@ public class Envio {
     private double alto;
     private double ancho;
     private double costo;
+    private Factura factura;
 
-    public Envio(String idEnvio, LocalDate fecha, LocalDate fechaEntregaEstimada, String origen, String destino, String estado, double peso, double largo, double alto, double ancho, double costo) {
+    // Constructores
+    public Envio() {}
+
+    public Envio(String idEnvio, LocalDate fecha, LocalDate fechaEntregaEstimada, String origen, String destino, String estado, double peso, double largo, double alto, double ancho, double costo, Factura factura) {
         this.idEnvio = idEnvio;
         this.fecha = fecha;
         this.fechaEntregaEstimada = fechaEntregaEstimada;
@@ -28,8 +31,10 @@ public class Envio {
         this.alto = alto;
         this.ancho = ancho;
         this.costo = costo;
+        this.factura = factura;
     }
 
+    // Getters y Setters
     public String getIdEnvio() {
         return idEnvio;
     }
@@ -118,6 +123,18 @@ public class Envio {
         this.costo = costo;
     }
 
+    public Factura getFactura() {
+        return factura;
+    }
+
+    public void setFactura(Factura factura) {
+        this.factura = factura;
+    }
+
+    /**
+     * Calcula el volumen del paquete.
+     * @return El volumen en cm³.
+     */
     public double calcularVolumen() {
         return largo * alto * ancho;
     }

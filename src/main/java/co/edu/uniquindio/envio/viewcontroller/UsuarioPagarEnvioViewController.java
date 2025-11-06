@@ -1,14 +1,38 @@
 package co.edu.uniquindio.envio.viewcontroller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import co.edu.uniquindio.envio.factory.ModelFactory;
+import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
+import co.edu.uniquindio.envio.mapping.dto.MetodoPagoDto;
+import co.edu.uniquindio.envio.model.Factura;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.net.URL;
+import java.time.format.DateTimeFormatter;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class UsuarioPagarEnvioViewController {
+
+    private static final String ID_USUARIO_LOGUEADO = "2245"; // Simulación de usuario logueado
+
+    ModelFactory modelFactory;
+    ObservableList<EnvioDto> listaEnviosPendientes = FXCollections.observableArrayList();
+    ObservableList<MetodoPagoDto> listaMetodosPago = FXCollections.observableArrayList();
 
     @FXML
     private ResourceBundle resources;
@@ -20,21 +44,137 @@ public class UsuarioPagarEnvioViewController {
     private Button btnPagar;
 
     @FXML
-    private ComboBox<String> cmbEnviosPendientes;
+    private TableView<EnvioDto> tableEnviosPendientes;
 
     @FXML
-    private ComboBox<String> cmbMetodoPago;
+    private TableColumn<EnvioDto, String> tcIdEnvio;
 
     @FXML
-    private TextArea taResultado;
+    private TableColumn<EnvioDto, String> tcFechaCreacion;
+
+    @FXML
+    private TableColumn<EnvioDto, String> tcFechaEntrega;
+
+    @FXML
+    private TableColumn<EnvioDto, String> tcOrigenDestino;
+
+    @FXML
+    private TableColumn<EnvioDto, String> tcEstado;
+
+    @FXML
+    private TableColumn<EnvioDto, String> tcPeso;
+
+    @FXML
+    private TableColumn<EnvioDto, String> tcVolumen;
+
+    @FXML
+    private TableColumn<EnvioDto, String> tcCosto;
+
+    @FXML
+    private ComboBox<MetodoPagoDto> cmbMetodoPago;
 
     @FXML
     void onPagar(ActionEvent event) {
-
+        pagarEnvio();
     }
 
     @FXML
     void initialize() {
+        modelFactory = ModelFactory.getInstance();
+        initView();
     }
 
+    private void initView() {
+        initDataBinding();
+        cargarEnviosPendientes();
+        cargarMetodosPago();
+        tableEnviosPendientes.setItems(listaEnviosPendientes);
+        cmbMetodoPago.setItems(listaMetodosPago);
+
+        tableEnviosPendientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                if (newSelection.costo() > 0) {
+                    btnPagar.setDisable(false);
+                } else {
+                    btnPagar.setDisable(true);
+                }
+            } else {
+                btnPagar.setDisable(true);
+            }
+        });
+
+        btnPagar.setDisable(true); // Deshabilitar inicialmente
+    }
+
+    private void initDataBinding() {
+        tcIdEnvio.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().idEnvio()));
+        tcFechaCreacion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fecha().toString()));
+        tcFechaEntrega.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaEntregaEstimada().toString()));
+        tcOrigenDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().origen() + " - " + cellData.getValue().destino()));
+        tcEstado.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().estado()));
+        tcPeso.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f kg", cellData.getValue().peso())));
+        tcVolumen.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.0fx%.0fx%.0f cm", cellData.getValue().largo(), cellData.getValue().ancho(), cellData.getValue().alto())));
+        tcCosto.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("$%,.2f", cellData.getValue().costo())));
+    }
+
+    private void cargarEnviosPendientes() {
+        listaEnviosPendientes.clear();
+        listaEnviosPendientes.addAll(
+                modelFactory.getEnvioServices().obtenerEnvios(ID_USUARIO_LOGUEADO).stream()
+                        .filter(envio -> "Solicitado".equals(envio.estado()) && envio.costo() > 0 && envio.factura() == null)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private void cargarMetodosPago() {
+        listaMetodosPago.clear();
+        listaMetodosPago.addAll(modelFactory.getUsuarioServices().obtenerMetodosPago(ID_USUARIO_LOGUEADO));
+    }
+
+    private void pagarEnvio() {
+        EnvioDto envioSeleccionado = tableEnviosPendientes.getSelectionModel().getSelectedItem();
+        MetodoPagoDto metodoPagoSeleccionado = cmbMetodoPago.getSelectionModel().getSelectedItem();
+
+        if (envioSeleccionado == null || metodoPagoSeleccionado == null) {
+            mostrarMensaje("Error de Pago", "", "Debe seleccionar un envío y un método de pago.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Factura factura = modelFactory.pagarEnvio(envioSeleccionado.idEnvio(), metodoPagoSeleccionado);
+
+        if (factura != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/envio/usuario/UsuarioComprobantePago.fxml"));
+                Parent root = loader.load();
+
+                UsuarioComprobantePagoViewController controller = loader.getController();
+                controller.init(factura, envioSeleccionado);
+
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle("Comprobante de Pago");
+                stage.setScene(new Scene(root));
+                stage.showAndWait();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                mostrarMensaje("Error", "", "No se pudo cargar la ventana del comprobante.", Alert.AlertType.ERROR);
+            }
+
+            // Actualizar la lista de envíos pendientes y la tabla
+            cargarEnviosPendientes(); // Recargar los envíos para reflejar el cambio de estado
+            tableEnviosPendientes.getSelectionModel().clearSelection();
+            btnPagar.setDisable(true);
+        } else {
+            mostrarMensaje("Error de Pago", "", "No se pudo procesar el pago. El envío ya podría estar pagado o no existe.", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void mostrarMensaje(String titulo, String header, String contenido, Alert.AlertType alertType) {
+        Alert aler = new Alert(alertType);
+        aler.setTitle(titulo);
+        aler.setHeaderText(header);
+        aler.setContentText(contenido);
+        aler.showAndWait();
+    }
 }

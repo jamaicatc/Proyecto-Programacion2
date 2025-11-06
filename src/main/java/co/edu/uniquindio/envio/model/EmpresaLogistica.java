@@ -2,11 +2,13 @@ package co.edu.uniquindio.envio.model;
 
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
 import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
+import co.edu.uniquindio.envio.mapping.dto.MetodoPagoDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import co.edu.uniquindio.envio.services.IEmpresaLogisticaServices;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EmpresaLogistica implements IEmpresaLogisticaServices {
     private final String nombre;
@@ -148,6 +150,17 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
             return usuario.getDireccionesFrecuentes().remove(aliasDireccion) != null;
         }
         return false;
+    }
+
+    @Override
+    public List<MetodoPagoDto> obtenerMetodosPago(String idUsuario) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        if (usuario != null) {
+            return usuario.getMetodosPago().values().stream()
+                    .map(this::convertirAMetodoPagoDto)
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     // Implementación de IRepartidorServices
@@ -302,7 +315,8 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
             envio.getLargo(),
             envio.getAncho(),
             envio.getAlto(),
-            envio.getCosto()
+            envio.getCosto(),
+            envio.getFactura()
         );
     }
 
@@ -318,7 +332,16 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
             dto.largo(),
             dto.ancho(),
             dto.alto(),
-            dto.costo()
+            dto.costo(),
+            null // Se añade null para el campo Factura
+        );
+    }
+
+    private MetodoPagoDto convertirAMetodoPagoDto(MetodoPago metodoPago) {
+        return new MetodoPagoDto(
+                metodoPago.getAlias(),
+                metodoPago.getNumero(),
+                metodoPago.getTipo()
         );
     }
 }

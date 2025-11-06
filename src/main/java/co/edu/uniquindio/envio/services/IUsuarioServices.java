@@ -1,6 +1,7 @@
 package co.edu.uniquindio.envio.services;
 
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
+import co.edu.uniquindio.envio.mapping.dto.MetodoPagoDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface IUsuarioServices {
     boolean agregarDireccion(String idUsuario, DireccionDto direccionDto);
     boolean actualizarDireccion(String idUsuario, DireccionDto direccionDto);
     boolean eliminarDireccion(String idUsuario, String aliasDireccion);
+    List<MetodoPagoDto> obtenerMetodosPago(String idUsuario);
 }

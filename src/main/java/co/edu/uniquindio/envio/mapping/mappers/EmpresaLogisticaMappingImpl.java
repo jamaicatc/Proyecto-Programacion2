@@ -1,23 +1,14 @@
 package co.edu.uniquindio.envio.mapping.mappers;
 
-import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
-import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
-import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
-import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
-import co.edu.uniquindio.envio.model.Direccion;
-import co.edu.uniquindio.envio.model.Envio;
-import co.edu.uniquindio.envio.model.Repartidor;
-import co.edu.uniquindio.envio.model.Usuario;
-import co.edu.uniquindio.envio.services.IDireccionMapping;
-import co.edu.uniquindio.envio.services.IEmpresaLogisticaMapping;
-import co.edu.uniquindio.envio.services.IRepartidorMapping;
-import co.edu.uniquindio.envio.services.IUsuarioMapping;
+import co.edu.uniquindio.envio.mapping.dto.*;
+import co.edu.uniquindio.envio.model.*;
+import co.edu.uniquindio.envio.services.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping, IUsuarioMapping<Usuario, UsuarioDto>, IRepartidorMapping<Repartidor, RepartidorDto>, IDireccionMapping<Direccion, DireccionDto> {
+public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
 
     @Override
     public List<UsuarioDto> getUsuariosDto(List<Usuario> listaUsuarios) {
@@ -137,7 +128,8 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping, IU
                 envio.getLargo(),
                 envio.getAncho(),
                 envio.getAlto(),
-                envio.getCosto()
+                envio.getCosto(),
+                envio.getFactura()
         );
     }
 
@@ -155,7 +147,8 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping, IU
                 envioDto.largo(),
                 envioDto.ancho(),
                 envioDto.alto(),
-                envioDto.costo()
+                envioDto.costo(),
+                null // La factura no se mapea desde el DTO
         );
     }
 
@@ -166,6 +159,36 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping, IU
         }
         return listaEnvios.stream()
                 .map(this::envioToEnvioDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public MetodoPagoDto metodoPagoToMetodoPagoDto(MetodoPago metodoPago) {
+        if (metodoPago == null) return null;
+        return new MetodoPagoDto(
+                metodoPago.getAlias(),
+                metodoPago.getNumero(),
+                metodoPago.getTipo()
+        );
+    }
+
+    @Override
+    public MetodoPago metodoPagoDtoToMetodoPago(MetodoPagoDto metodoPagoDto) {
+        if (metodoPagoDto == null) return null;
+        return new MetodoPago(
+                metodoPagoDto.alias(),
+                metodoPagoDto.numero(),
+                metodoPagoDto.tipo()
+        );
+    }
+
+    @Override
+    public List<MetodoPagoDto> getMetodosPagoDto(List<MetodoPago> metodosPago) {
+        if (metodosPago == null) {
+            return null;
+        }
+        return metodosPago.stream()
+                .map(this::metodoPagoToMetodoPagoDto)
                 .collect(Collectors.toList());
     }
 }

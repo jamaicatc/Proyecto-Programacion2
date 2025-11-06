@@ -13,7 +13,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -297,6 +304,15 @@ public class UsuarioSolicitudesEnvioViewController {
         String id = "env-" + UUID.randomUUID().toString().substring(0, 4);
         LocalDate fecha = LocalDate.now();
         LocalDate fechaEstimada = fecha.plusDays(3);
+        double peso = 0.0, largo = 0.0, ancho = 0.0, alto = 0.0;
+        try {
+            peso = Double.parseDouble(txtPeso.getText());
+            largo = Double.parseDouble(txtLargo.getText());
+            ancho = Double.parseDouble(txtAncho.getText());
+            alto = Double.parseDouble(txtAlto.getText());
+        } catch (NumberFormatException e) {
+            // El método datosValidos se encargará de mostrar el error
+        }
         double costo = calcularCosto();
         return new EnvioDto(
                 id,
@@ -305,15 +321,25 @@ public class UsuarioSolicitudesEnvioViewController {
                 txtOrigen.getText(),
                 txtDestino.getText(),
                 "Solicitado",
-                Double.parseDouble(txtPeso.getText()),
-                Double.parseDouble(txtLargo.getText()),
-                Double.parseDouble(txtAncho.getText()),
-                Double.parseDouble(txtAlto.getText()),
-                costo
+                peso,
+                largo,
+                ancho,
+                alto,
+                costo,
+                null // Factura es null al crear un nuevo envío
         );
     }
 
     private EnvioDto crearEnvioDto(EnvioDto envioOriginal) {
+        double peso = 0.0, largo = 0.0, ancho = 0.0, alto = 0.0;
+        try {
+            peso = Double.parseDouble(txtPeso.getText());
+            largo = Double.parseDouble(txtLargo.getText());
+            ancho = Double.parseDouble(txtAncho.getText());
+            alto = Double.parseDouble(txtAlto.getText());
+        } catch (NumberFormatException e) {
+            // El método datosValidos se encargará de mostrar el error
+        }
         double costo = calcularCosto();
         return new EnvioDto(
                 envioOriginal.idEnvio(),
@@ -322,11 +348,12 @@ public class UsuarioSolicitudesEnvioViewController {
                 txtOrigen.getText(),
                 txtDestino.getText(),
                 envioOriginal.estado(),
-                Double.parseDouble(txtPeso.getText()),
-                Double.parseDouble(txtLargo.getText()),
-                Double.parseDouble(txtAncho.getText()),
-                Double.parseDouble(txtAlto.getText()),
-                costo
+                peso,
+                largo,
+                ancho,
+                alto,
+                costo,
+                envioOriginal.factura() // Se mantiene la factura original si existe
         );
     }
 
@@ -370,7 +397,7 @@ public class UsuarioSolicitudesEnvioViewController {
 
             Envio envio = new Envio(
                     "", LocalDate.now(), LocalDate.now(), "", "", "",
-                    peso, largo, ancho, alto, 0.0
+                    peso, largo, ancho, alto, 0.0, null // Se añade null para el campo Factura
             );
 
             ITarifaStrategy estrategia = null;

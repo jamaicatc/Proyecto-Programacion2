@@ -31,10 +31,16 @@ public class DataUtil {
         usuario2.getDireccionesFrecuentes().put("Trabajo", direccion2);
         usuario2.getDireccionesFrecuentes().put("Universidad", direccion3);
 
+        // Agregando métodos de pago para Juan David
+        MetodoPago metodoPago1 = new MetodoPago("Principal", "**** 1234", "Tarjeta de Crédito");
+        MetodoPago metodoPago2 = new MetodoPago("Secundaria", "PSE", "Cuenta de Ahorros");
+        usuario2.getMetodosPago().put("Principal", metodoPago1);
+        usuario2.getMetodosPago().put("Secundaria", metodoPago2);
+
         // Agregando envíos para Juan David
-        Envio envio1 = new Envio("env1", LocalDate.now(), LocalDate.now().plusDays(3), "Casa", "Trabajo", "Solicitado", 2.5, 30, 20, 10, 13250.0);
-        Envio envio2 = new Envio("env2", LocalDate.now().minusDays(1), LocalDate.now().plusDays(2), "Universidad", "Casa", "Entregado", 1.0, 20, 15, 5, 3500.0);
-        Envio envio3 = new Envio("env3", LocalDate.now().minusDays(2), LocalDate.now().plusDays(1), "Trabajo", "Universidad", "En ruta", 5.0, 50, 40, 20, 82500.0);
+        Envio envio1 = new Envio("env1", LocalDate.now(), LocalDate.now().plusDays(3), "Casa", "Trabajo", "Solicitado", 2.5, 30, 20, 10, 13250.0, null);
+        Envio envio2 = new Envio("env2", LocalDate.now().minusDays(1), LocalDate.now().plusDays(2), "Universidad", "Casa", "Entregado", 1.0, 20, 15, 5, 3500.0, null);
+        Envio envio3 = new Envio("env3", LocalDate.now().minusDays(2), LocalDate.now().plusDays(1), "Trabajo", "Universidad", "En ruta", 5.0, 50, 40, 20, 82500.0, null);
 
         usuario2.getEnvios().add(envio1);
         usuario2.getEnvios().add(envio2);
