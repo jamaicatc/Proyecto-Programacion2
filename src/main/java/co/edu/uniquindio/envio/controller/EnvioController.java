@@ -32,4 +32,8 @@ public class EnvioController {
     public boolean eliminarEnvio(String idEnvio) {
         return modelFactory.eliminarEnvio(idEnvio);
     }
+
+    public EnvioDto obtenerEnvio(String numeroSeguimiento) {
+        return modelFactory.obtenerEnvio(numeroSeguimiento);
+    }
 }

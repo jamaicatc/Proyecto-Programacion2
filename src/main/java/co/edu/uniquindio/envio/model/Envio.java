@@ -1,7 +1,12 @@
 package co.edu.uniquindio.envio.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Representa un envío con sus atributos y dimensiones.
+ */
 public class Envio {
     private String idEnvio;
     private LocalDate fecha;
@@ -15,11 +20,15 @@ public class Envio {
     private double ancho;
     private double costo;
     private Factura factura;
+    private List<String> historial;
 
     // Constructores
-    public Envio() {}
+    public Envio() {
+        this.historial = new ArrayList<>();
+    }
 
     public Envio(String idEnvio, LocalDate fecha, LocalDate fechaEntregaEstimada, String origen, String destino, String estado, double peso, double largo, double alto, double ancho, double costo, Factura factura) {
+        this();
         this.idEnvio = idEnvio;
         this.fecha = fecha;
         this.fechaEntregaEstimada = fechaEntregaEstimada;
@@ -129,6 +138,14 @@ public class Envio {
 
     public void setFactura(Factura factura) {
         this.factura = factura;
+    }
+
+    public List<String> getHistorial() {
+        return historial;
+    }
+
+    public void setHistorial(List<String> historial) {
+        this.historial = historial;
     }
 
     /**

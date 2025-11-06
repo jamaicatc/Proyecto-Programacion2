@@ -3,8 +3,7 @@ package co.edu.uniquindio.envio.factory;
 import co.edu.uniquindio.envio.mapping.dto.*;
 import co.edu.uniquindio.envio.mapping.mappers.EmpresaLogisticaMappingImpl;
 import co.edu.uniquindio.envio.model.*;
-import co.edu.uniquindio.envio.model.strategy.ITarifaStrategy;
-import co.edu.uniquindio.envio.model.strategy.TarifaBase;
+import co.edu.uniquindio.envio.model.strategy.*;
 import co.edu.uniquindio.envio.services.*;
 import co.edu.uniquindio.envio.utils.DataUtil;
 
@@ -167,6 +166,15 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     }
 
     @Override
+    public EnvioDto obtenerEnvioDto(String idEnvio) {
+        Envio envio = empresaLogistica.obtenerEnvio(idEnvio);
+        if (envio != null) {
+            return empresaLogisticaMapping.envioToEnvioDto(envio);
+        }
+        return null;
+    }
+
+    @Override
     public boolean agregarEnvio(String idUsuario, EnvioDto envioDto) {
         return empresaLogistica.agregarEnvio(idUsuario, envioDto);
     }
@@ -179,6 +187,15 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     @Override
     public boolean eliminarEnvio(String idEnvio) {
         return empresaLogistica.eliminarEnvio(idEnvio);
+    }
+
+    @Override
+    public List<String> obtenerHistorial(String idEnvio) {
+        Envio envio = empresaLogistica.obtenerEnvio(idEnvio);
+        if (envio != null) {
+            return envio.getHistorial();
+        }
+        return new ArrayList<>();
     }
 
     public double calcularTarifa(Envio envio, ITarifaStrategy estrategia) {
@@ -200,6 +217,14 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
             envio.setFactura(factura);
             envio.setEstado("Pagado");
             return factura;
+        }
+        return null;
+    }
+
+    public EnvioDto obtenerEnvio(String numeroSeguimiento) {
+        Envio envio = empresaLogistica.obtenerEnvio(numeroSeguimiento);
+        if (envio != null) {
+            return empresaLogisticaMapping.envioToEnvioDto(envio);
         }
         return null;
     }

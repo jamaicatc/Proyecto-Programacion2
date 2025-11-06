@@ -39,8 +39,15 @@ public class DataUtil {
 
         // Agregando envíos para Juan David
         Envio envio1 = new Envio("env1", LocalDate.now(), LocalDate.now().plusDays(3), "Casa", "Trabajo", "Solicitado", 2.5, 30, 20, 10, 13250.0, null);
+        envio1.getHistorial().add("2024-05-20 10:00 - Envío creado");
         Envio envio2 = new Envio("env2", LocalDate.now().minusDays(1), LocalDate.now().plusDays(2), "Universidad", "Casa", "Entregado", 1.0, 20, 15, 5, 3500.0, null);
+        envio2.getHistorial().add("2024-05-19 14:30 - Envío creado");
+        envio2.getHistorial().add("2024-05-20 08:00 - En bodega");
+        envio2.getHistorial().add("2024-05-20 11:00 - En reparto");
+        envio2.getHistorial().add("2024-05-20 16:00 - Entregado");
         Envio envio3 = new Envio("env3", LocalDate.now().minusDays(2), LocalDate.now().plusDays(1), "Trabajo", "Universidad", "En ruta", 5.0, 50, 40, 20, 82500.0, null);
+        envio3.getHistorial().add("2024-05-18 09:00 - Envío creado");
+        envio3.getHistorial().add("2024-05-19 12:00 - En bodega");
 
         usuario2.getEnvios().add(envio1);
         usuario2.getEnvios().add(envio2);

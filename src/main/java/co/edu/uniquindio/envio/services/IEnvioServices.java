@@ -7,7 +7,9 @@ import java.util.List;
 public interface IEnvioServices {
     List<EnvioDto> obtenerEnvios();
     List<EnvioDto> obtenerEnvios(String idUsuario);
+    EnvioDto obtenerEnvioDto(String idEnvio);
     boolean agregarEnvio(String idUsuario, EnvioDto envioDto);
     boolean actualizarEnvio(EnvioDto envioDto);
     boolean eliminarEnvio(String idEnvio);
+    List<String> obtenerHistorial(String idEnvio);
 }
