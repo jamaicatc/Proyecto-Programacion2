@@ -129,7 +129,8 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 envio.getAncho(),
                 envio.getAlto(),
                 envio.getCosto(),
-                envio.getFactura()
+                envio.getFactura(),
+                envio.getPago()
         );
     }
 

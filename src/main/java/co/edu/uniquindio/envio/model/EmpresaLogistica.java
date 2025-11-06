@@ -250,6 +250,7 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
             envioEncontrado.setAncho(envioDto.ancho());
             envioEncontrado.setAlto(envioDto.alto());
             envioEncontrado.setCosto(envioDto.costo());
+            envioEncontrado.setPago(envioDto.pago());
             return true;
         }
         return false;
@@ -316,7 +317,8 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
             envio.getAncho(),
             envio.getAlto(),
             envio.getCosto(),
-            envio.getFactura()
+            envio.getFactura(),
+            envio.getPago()
         );
     }
 
@@ -333,7 +335,8 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
             dto.ancho(),
             dto.alto(),
             dto.costo(),
-            null // Se añade null para el campo Factura
+            dto.factura(),
+            dto.pago()
         );
     }
 

@@ -215,7 +215,7 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
                     metodoPago
             );
             envio.setFactura(factura);
-            envio.setEstado("Pagado");
+            envio.setPago(true);
             return factura;
         }
         return null;

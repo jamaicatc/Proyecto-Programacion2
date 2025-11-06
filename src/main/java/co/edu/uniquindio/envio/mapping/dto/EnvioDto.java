@@ -16,6 +16,7 @@ public record EnvioDto(
         double ancho,
         double alto,
         double costo,
-        Factura factura
+        Factura factura,
+        boolean pago
 ) {
 }

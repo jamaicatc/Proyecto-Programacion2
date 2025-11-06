@@ -21,10 +21,12 @@ public class Envio {
     private double costo;
     private Factura factura;
     private List<String> historial;
+    private boolean pago; // Nuevo atributo
 
     // Constructores
     public Envio() {
         this.historial = new ArrayList<>();
+        this.pago = false; // Por defecto, un envío no está pagado
     }
 
     public Envio(String idEnvio, LocalDate fecha, LocalDate fechaEntregaEstimada, String origen, String destino, String estado, double peso, double largo, double alto, double ancho, double costo, Factura factura) {
@@ -41,6 +43,23 @@ public class Envio {
         this.ancho = ancho;
         this.costo = costo;
         this.factura = factura;
+    }
+
+    public Envio(String idEnvio, LocalDate fecha, LocalDate fechaEntregaEstimada, String origen, String destino, String estado, double peso, double largo, double alto, double ancho, double costo, Factura factura, boolean pago) {
+        this();
+        this.idEnvio = idEnvio;
+        this.fecha = fecha;
+        this.fechaEntregaEstimada = fechaEntregaEstimada;
+        this.origen = origen;
+        this.destino = destino;
+        this.estado = estado;
+        this.peso = peso;
+        this.largo = largo;
+        this.alto = alto;
+        this.ancho = ancho;
+        this.costo = costo;
+        this.factura = factura;
+        this.pago = pago;
     }
 
     // Getters y Setters
@@ -146,6 +165,14 @@ public class Envio {
 
     public void setHistorial(List<String> historial) {
         this.historial = historial;
+    }
+
+    public boolean getPago() {
+        return pago;
+    }
+
+    public void setPago(boolean pago) {
+        this.pago = pago;
     }
 
     /**

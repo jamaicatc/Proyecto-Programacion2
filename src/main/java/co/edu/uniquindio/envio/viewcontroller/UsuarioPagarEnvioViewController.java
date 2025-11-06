@@ -121,7 +121,7 @@ public class UsuarioPagarEnvioViewController {
         listaEnviosPendientes.clear();
         listaEnviosPendientes.addAll(
                 modelFactory.getEnvioServices().obtenerEnvios(ID_USUARIO_LOGUEADO).stream()
-                        .filter(envio -> "Solicitado".equals(envio.estado()) && envio.costo() > 0 && envio.factura() == null)
+                        .filter(envio -> !envio.pago())
                         .collect(Collectors.toList())
         );
     }

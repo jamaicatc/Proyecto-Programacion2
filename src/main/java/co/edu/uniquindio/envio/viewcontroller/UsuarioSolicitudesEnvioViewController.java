@@ -326,7 +326,8 @@ public class UsuarioSolicitudesEnvioViewController {
                 ancho,
                 alto,
                 costo,
-                null // Factura es null al crear un nuevo envío
+                null, // Factura es null al crear un nuevo envío
+                false // Por defecto, un envío no está pagado
         );
     }
 
@@ -353,7 +354,8 @@ public class UsuarioSolicitudesEnvioViewController {
                 ancho,
                 alto,
                 costo,
-                envioOriginal.factura() // Se mantiene la factura original si existe
+                envioOriginal.factura(), // Se mantiene la factura original si existe
+                envioOriginal.pago() // Se mantiene el estado de pago original
         );
     }
 
@@ -397,7 +399,7 @@ public class UsuarioSolicitudesEnvioViewController {
 
             Envio envio = new Envio(
                     "", LocalDate.now(), LocalDate.now(), "", "", "",
-                    peso, largo, ancho, alto, 0.0, null // Se añade null para el campo Factura
+                    peso, largo, ancho, alto, 0.0, null, false // Se añade null para el campo Factura y pago en false
             );
 
             ITarifaStrategy estrategia = null;
