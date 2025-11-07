@@ -149,7 +149,8 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 envioDto.ancho(),
                 envioDto.alto(),
                 envioDto.costo(),
-                null // La factura no se mapea desde el DTO
+                envioDto.factura(),
+                envioDto.pago()
         );
     }
 

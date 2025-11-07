@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -92,18 +91,10 @@ public class UsuarioPagarEnvioViewController {
         cmbMetodoPago.setItems(listaMetodosPago);
 
         tableEnviosPendientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                if (newSelection.costo() > 0) {
-                    btnPagar.setDisable(false);
-                } else {
-                    btnPagar.setDisable(true);
-                }
-            } else {
-                btnPagar.setDisable(true);
-            }
+            btnPagar.setDisable(newSelection == null || newSelection.costo() <= 0);
         });
 
-        btnPagar.setDisable(true); // Deshabilitar inicialmente
+        btnPagar.setDisable(true);
     }
 
     private void initDataBinding() {
@@ -136,11 +127,11 @@ public class UsuarioPagarEnvioViewController {
         MetodoPagoDto metodoPagoSeleccionado = cmbMetodoPago.getSelectionModel().getSelectedItem();
 
         if (envioSeleccionado == null || metodoPagoSeleccionado == null) {
-            mostrarMensaje("Error de Pago", "", "Debe seleccionar un envío y un método de pago.", Alert.AlertType.WARNING);
+            mostrarMensaje("Error de Pago", "Debe seleccionar un envío y un método de pago.", "",Alert.AlertType.WARNING);
             return;
         }
 
-        Factura factura = modelFactory.pagarEnvio(envioSeleccionado.idEnvio(), metodoPagoSeleccionado);
+        Factura factura = modelFactory.getEnvioServices().pagarEnvio(envioSeleccionado.idEnvio(), metodoPagoSeleccionado);
 
         if (factura != null) {
             try {
@@ -158,15 +149,17 @@ public class UsuarioPagarEnvioViewController {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                mostrarMensaje("Error", "", "No se pudo cargar la ventana del comprobante.", Alert.AlertType.ERROR);
+                mostrarMensaje("Error", "No se pudo cargar la ventana del comprobante.", "", Alert.AlertType.ERROR);
             }
 
-            // Actualizar la lista de envíos pendientes y la tabla
-            cargarEnviosPendientes(); // Recargar los envíos para reflejar el cambio de estado
+            // Notificar a toda la aplicación que los datos han cambiado.
+            ModelFactory.datosActualizadosProperty.set(!ModelFactory.datosActualizadosProperty.get());
+
+            // Recargar la lista de envíos pendientes para reflejar el cambio
+            cargarEnviosPendientes();
             tableEnviosPendientes.getSelectionModel().clearSelection();
-            btnPagar.setDisable(true);
         } else {
-            mostrarMensaje("Error de Pago", "", "No se pudo procesar el pago. El envío ya podría estar pagado o no existe.", Alert.AlertType.ERROR);
+            mostrarMensaje("Error de Pago", "No se pudo procesar el pago. El envío ya podría estar pagado o no existe.", "", Alert.AlertType.ERROR);
         }
     }
 

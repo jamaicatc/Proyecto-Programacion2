@@ -1,16 +1,13 @@
 package co.edu.uniquindio.envio.model;
 
-import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
-import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
-import co.edu.uniquindio.envio.mapping.dto.MetodoPagoDto;
-import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
-import co.edu.uniquindio.envio.services.IEmpresaLogisticaServices;
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class EmpresaLogistica implements IEmpresaLogisticaServices {
+public class EmpresaLogistica {
     private final String nombre;
     private final List<Usuario> listaUsuarios;
     private final List<Repartidor> listaRepartidores;
@@ -44,190 +41,93 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
         return listaEnvios;
     }
 
-    // Implementación de IUsuarioServices
-    @Override
-    public List<UsuarioDto> obtenerUsuarios() {
-        List<UsuarioDto> usuariosDto = new ArrayList<>();
-        for (Usuario usuario : listaUsuarios) {
-            usuariosDto.add(convertirAUsuarioDto(usuario));
+    // --- Lógica de Negocio para Usuarios ---
+    public boolean agregarUsuario(Usuario usuario) {
+        if (usuario == null || obtenerUsuario(usuario.getIdUsuario()) != null) {
+            return false;
         }
-        return usuariosDto;
+        return getListaUsuarios().add(usuario);
     }
 
-    @Override
-    public boolean agregarUsuario(UsuarioDto usuarioDto) {
-        if (usuarioDto == null) return false;
-        Usuario usuario = convertirAUsuario(usuarioDto);
-        Usuario usuarioEncontrado = obtenerUsuario(usuario.getIdUsuario());
-        if (usuarioEncontrado == null) {
-            getListaUsuarios().add(usuario);
-            return true;
-        }
-        return false;
+    public Usuario obtenerUsuario(String idUsuario) {
+        return getListaUsuarios().stream()
+                .filter(u -> u.getIdUsuario().equalsIgnoreCase(idUsuario))
+                .findFirst()
+                .orElse(null);
     }
 
-    private Usuario obtenerUsuario(String idUsuario) {
-        for (Usuario usuario : getListaUsuarios()) {
-            if (usuario.getIdUsuario().equalsIgnoreCase(idUsuario)) {
-                return usuario;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public boolean eliminarUsuario(String idUsuario) {
         Usuario usuarioEncontrado = obtenerUsuario(idUsuario);
         if (usuarioEncontrado != null) {
-            getListaUsuarios().remove(usuarioEncontrado);
-            return true;
+            // Eliminar también los envíos del usuario
+            usuarioEncontrado.getEnvios().forEach(envio -> listaEnvios.remove(envio));
+            return getListaUsuarios().remove(usuarioEncontrado);
         }
         return false;
     }
 
-    @Override
-    public boolean actualizarUsuario(UsuarioDto usuarioDto) {
-        if (usuarioDto == null) return false;
-        Usuario usuarioEncontrado = obtenerUsuario(usuarioDto.idUsuario());
+    public boolean actualizarUsuario(Usuario usuarioActualizado) {
+        if (usuarioActualizado == null) return false;
+        Usuario usuarioEncontrado = obtenerUsuario(usuarioActualizado.getIdUsuario());
         if (usuarioEncontrado != null) {
-            usuarioEncontrado.setNombreCompleto(usuarioDto.nombreCompleto());
-            usuarioEncontrado.setCorreo(usuarioDto.correo());
-            usuarioEncontrado.setTelefono(usuarioDto.telefono());
+            usuarioEncontrado.setNombreCompleto(usuarioActualizado.getNombreCompleto());
+            usuarioEncontrado.setCorreo(usuarioActualizado.getCorreo());
+            usuarioEncontrado.setTelefono(usuarioActualizado.getTelefono());
             return true;
         }
         return false;
     }
 
-    @Override
-    public UsuarioDto obtenerUsuarioPorNombre(String nombre) {
-        for (Usuario usuario : listaUsuarios) {
-            if (usuario.getNombreCompleto().equalsIgnoreCase(nombre)) {
-                return convertirAUsuarioDto(usuario);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public List<DireccionDto> obtenerDireccionesUsuario(String idUsuario) {
-        Usuario usuario = obtenerUsuario(idUsuario);
-        if (usuario != null) {
-            List<DireccionDto> direccionesDto = new ArrayList<>();
-            for (Direccion direccion : usuario.getDireccionesFrecuentes().values()) {
-                direccionesDto.add(convertirADireccionDto(direccion));
-            }
-            return direccionesDto;
-        }
-        return new ArrayList<>();
-    }
-
-    @Override
-    public boolean agregarDireccion(String idUsuario, DireccionDto direccionDto) {
-        Usuario usuario = obtenerUsuario(idUsuario);
-        if (usuario != null && direccionDto != null) {
-            Direccion direccion = convertirADireccion(direccionDto);
-            usuario.getDireccionesFrecuentes().put(direccionDto.alias(), direccion);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean actualizarDireccion(String idUsuario, DireccionDto direccionDto) {
-        Usuario usuario = obtenerUsuario(idUsuario);
-        if (usuario != null && direccionDto != null) {
-            Direccion direccion = convertirADireccion(direccionDto);
-            usuario.getDireccionesFrecuentes().put(direccionDto.alias(), direccion);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean eliminarDireccion(String idUsuario, String aliasDireccion) {
-        Usuario usuario = obtenerUsuario(idUsuario);
-        if (usuario != null) {
-            return usuario.getDireccionesFrecuentes().remove(aliasDireccion) != null;
-        }
-        return false;
-    }
-
-    @Override
-    public List<MetodoPagoDto> obtenerMetodosPago(String idUsuario) {
-        Usuario usuario = obtenerUsuario(idUsuario);
-        if (usuario != null) {
-            return usuario.getMetodosPago().values().stream()
-                    .map(this::convertirAMetodoPagoDto)
-                    .collect(Collectors.toList());
-        }
-        return new ArrayList<>();
-    }
-
-    // Implementación de IRepartidorServices
-    @Override
-    public List<Repartidor> obtenerRepartidores() {
-        return new ArrayList<>(listaRepartidores);
-    }
-
-    @Override
+    // --- Lógica de Negocio para Repartidores ---
     public boolean agregarRepartidor(Repartidor repartidor) {
-        if (repartidor == null) return false;
-        if (obtenerRepartidor(repartidor.getIdRepartidor()) == null) {
-            listaRepartidores.add(repartidor);
-            return true;
+        if (repartidor == null || obtenerRepartidor(repartidor.getIdRepartidor()) != null) {
+            return false;
         }
-        return false;
+        return listaRepartidores.add(repartidor);
     }
 
-    @Override
+    public Repartidor obtenerRepartidor(String idRepartidor) {
+        return listaRepartidores.stream()
+                .filter(r -> r.getIdRepartidor().equalsIgnoreCase(idRepartidor))
+                .findFirst()
+                .orElse(null);
+    }
+
     public boolean eliminarRepartidor(String idRepartidor) {
         Repartidor repartidor = obtenerRepartidor(idRepartidor);
         if (repartidor != null) {
-            listaRepartidores.remove(repartidor);
-            return true;
+            return listaRepartidores.remove(repartidor);
         }
         return false;
     }
 
-    @Override
-    public boolean actualizarRepartidor(Repartidor repartidor) {
-        if (repartidor == null) return false;
-        Repartidor repartidorExistente = obtenerRepartidor(repartidor.getIdRepartidor());
+    public boolean actualizarRepartidor(Repartidor repartidorActualizado) {
+        if (repartidorActualizado == null) return false;
+        Repartidor repartidorExistente = obtenerRepartidor(repartidorActualizado.getIdRepartidor());
         if (repartidorExistente != null) {
             int index = listaRepartidores.indexOf(repartidorExistente);
-            listaRepartidores.set(index, repartidor);
+            listaRepartidores.set(index, repartidorActualizado);
             return true;
         }
         return false;
     }
 
-    private Repartidor obtenerRepartidor(String idRepartidor) {
-        for (Repartidor repartidor : listaRepartidores) {
-            if (repartidor.getIdRepartidor().equalsIgnoreCase(idRepartidor)) {
-                return repartidor;
-            }
-        }
-        return null;
-    }
-
-    // Métodos para Envios
-    public boolean agregarEnvio(String idUsuario, EnvioDto envioDto) {
+    // --- Lógica de Negocio para Envios ---
+    public boolean agregarEnvio(String idUsuario, Envio envio) {
         Usuario usuario = obtenerUsuario(idUsuario);
-        if (usuario == null || envioDto == null) return false;
-        Envio envio = convertirAEnvio(envioDto);
-        Envio envioEncontrado = obtenerEnvio(envio.getIdEnvio());
-        if (envioEncontrado == null) {
-            getListaEnvios().add(envio);
-            usuario.getEnvios().add(envio);
-            return true;
+        if (usuario == null || envio == null || obtenerEnvio(envio.getIdEnvio()) != null) {
+            return false;
         }
-        return false;
+        getListaEnvios().add(envio);
+        usuario.getEnvios().add(envio);
+        return true;
     }
 
     public boolean eliminarEnvio(String idEnvio) {
         Envio envioEncontrado = obtenerEnvio(idEnvio);
         if (envioEncontrado != null) {
             getListaEnvios().remove(envioEncontrado);
+            // Eliminar la referencia del envío en todos los usuarios
             for (Usuario usuario : listaUsuarios) {
                 usuario.getEnvios().remove(envioEncontrado);
             }
@@ -236,115 +136,84 @@ public class EmpresaLogistica implements IEmpresaLogisticaServices {
         return false;
     }
 
-    public boolean actualizarEnvio(EnvioDto envioDto) {
-        if (envioDto == null) return false;
-        Envio envioEncontrado = obtenerEnvio(envioDto.idEnvio());
+    public boolean actualizarEnvio(Envio envioActualizado) {
+        if (envioActualizado == null) return false;
+        Envio envioEncontrado = obtenerEnvio(envioActualizado.getIdEnvio());
         if (envioEncontrado != null) {
-            envioEncontrado.setFecha(envioDto.fecha());
-            envioEncontrado.setFechaEntregaEstimada(envioDto.fechaEntregaEstimada());
-            envioEncontrado.setOrigen(envioDto.origen());
-            envioEncontrado.setDestino(envioDto.destino());
-            envioEncontrado.setEstado(envioDto.estado());
-            envioEncontrado.setPeso(envioDto.peso());
-            envioEncontrado.setLargo(envioDto.largo());
-            envioEncontrado.setAncho(envioDto.ancho());
-            envioEncontrado.setAlto(envioDto.alto());
-            envioEncontrado.setCosto(envioDto.costo());
-            envioEncontrado.setPago(envioDto.pago());
+            envioEncontrado.setFecha(envioActualizado.getFecha());
+            envioEncontrado.setFechaEntregaEstimada(envioActualizado.getFechaEntregaEstimada());
+            envioEncontrado.setOrigen(envioActualizado.getOrigen());
+            envioEncontrado.setDestino(envioActualizado.getDestino());
+            envioEncontrado.setEstado(envioActualizado.getEstado());
+            envioEncontrado.setPeso(envioActualizado.getPeso());
+            envioEncontrado.setLargo(envioActualizado.getLargo());
+            envioEncontrado.setAncho(envioActualizado.getAncho());
+            envioEncontrado.setAlto(envioActualizado.getAlto());
+            envioEncontrado.setCosto(envioActualizado.getCosto());
+            envioEncontrado.setPago(envioActualizado.getPago());
             return true;
         }
         return false;
     }
 
     public Envio obtenerEnvio(String idEnvio) {
-        for (Envio envio : getListaEnvios()) {
-            if (envio.getIdEnvio().equalsIgnoreCase(idEnvio)) {
-                return envio;
-            }
+        return getListaEnvios().stream()
+                .filter(e -> e.getIdEnvio().equalsIgnoreCase(idEnvio))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<Envio> obtenerEnviosDeUsuario(String idUsuario) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        return (usuario != null) ? usuario.getEnvios() : new ArrayList<>();
+    }
+
+    public Factura pagarEnvio(String idEnvio, MetodoPago metodoPago) {
+        Envio envio = obtenerEnvio(idEnvio);
+        // Validaciones: el envío debe existir y no debe estar pagado.
+        if (envio != null && !envio.getPago()) {
+            Factura factura = new Factura(
+                    "fact-" + UUID.randomUUID().toString().substring(0, 4),
+                    LocalDateTime.now(),
+                    envio.getCosto(),
+                    metodoPago
+            );
+            envio.setFactura(factura);
+            envio.setPago(true);
+            return factura;
         }
-        return null;
+        return null; // El pago no se pudo procesar
     }
 
-    // Métodos auxiliares de conversión
-    private UsuarioDto convertirAUsuarioDto(Usuario usuario) {
-        return new UsuarioDto(
-            usuario.getIdUsuario(),
-            usuario.getNombreCompleto(),
-            usuario.getCorreo(),
-            usuario.getTelefono()
-        );
+    // --- Lógica de Negocio para Direcciones y Métodos de Pago ---
+    public List<Direccion> obtenerDireccionesUsuario(String idUsuario) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        return (usuario != null) ? new ArrayList<>(usuario.getDireccionesFrecuentes().values()) : new ArrayList<>();
     }
 
-    private Usuario convertirAUsuario(UsuarioDto dto) {
-        return new Usuario(
-            dto.idUsuario(),
-            dto.nombreCompleto(),
-            dto.correo(),
-            dto.telefono()
-        );
+    public boolean agregarDireccion(String idUsuario, Direccion direccion) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        if (usuario != null && direccion != null) {
+            usuario.getDireccionesFrecuentes().put(direccion.getAlias(), direccion);
+            return true;
+        }
+        return false;
     }
 
-    private DireccionDto convertirADireccionDto(Direccion direccion) {
-        return new DireccionDto(
-            direccion.getIdDireccion(),
-            direccion.getAlias(),
-            direccion.getCalle(),
-            direccion.getCiudad(),
-            direccion.getCoordenadas()
-        );
+    public boolean actualizarDireccion(String idUsuario, Direccion direccion) {
+        return agregarDireccion(idUsuario, direccion); // La lógica es la misma: reemplazar o agregar.
     }
 
-    private Direccion convertirADireccion(DireccionDto dto) {
-        return new Direccion(
-            dto.idDireccion(),
-            dto.alias(),
-            dto.calleCarrera(),
-            dto.ciudad(),
-            dto.coordenadas()
-        );
+    public boolean eliminarDireccion(String idUsuario, String aliasDireccion) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        if (usuario != null) {
+            return usuario.getDireccionesFrecuentes().remove(aliasDireccion) != null;
+        }
+        return false;
     }
 
-    private EnvioDto convertirAEnvioDto(Envio envio) {
-        return new EnvioDto(
-            envio.getIdEnvio(),
-            envio.getFecha(),
-            envio.getFechaEntregaEstimada(),
-            envio.getOrigen(),
-            envio.getDestino(),
-            envio.getEstado(),
-            envio.getPeso(),
-            envio.getLargo(),
-            envio.getAncho(),
-            envio.getAlto(),
-            envio.getCosto(),
-            envio.getFactura(),
-            envio.getPago()
-        );
-    }
-
-    private Envio convertirAEnvio(EnvioDto dto) {
-        return new Envio(
-            dto.idEnvio(),
-            dto.fecha(),
-            dto.fechaEntregaEstimada(),
-            dto.origen(),
-            dto.destino(),
-            dto.estado(),
-            dto.peso(),
-            dto.largo(),
-            dto.ancho(),
-            dto.alto(),
-            dto.costo(),
-            dto.factura(),
-            dto.pago()
-        );
-    }
-
-    private MetodoPagoDto convertirAMetodoPagoDto(MetodoPago metodoPago) {
-        return new MetodoPagoDto(
-                metodoPago.getAlias(),
-                metodoPago.getNumero(),
-                metodoPago.getTipo()
-        );
+    public List<MetodoPago> obtenerMetodosPago(String idUsuario) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        return (usuario != null) ? new ArrayList<>(usuario.getMetodosPago().values()) : new ArrayList<>();
     }
 }
