@@ -47,7 +47,7 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
 
     @Override
     public UsuarioDto obtenerUsuarioPorNombre(String nombre) {
-        return mapper.usuarioToUsuarioDto(empresaLogistica.obtenerUsuario(nombre));
+        return mapper.usuarioToUsuarioDto(empresaLogistica.obtenerUsuarioPorNombre(nombre));
     }
 
     @Override
@@ -168,5 +168,22 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     @Override
     public List<MetodoPagoDto> obtenerMetodosPago(String idUsuario) {
         return mapper.getMetodosPagoDto(empresaLogistica.obtenerMetodosPago(idUsuario));
+    }
+
+    @Override
+    public boolean agregarMetodoPago(String idUsuario, MetodoPagoDto metodoPagoDto) {
+        MetodoPago metodoPago = mapper.metodoPagoDtoToMetodoPago(metodoPagoDto);
+        return empresaLogistica.agregarMetodoPago(idUsuario, metodoPago);
+    }
+
+    @Override
+    public boolean actualizarMetodoPago(String idUsuario, MetodoPagoDto metodoPagoDto) {
+        MetodoPago metodoPago = mapper.metodoPagoDtoToMetodoPago(metodoPagoDto);
+        return empresaLogistica.actualizarMetodoPago(idUsuario, metodoPago);
+    }
+
+    @Override
+    public boolean eliminarMetodoPago(String idUsuario, String aliasMetodoPago) {
+        return empresaLogistica.eliminarMetodoPago(idUsuario, aliasMetodoPago);
     }
 }

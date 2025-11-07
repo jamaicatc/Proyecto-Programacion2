@@ -4,6 +4,10 @@ import co.edu.uniquindio.envio.controller.EnvioController;
 import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
 import co.edu.uniquindio.envio.model.*;
+import co.edu.uniquindio.envio.model.decorator.Tarifa;
+import co.edu.uniquindio.envio.model.decorator.TarifaBase;
+import co.edu.uniquindio.envio.model.decorator.TarifaFragil;
+import co.edu.uniquindio.envio.model.decorator.TarifaPrioritaria;
 import co.edu.uniquindio.envio.model.strategy.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -13,14 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -41,7 +38,7 @@ public class UsuarioSolicitudesEnvioViewController {
     EnvioDto envioSeleccionado;
 
     ObservableList<String> listaEstados = FXCollections.observableArrayList("Solicitado", "Asignado", "En ruta", "Entregado", "Incidencia");
-    ObservableList<String> listaTiposTarifa = FXCollections.observableArrayList("Estándar", "Rápida", "Frágil", "Con Seguro");
+    ObservableList<String> listaPrioridades = FXCollections.observableArrayList("Normal", "Alta", "Urgente");
 
     @FXML
     private ResourceBundle resources;
@@ -53,7 +50,7 @@ public class UsuarioSolicitudesEnvioViewController {
     private Button btnBuscar;
 
     @FXML
-    private Button btnCancelar;
+    private Button btnCancelarEnvio;
 
     @FXML
     private Button btnExportarCsv;
@@ -62,13 +59,13 @@ public class UsuarioSolicitudesEnvioViewController {
     private Button btnExportarPdf;
 
     @FXML
-    private Button btnModificar;
+    private Button btnActualizar;
 
     @FXML
     private Button btnNuevaSolicitud;
 
     @FXML
-    private Button btnRefrescar;
+    private Button btnRefrescarTabla;
 
     @FXML
     private Button btnVerDetalle;
@@ -77,7 +74,13 @@ public class UsuarioSolicitudesEnvioViewController {
     private ComboBox<String> cmbEstado;
 
     @FXML
-    private ComboBox<String> cmbTipoTarifa;
+    private ComboBox<String> cmbPrioridad;
+
+    @FXML
+    private CheckBox chkFragil;
+
+    @FXML
+    private CheckBox chkUrgente;
 
     @FXML
     private DatePicker dpFechaDesde;
@@ -162,12 +165,13 @@ public class UsuarioSolicitudesEnvioViewController {
             mostrarInformacionEnvio(envioSeleccionado);
         });
 
-        // Listener para calcular la tarifa cuando se cambia un valor
         txtPeso.textProperty().addListener((obs, oldVal, newVal) -> calcularCosto());
         txtLargo.textProperty().addListener((obs, oldVal, newVal) -> calcularCosto());
         txtAncho.textProperty().addListener((obs, oldVal, newVal) -> calcularCosto());
         txtAlto.textProperty().addListener((obs, oldVal, newVal) -> calcularCosto());
-        cmbTipoTarifa.valueProperty().addListener((obs, oldVal, newVal) -> calcularCosto());
+        cmbPrioridad.valueProperty().addListener((obs, oldVal, newVal) -> calcularCosto());
+        chkFragil.selectedProperty().addListener((obs, oldVal, newVal) -> calcularCosto());
+        chkUrgente.selectedProperty().addListener((obs, oldVal, newVal) -> calcularCosto());
     }
 
     private void mostrarInformacionEnvio(EnvioDto envioSeleccionado) {
@@ -190,7 +194,7 @@ public class UsuarioSolicitudesEnvioViewController {
     }
 
     @FXML
-    void onCancelar(ActionEvent event) {
+    void onCancelarEnvio(ActionEvent event) {
         cancelarSolicitud();
     }
 
@@ -205,7 +209,7 @@ public class UsuarioSolicitudesEnvioViewController {
     }
 
     @FXML
-    void onModificar(ActionEvent event) {
+    void onActualizar(ActionEvent event) {
         modificarSolicitud();
     }
 
@@ -215,7 +219,7 @@ public class UsuarioSolicitudesEnvioViewController {
     }
 
     @FXML
-    void onRefrescar(ActionEvent event) {
+    void onRefrescarTabla(ActionEvent event) {
         actualizarTabla();
         limpiarCampos();
     }
@@ -380,14 +384,17 @@ public class UsuarioSolicitudesEnvioViewController {
         txtLargo.clear();
         txtAncho.clear();
         txtAlto.clear();
-        cmbTipoTarifa.getSelectionModel().clearSelection();
+        cmbPrioridad.getSelectionModel().clearSelection();
+        chkFragil.setSelected(false);
+        chkUrgente.setSelected(false);
         lblCostoEnvio.setText("$0.00");
         tableEnvios.getSelectionModel().clearSelection();
     }
 
     private void cargarDatos() {
         cmbEstado.setItems(listaEstados);
-        cmbTipoTarifa.setItems(listaTiposTarifa);
+        cmbPrioridad.setItems(listaPrioridades);
+        cmbPrioridad.setValue("Normal");
     }
 
     private double calcularCosto() {
@@ -396,39 +403,31 @@ public class UsuarioSolicitudesEnvioViewController {
             double largo = Double.parseDouble(txtLargo.getText());
             double ancho = Double.parseDouble(txtAncho.getText());
             double alto = Double.parseDouble(txtAlto.getText());
+            double volumen = largo * ancho * alto;
+            String origen = txtOrigen.getText();
+            String destino = txtDestino.getText();
 
-            Envio envio = new Envio(
-                    "", LocalDate.now(), LocalDate.now(), "", "", "",
-                    peso, largo, ancho, alto, 0.0, null, false // Se añade null para el campo Factura y pago en false
-            );
+            Tarifa tarifa = new TarifaBase(peso, volumen, 1, false, origen, destino); // Asumiendo cantidad=1 y no es documento
 
-            ITarifaStrategy estrategia = null;
-            String tipoTarifa = cmbTipoTarifa.getValue();
-
-            if (tipoTarifa != null) {
-                switch (tipoTarifa) {
-                    case "Rápida":
-                        estrategia = new TarifaRapidaStrategy();
-                        break;
-                    case "Frágil":
-                        estrategia = new TarifaFragilStrategy();
-                        break;
-                    case "Con Seguro":
-                        estrategia = new TarifaConSeguroStrategy();
-                        break;
-                    default:
-                        estrategia = new TarifaEstandarStrategy();
-                        break;
-                }
+            if (chkFragil.isSelected()) {
+                tarifa = new TarifaFragil(tarifa);
             }
 
-            if (estrategia != null) {
-                double costo = modelFactory.calcularTarifa(envio, estrategia);
-                lblCostoEnvio.setText(String.format("$%,.2f", costo));
-                return costo;
+            String prioridad = cmbPrioridad.getValue();
+            if (chkUrgente.isSelected() || (prioridad != null && !prioridad.equals("Normal"))) {
+                tarifa = new TarifaPrioritaria(tarifa, chkUrgente.isSelected() ? "urgente" : prioridad);
             }
+
+            double costoFinal = tarifa.calcularCosto();
+
+            lblCostoEnvio.setText(String.format("$%,.2f", costoFinal));
+            return costoFinal;
+
         } catch (NumberFormatException e) {
             lblCostoEnvio.setText("Datos inválidos");
+        } catch (Exception e) {
+            lblCostoEnvio.setText("Error de cálculo");
+            e.printStackTrace(); // Para depuración
         }
         return 0.0;
     }

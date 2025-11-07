@@ -16,4 +16,7 @@ public interface IUsuarioServices {
     boolean actualizarDireccion(String idUsuario, DireccionDto direccionDto);
     boolean eliminarDireccion(String idUsuario, String aliasDireccion);
     List<MetodoPagoDto> obtenerMetodosPago(String idUsuario);
+    boolean agregarMetodoPago(String idUsuario, MetodoPagoDto metodoPagoDto);
+    boolean actualizarMetodoPago(String idUsuario, MetodoPagoDto metodoPagoDto);
+    boolean eliminarMetodoPago(String idUsuario, String aliasMetodoPago);
 }

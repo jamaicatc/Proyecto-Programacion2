@@ -56,6 +56,13 @@ public class EmpresaLogistica {
                 .orElse(null);
     }
 
+    public Usuario obtenerUsuarioPorNombre(String nombre) {
+        return getListaUsuarios().stream()
+                .filter(u -> u.getNombreCompleto().equalsIgnoreCase(nombre))
+                .findFirst()
+                .orElse(null);
+    }
+
     public boolean eliminarUsuario(String idUsuario) {
         Usuario usuarioEncontrado = obtenerUsuario(idUsuario);
         if (usuarioEncontrado != null) {
@@ -170,7 +177,6 @@ public class EmpresaLogistica {
 
     public Factura pagarEnvio(String idEnvio, MetodoPago metodoPago) {
         Envio envio = obtenerEnvio(idEnvio);
-        // Validaciones: el envío debe existir y no debe estar pagado.
         if (envio != null && !envio.getPago()) {
             Factura factura = new Factura(
                     "fact-" + UUID.randomUUID().toString().substring(0, 4),
@@ -182,7 +188,7 @@ public class EmpresaLogistica {
             envio.setPago(true);
             return factura;
         }
-        return null; // El pago no se pudo procesar
+        return null;
     }
 
     // --- Lógica de Negocio para Direcciones y Métodos de Pago ---
@@ -215,5 +221,36 @@ public class EmpresaLogistica {
     public List<MetodoPago> obtenerMetodosPago(String idUsuario) {
         Usuario usuario = obtenerUsuario(idUsuario);
         return (usuario != null) ? new ArrayList<>(usuario.getMetodosPago().values()) : new ArrayList<>();
+    }
+
+    public boolean agregarMetodoPago(String idUsuario, MetodoPago metodoPago) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        if (usuario != null && metodoPago != null) {
+            if (usuario.getMetodosPago().containsKey(metodoPago.getAlias())) {
+                return false;
+            }
+            usuario.getMetodosPago().put(metodoPago.getAlias(), metodoPago);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean actualizarMetodoPago(String idUsuario, MetodoPago metodoPagoActualizado) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        if (usuario != null && metodoPagoActualizado != null) {
+            if (usuario.getMetodosPago().containsKey(metodoPagoActualizado.getAlias())) {
+                usuario.getMetodosPago().put(metodoPagoActualizado.getAlias(), metodoPagoActualizado);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean eliminarMetodoPago(String idUsuario, String aliasMetodoPago) {
+        Usuario usuario = obtenerUsuario(idUsuario);
+        if (usuario != null) {
+            return usuario.getMetodosPago().remove(aliasMetodoPago) != null;
+        }
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package co.edu.uniquindio.envio.controller;
 
 import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
+import co.edu.uniquindio.envio.mapping.dto.MetodoPagoDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import co.edu.uniquindio.envio.services.IUsuarioServices;
 import co.edu.uniquindio.envio.utils.DataUtil;
@@ -51,6 +52,22 @@ public class UsuarioController {
 
     public boolean eliminarDireccion(String idUsuario, String aliasDireccion) {
         return usuarioServices.eliminarDireccion(idUsuario, aliasDireccion);
+    }
+
+    public List<MetodoPagoDto> obtenerMetodosPago(String idUsuario) {
+        return usuarioServices.obtenerMetodosPago(idUsuario);
+    }
+
+    public boolean agregarMetodoPago(String idUsuario, MetodoPagoDto metodoPagoDto) {
+        return usuarioServices.agregarMetodoPago(idUsuario, metodoPagoDto);
+    }
+
+    public boolean actualizarMetodoPago(String idUsuario, MetodoPagoDto metodoPagoDto) {
+        return usuarioServices.actualizarMetodoPago(idUsuario, metodoPagoDto);
+    }
+
+    public boolean eliminarMetodoPago(String idUsuario, String aliasMetodoPago) {
+        return usuarioServices.eliminarMetodoPago(idUsuario, aliasMetodoPago);
     }
 
     public static boolean validarCredencialesUsuario(String usuario, String contrasena, String rol){
