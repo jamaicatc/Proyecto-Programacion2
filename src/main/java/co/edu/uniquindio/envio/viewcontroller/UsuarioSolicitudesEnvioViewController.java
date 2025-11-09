@@ -26,6 +26,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class UsuarioSolicitudesEnvioViewController {
 
@@ -37,7 +38,7 @@ public class UsuarioSolicitudesEnvioViewController {
     ObservableList<EnvioDto> listaEnvios = FXCollections.observableArrayList();
     EnvioDto envioSeleccionado;
 
-    ObservableList<String> listaEstados = FXCollections.observableArrayList("Solicitado", "Asignado", "En ruta", "Entregado", "Incidencia");
+    ObservableList<String> listaEstados = FXCollections.observableArrayList("Todos", "Solicitado", "Asignado", "En ruta", "Entregado", "Incidencia");
     ObservableList<String> listaPrioridades = FXCollections.observableArrayList("Normal", "Alta", "Urgente");
 
     @FXML
@@ -190,8 +191,35 @@ public class UsuarioSolicitudesEnvioViewController {
 
     @FXML
     void onBuscar(ActionEvent event) {
+        String estado = cmbEstado.getValue();
+        LocalDate fechaDesde = dpFechaDesde.getValue();
+        LocalDate fechaHasta = dpFechaHasta.getValue();
 
+        ObservableList<EnvioDto> enviosFiltrados = listaEnvios.stream()
+                .filter(envio -> {
+                    boolean coincideEstado = true;
+                    if (estado != null && !estado.isEmpty() && !estado.equals("Todos")) {
+                        coincideEstado = envio.estado().equalsIgnoreCase(estado);
+                    }
+                    return coincideEstado;
+                })
+                .filter(envio -> {
+                    boolean coincideFecha = true;
+                    LocalDate fechaEnvio = envio.fecha();
+                    if (fechaDesde != null && fechaHasta != null) {
+                        coincideFecha = !fechaEnvio.isBefore(fechaDesde) && !fechaEnvio.isAfter(fechaHasta);
+                    } else if (fechaDesde != null) {
+                        coincideFecha = !fechaEnvio.isBefore(fechaDesde);
+                    } else if (fechaHasta != null) {
+                        coincideFecha = !fechaEnvio.isAfter(fechaHasta);
+                    }
+                    return coincideFecha;
+                })
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
+        tableEnvios.setItems(enviosFiltrados);
     }
+
 
     @FXML
     void onCancelarEnvio(ActionEvent event) {
@@ -222,7 +250,12 @@ public class UsuarioSolicitudesEnvioViewController {
     void onRefrescarTabla(ActionEvent event) {
         actualizarTabla();
         limpiarCampos();
+        cmbEstado.getSelectionModel().clearSelection();
+        dpFechaDesde.setValue(null);
+        dpFechaHasta.setValue(null);
+        tableEnvios.setItems(listaEnvios);
     }
+
 
     @FXML
     void onVerDetalle(ActionEvent event) {
