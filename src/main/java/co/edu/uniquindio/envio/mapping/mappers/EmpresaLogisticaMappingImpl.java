@@ -59,7 +59,9 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 repartidor.getIdRepartidor(),
                 repartidor.getNombre(),
                 repartidor.getDocumento(),
-                repartidor.getTelefono()
+                repartidor.getTelefono(),
+                repartidor.getZonaCobertura(),
+                repartidor.getDisponibilidad().toString()
         );
     }
 
@@ -71,6 +73,8 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 .setNombre(repartidorDto.nombre())
                 .setDocumento(repartidorDto.documento())
                 .setTelefono(repartidorDto.telefono())
+                .setZonaCobertura(repartidorDto.zona())
+                .setDisponibilidad(repartidorDto.disponibilidad())
                 .build();
     }
 

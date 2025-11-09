@@ -52,7 +52,7 @@ public class AdminRepartidoresViewController {
     private TableView<RepartidorDto> tableRepartidor;
 
     @FXML
-    private TableColumn<?, ?> tcDisponibilidad;
+    private TableColumn<RepartidorDto, String> tcDisponibilidad;
 
     @FXML
     private TableColumn<RepartidorDto, String> tcDocumento;
@@ -67,7 +67,7 @@ public class AdminRepartidoresViewController {
     private TableColumn<RepartidorDto, String> tcTelefono;
 
     @FXML
-    private TableColumn<?, ?> tcZona;
+    private TableColumn<RepartidorDto, String> tcZona;
 
     @FXML
     private TextField txtDocumento;
@@ -142,6 +142,8 @@ public class AdminRepartidoresViewController {
         tcNombre.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().nombre()));
         tcDocumento.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().documento()));
         tcTelefono.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().telefono()));
+        tcZona.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().zona()));
+        tcDisponibilidad.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().disponibilidad()));
     }
 
     private void listenerSelection() {
@@ -155,7 +157,7 @@ public class AdminRepartidoresViewController {
         RepartidorDto repartidorDto = crearRepartidorDto();
         if(datosValidos(repartidorDto)){
             if(repartidorController.agregarRepartidor(repartidorDto)){
-                listaRepartidores.addAll(repartidorDto);
+                listaRepartidores.add(repartidorDto);
                 limpiarCampos();
                 mostrarMensaje(TITULO_REPARTIDOR_AGREGADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_AGREGADO, Alert.AlertType.INFORMATION);
             }else{
@@ -210,6 +212,8 @@ public class AdminRepartidoresViewController {
         txtNombre.setText("");
         txtDocumento.setText("");
         txtTelefono.setText("");
+        txtZona.setText("");
+        cmbDisponibilidad.setValue(null);
     }
 
     private RepartidorDto crearRepartidorDto() {
@@ -217,14 +221,19 @@ public class AdminRepartidoresViewController {
                 txtIdRepartidor.getText(),
                 txtNombre.getText(),
                 txtDocumento.getText(),
-                txtTelefono.getText());
+                txtTelefono.getText(),
+                txtZona.getText(),
+                cmbDisponibilidad.getValue()
+        );
     }
 
     private boolean datosValidos(RepartidorDto repartidorDto) {
         if(repartidorDto.idRepartidor().isBlank() ||
                 repartidorDto.nombre().isBlank() ||
                 repartidorDto.documento().isBlank() ||
-                repartidorDto.telefono().isBlank()
+                repartidorDto.telefono().isBlank() ||
+                repartidorDto.zona().isBlank() ||
+                repartidorDto.disponibilidad() == null
         ){
             return false;
         }else{
@@ -238,6 +247,8 @@ public class AdminRepartidoresViewController {
             txtNombre.setText(repartidorSeleccionado.nombre());
             txtDocumento.setText(repartidorSeleccionado.documento());
             txtTelefono.setText(repartidorSeleccionado.telefono());
+            txtZona.setText(repartidorSeleccionado.zona());
+            cmbDisponibilidad.setValue(repartidorSeleccionado.disponibilidad());
         }
     }
 

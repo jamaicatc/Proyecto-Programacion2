@@ -4,5 +4,7 @@ public record RepartidorDto(
         String idRepartidor,
         String nombre,
         String documento,
-        String telefono) {
+        String telefono,
+        String zona,
+        String disponibilidad) {
 }

@@ -11,7 +11,7 @@ public class Repartidor {
     private String nombre;
     private String documento;
     private String telefono;
-    private EstadoDisponibilidad disponibilidad;
+    private String disponibilidad;
     private String zonaCobertura;
     private List<Envio> enviosAsignados;
 
@@ -19,7 +19,7 @@ public class Repartidor {
         this.enviosAsignados = new ArrayList<>();
     }
 
-    public Repartidor(String idRepartidor, String nombre, String documento, String telefono, EstadoDisponibilidad disponibilidad, String zonaCobertura) {
+    public Repartidor(String idRepartidor, String nombre, String documento, String telefono, String disponibilidad, String zonaCobertura) {
         this();
         this.idRepartidor = idRepartidor;
         this.nombre = nombre;
@@ -49,7 +49,7 @@ public class Repartidor {
         return telefono;
     }
 
-    public EstadoDisponibilidad getDisponibilidad() {
+    public String getDisponibilidad() {
         return disponibilidad;
     }
 
@@ -77,7 +77,7 @@ public class Repartidor {
         this.telefono = telefono;
     }
 
-    public void setDisponibilidad(EstadoDisponibilidad disponibilidad) {
+    public void setDisponibilidad(String disponibilidad) {
         this.disponibilidad = disponibilidad;
     }
 

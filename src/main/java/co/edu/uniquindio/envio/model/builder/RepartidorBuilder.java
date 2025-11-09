@@ -1,17 +1,13 @@
 package co.edu.uniquindio.envio.model.builder;
 
-import co.edu.uniquindio.envio.model.Envio;
-import co.edu.uniquindio.envio.model.EstadoDisponibilidad;
 import co.edu.uniquindio.envio.model.Repartidor;
-
-import java.util.List;
 
 public class RepartidorBuilder {
     private String idRepartidor;
     private String nombre;
     private String documento;
     private String telefono;
-    private EstadoDisponibilidad disponibilidad;
+    private String disponibilidad;
     private String zonaCobertura;
 
     public RepartidorBuilder setIdRepartidor(String idRepartidor){
@@ -34,7 +30,7 @@ public class RepartidorBuilder {
         return this;
     }
 
-    public RepartidorBuilder setDisponibilidad(EstadoDisponibilidad disponibilidad){
+    public RepartidorBuilder setDisponibilidad(String disponibilidad){
         this.disponibilidad = disponibilidad;
         return this;
     }

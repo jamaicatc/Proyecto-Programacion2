@@ -53,9 +53,9 @@ public class DataUtil {
         usuario2.getEnvios().add(envio2);
         usuario2.getEnvios().add(envio3);
 
-        Repartidor repartidor1 = new Repartidor("1234", "juan", "4455", "311", EstadoDisponibilidad.ACTIVO, "Armenia");
-        Repartidor repartidor2 = new Repartidor("7788", "jose", "7610", "314", EstadoDisponibilidad.EN_RUTA, "Calarcá");
-        Repartidor repartidor3 = new Repartidor("2971", "isabela", "1098", "350", EstadoDisponibilidad.INACTIVO, "Circasia");
+        Repartidor repartidor1 = new Repartidor("1234", "juan", "4455", "311", "Activo", "Armenia");
+        Repartidor repartidor2 = new Repartidor("7788", "jose", "7610", "314", "En ruta", "Calarcá");
+        Repartidor repartidor3 = new Repartidor("2971", "isabela", "1098", "350", "Inactivo", "Circasia");
 
         empresaLogistica.getListaRepartidores().add(repartidor1);
         empresaLogistica.getListaRepartidores().add(repartidor2);
