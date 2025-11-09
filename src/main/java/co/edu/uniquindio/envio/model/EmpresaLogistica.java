@@ -312,4 +312,30 @@ public class EmpresaLogistica {
         }
         return false;
     }
+
+    // --- Lógica de Negocio para Métricas ---
+    public double calcularTiempoPromedioEntrega(List<Envio> envios) {
+        return envios.stream()
+                .filter(e -> "Entregado".equals(e.getEstadoActual()) && e.getFechaEntrega() != null)
+                .mapToLong(e -> java.time.temporal.ChronoUnit.DAYS.between(e.getFechaCreacion(), e.getFechaEntrega()))
+                .average()
+                .orElse(0.0);
+    }
+
+    public double calcularIngresosTotales(List<Envio> envios) {
+        return envios.stream()
+                .mapToDouble(Envio::getCosto)
+                .sum();
+    }
+
+    public long contarIncidencias(List<Envio> envios) {
+        return envios.stream()
+                .flatMap(e -> e.getIncidencias().stream())
+                .count();
+    }
+
+    public List<Repartidor> getRepartidores() {
+        return new ArrayList<>(listaRepartidores);
+    }
+
 }

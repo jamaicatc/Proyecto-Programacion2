@@ -333,4 +333,34 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
         }
         return result;
     }
+
+    // Métodos para métricas
+    public double calcularTiempoPromedioEntrega(List<EnvioDto> enviosDto) {
+        List<Envio> envios = enviosDto.stream()
+                .map(this::obtenerEnvioOriginalDesdeDto)
+                .collect(Collectors.toList());
+        return empresaLogistica.calcularTiempoPromedioEntrega(envios);
+    }
+
+    public double calcularIngresosTotales(List<EnvioDto> enviosDto) {
+        List<Envio> envios = enviosDto.stream()
+                .map(this::obtenerEnvioOriginalDesdeDto)
+                .collect(Collectors.toList());
+        return empresaLogistica.calcularIngresosTotales(envios);
+    }
+
+    public long contarIncidencias(List<EnvioDto> enviosDto) {
+        List<Envio> envios = enviosDto.stream()
+                .map(this::obtenerEnvioOriginalDesdeDto)
+                .collect(Collectors.toList());
+        return empresaLogistica.contarIncidencias(envios);
+    }
+
+    public List<String> obtenerZonasDeRepartidores() {
+        return empresaLogistica.getRepartidores().stream().map(Repartidor::getZonaCobertura).distinct().collect(Collectors.toList());
+    }
+
+    private Envio obtenerEnvioOriginalDesdeDto(EnvioDto envioDto) {
+        return empresaLogistica.obtenerEnvio(envioDto.id());
+    }
 }

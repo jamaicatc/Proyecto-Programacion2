@@ -56,20 +56,20 @@
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Gráfico de Ingresos por Periodo" />
-                        <LineChart VBox.vgrow="ALWAYS">
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
-                        </LineChart>
+                         <LineChart fx:id="chartIngresos" VBox.vgrow="ALWAYS">
+                             <xAxis>
+                                 <CategoryAxis side="BOTTOM" label="Mes"/>
+                             </xAxis>
+                             <yAxis>
+                                 <NumberAxis side="LEFT" label="Ingresos (COP)"/>
+                             </yAxis>
+                         </LineChart>
                      </children>
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Distribución de Servicios Adicionales" />
-                        <PieChart VBox.vgrow="ALWAYS" />
+                         <PieChart fx:id="chartDistribucion" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                </children>
