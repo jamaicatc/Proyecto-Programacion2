@@ -5,6 +5,7 @@ import co.edu.uniquindio.envio.controller.AdministradorController;
 import co.edu.uniquindio.envio.controller.RepartidorController;
 import co.edu.uniquindio.envio.controller.UsuarioController;
 import co.edu.uniquindio.envio.factory.ModelFactory;
+import co.edu.uniquindio.envio.model.Usuario;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -76,6 +77,8 @@ public class LoginViewController {
         switch (rol) {
             case "Usuario":
                 if (usuarioController.validarCredencialesUsuario(usuario, contrasena)) {
+                    Usuario usuarioLogueado = modelFactory.obtenerUsuarioPorCredenciales(usuario, contrasena);
+                    modelFactory.setUsuarioActual(usuarioLogueado);
                     EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuario);
                     EnvioApplication.mainStage.setTitle("Panel Usuario");
                     loginExitoso = true;

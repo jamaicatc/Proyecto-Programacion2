@@ -2,6 +2,7 @@ package co.edu.uniquindio.envio.controller;
 
 import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
+import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
 import co.edu.uniquindio.envio.mapping.dto.MetodoPagoDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import co.edu.uniquindio.envio.model.Usuario;
@@ -16,6 +17,11 @@ public class UsuarioController {
     public UsuarioController() {
         modelFactory = ModelFactory.getInstance();
         usuarioServices = modelFactory.getUsuarioServices();
+    }
+
+    public UsuarioController(ModelFactory modelFactory) {
+        this.modelFactory = modelFactory;
+        this.usuarioServices = modelFactory.getUsuarioServices();
     }
 
     public List<UsuarioDto> obtenerUsuarios() {
@@ -80,5 +86,9 @@ public class UsuarioController {
             }
         }
         return false;
+    }
+
+    public List<EnvioDto> obtenerEnvios(String idUsuario) {
+        return usuarioServices.obtenerEnvios(idUsuario);
     }
 }

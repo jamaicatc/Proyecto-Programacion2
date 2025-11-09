@@ -3,6 +3,7 @@ module envio {
     requires javafx.fxml;
     requires javafx.base;
     requires javafx.graphics;
+    requires org.apache.pdfbox; // Changed to transitive
 
     opens co.edu.uniquindio.envio to javafx.fxml;
     exports co.edu.uniquindio.envio;

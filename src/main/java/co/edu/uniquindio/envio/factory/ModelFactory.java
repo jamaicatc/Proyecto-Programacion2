@@ -87,6 +87,14 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
         return mapper.usuarioToUsuarioDto(empresaLogistica.obtenerUsuarioPorNombre(nombre));
     }
 
+    public Usuario obtenerUsuarioPorCredenciales(String usuario, String contrasena) {
+        return empresaLogistica.getListaUsuarios().stream()
+                .filter(u -> u.getUsuario().equals(usuario) && u.getContrasena().equals(contrasena))
+                .findFirst()
+                .orElse(null);
+    }
+
+
     @Override
     public boolean agregarUsuario(UsuarioDto usuarioDto) {
         Usuario usuario = mapper.usuarioDtoToUsuario(usuarioDto);

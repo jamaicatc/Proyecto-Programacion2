@@ -14,87 +14,87 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.envio.viewcontroller.UsuarioHistorialEnviosViewController">
-   <children>
-      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Label alignment="CENTER" text="Historial de Envios">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-               <children>
-                  <Label text="Fecha desde:" />
-                  <DatePicker fx:id="dpFechaDesde">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></DatePicker>
-                  <Label layoutX="10.0" layoutY="10.0" text="Fecha hasta:" />
-                  <DatePicker fx:id="dpFechaHasta" layoutX="38.0" layoutY="10.0">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></DatePicker>
-                  <Label layoutX="212.0" layoutY="10.0" text="Estado:" />
-                  <ComboBox fx:id="cmbEstado" prefWidth="150.0" promptText="Seleccionar">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></ComboBox>
-                  <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#onBuscar" text="Buscar">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-                  <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#onLimpiar" text="Limpiar Filtros">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-               </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </HBox>
-            <TableView prefHeight="400.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-              <columns>
-                <TableColumn fx:id="tcIdEnvio" prefWidth="-1.0" text="Id Envio" />
-                <TableColumn fx:id="tcFecha" prefWidth="-1.0" text="Fecha" />
-                  <TableColumn fx:id="tcOrigen" prefWidth="-1.0" text="Origen" />
-                  <TableColumn fx:id="tcDestino" prefWidth="-1.0" text="Destino" />
-                  <TableColumn fx:id="tcEstado" prefWidth="-1.0" text="Estado" />
-                  <TableColumn fx:id="tcCosto" prefWidth="-1.0" text="Costo" />
-              </columns>
-               <columnResizePolicy>
-                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-            </TableView>
-            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-               <children>
-                  <Button fx:id="btnVerDetalles" mnemonicParsing="false" onAction="#onVerDetalles" text="Ver Detalles">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-               </children>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
-               <children>
-                  <Button fx:id="btnGenerarReportePdf" mnemonicParsing="false" onAction="#onGenerarReportePdf" text="Generar Reporte PDF">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-                  <Button fx:id="btnGenerarReporteCsv" mnemonicParsing="false" onAction="#onGenerarReporteCsv" text="Generar Reporte CSV">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-               </children>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </HBox>
-         </children>
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
-      </VBox>
-   </children>
+    <children>
+        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Label alignment="CENTER" text="Historial de Envios">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                    <children>
+                        <Label text="Fecha desde:" />
+                        <DatePicker fx:id="dpFechaDesde">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></DatePicker>
+                        <Label layoutX="10.0" layoutY="10.0" text="Fecha hasta:" />
+                        <DatePicker fx:id="dpFechaHasta" layoutX="38.0" layoutY="10.0">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></DatePicker>
+                        <Label layoutX="212.0" layoutY="10.0" text="Estado:" />
+                        <ComboBox fx:id="cmbEstado" prefWidth="150.0" promptText="Seleccionar">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></ComboBox>
+                        <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#onBuscar" text="Buscar">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                        <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#onLimpiar" text="Limpiar Filtros">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </padding>
+                </HBox>
+                <TableView fx:id="tableEnvios" prefHeight="400.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="tcIdEnvio" prefWidth="-1.0" text="Id Envio" />
+                        <TableColumn fx:id="tcFecha" prefWidth="-1.0" text="Fecha" />
+                        <TableColumn fx:id="tcOrigen" prefWidth="-1.0" text="Origen" />
+                        <TableColumn fx:id="tcDestino" prefWidth="-1.0" text="Destino" />
+                        <TableColumn fx:id="tcEstado" prefWidth="-1.0" text="Estado" />
+                        <TableColumn fx:id="tcCosto" prefWidth="-1.0" text="Costo" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+                <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                    <children>
+                        <Button fx:id="btnVerDetalles" mnemonicParsing="false" onAction="#onVerDetalles" text="Ver Detalles">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </HBox>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                    <children>
+                        <Button fx:id="btnGenerarReportePdf" mnemonicParsing="false" onAction="#onGenerarReportePdf" text="Generar Reporte PDF">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                        <Button fx:id="btnGenerarReporteCsv" mnemonicParsing="false" onAction="#onGenerarReporteCsv" text="Generar Reporte CSV">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+        </VBox>
+    </children>
 </AnchorPane>
