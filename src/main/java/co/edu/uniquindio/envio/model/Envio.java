@@ -4,111 +4,89 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Representa un envío con sus atributos y dimensiones.
- */
 public class Envio {
-    private String idEnvio;
-    private LocalDate fecha;
-    private LocalDate fechaEntregaEstimada;
-    private String origen;
-    private String destino;
-    private String estado;
+    private String id;
+    private LocalDate fechaCreacion;
+    private LocalDate fechaEntrega;
+    private String direccionOrigen;
+    private String direccionDestino;
+    private String estadoActual;
     private double peso;
     private double largo;
     private double alto;
     private double ancho;
     private double costo;
-    private Factura factura;
-    private List<String> historial;
+    private Repartidor repartidorAsignado;
     private boolean pago; // Nuevo atributo
+    private List<String> historial;
+    private List<Incidencia> incidencias;
+    private Factura factura; // Nuevo atributo para la factura
 
-    // Constructores
-    public Envio() {
+    public Envio(String id, LocalDate fechaCreacion, LocalDate fechaEntrega, String direccionOrigen, String direccionDestino, String estadoActual, double peso, double largo, double alto, double ancho, double costo, Repartidor repartidorAsignado, boolean pago) {
+        this.id = id;
+        this.fechaCreacion = fechaCreacion;
+        this.fechaEntrega = fechaEntrega;
+        this.direccionOrigen = direccionOrigen;
+        this.direccionDestino = direccionDestino;
+        this.estadoActual = estadoActual;
+        this.peso = peso;
+        this.largo = largo;
+        this.alto = alto;
+        this.ancho = ancho;
+        this.costo = costo;
+        this.repartidorAsignado = repartidorAsignado;
+        this.pago = pago; // Inicializar el nuevo atributo
         this.historial = new ArrayList<>();
-        this.pago = false; // Por defecto, un envío no está pagado
+        this.incidencias = new ArrayList<>();
+        this.factura = null; // Inicializar la factura como nula
     }
 
-    public Envio(String idEnvio, LocalDate fecha, LocalDate fechaEntregaEstimada, String origen, String destino, String estado, double peso, double largo, double alto, double ancho, double costo, Factura factura) {
-        this();
-        this.idEnvio = idEnvio;
-        this.fecha = fecha;
-        this.fechaEntregaEstimada = fechaEntregaEstimada;
-        this.origen = origen;
-        this.destino = destino;
-        this.estado = estado;
-        this.peso = peso;
-        this.largo = largo;
-        this.alto = alto;
-        this.ancho = ancho;
-        this.costo = costo;
-        this.factura = factura;
+    public String getId() {
+        return id;
     }
 
-    public Envio(String idEnvio, LocalDate fecha, LocalDate fechaEntregaEstimada, String origen, String destino, String estado, double peso, double largo, double alto, double ancho, double costo, Factura factura, boolean pago) {
-        this();
-        this.idEnvio = idEnvio;
-        this.fecha = fecha;
-        this.fechaEntregaEstimada = fechaEntregaEstimada;
-        this.origen = origen;
-        this.destino = destino;
-        this.estado = estado;
-        this.peso = peso;
-        this.largo = largo;
-        this.alto = alto;
-        this.ancho = ancho;
-        this.costo = costo;
-        this.factura = factura;
-        this.pago = pago;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    // Getters y Setters
-    public String getIdEnvio() {
-        return idEnvio;
+    public LocalDate getFechaCreacion() {
+        return fechaCreacion;
     }
 
-    public void setIdEnvio(String idEnvio) {
-        this.idEnvio = idEnvio;
+    public void setFechaCreacion(LocalDate fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
-    public LocalDate getFecha() {
-        return fecha;
+    public LocalDate getFechaEntrega() {
+        return fechaEntrega;
     }
 
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
+    public void setFechaEntrega(LocalDate fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
     }
 
-    public LocalDate getFechaEntregaEstimada() {
-        return fechaEntregaEstimada;
+    public String getDireccionOrigen() {
+        return direccionOrigen;
     }
 
-    public void setFechaEntregaEstimada(LocalDate fechaEntregaEstimada) {
-        this.fechaEntregaEstimada = fechaEntregaEstimada;
+    public void setDireccionOrigen(String direccionOrigen) {
+        this.direccionOrigen = direccionOrigen;
     }
 
-    public String getOrigen() {
-        return origen;
+    public String getDireccionDestino() {
+        return direccionDestino;
     }
 
-    public void setOrigen(String origen) {
-        this.origen = origen;
+    public void setDireccionDestino(String direccionDestino) {
+        this.direccionDestino = direccionDestino;
     }
 
-    public String getDestino() {
-        return destino;
+    public String getEstadoActual() {
+        return estadoActual;
     }
 
-    public void setDestino(String destino) {
-        this.destino = destino;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setEstadoActual(String estadoActual) {
+        this.estadoActual = estadoActual;
     }
 
     public double getPeso() {
@@ -151,20 +129,12 @@ public class Envio {
         this.costo = costo;
     }
 
-    public Factura getFactura() {
-        return factura;
+    public Repartidor getRepartidorAsignado() {
+        return repartidorAsignado;
     }
 
-    public void setFactura(Factura factura) {
-        this.factura = factura;
-    }
-
-    public List<String> getHistorial() {
-        return historial;
-    }
-
-    public void setHistorial(List<String> historial) {
-        this.historial = historial;
+    public void setRepartidorAsignado(Repartidor repartidorAsignado) {
+        this.repartidorAsignado = repartidorAsignado;
     }
 
     public boolean getPago() {
@@ -175,10 +145,30 @@ public class Envio {
         this.pago = pago;
     }
 
-    /**
-     * Calcula el volumen del paquete.
-     * @return El volumen en cm³.
-     */
+    public List<String> getHistorial() {
+        return historial;
+    }
+
+    public void setHistorial(List<String> historial) {
+        this.historial = historial;
+    }
+
+    public List<Incidencia> getIncidencias() {
+        return incidencias;
+    }
+
+    public void setIncidencias(List<Incidencia> incidencias) {
+        this.incidencias = incidencias;
+    }
+
+    public Factura getFactura() {
+        return factura;
+    }
+
+    public void setFactura(Factura factura) {
+        this.factura = factura;
+    }
+
     public double calcularVolumen() {
         return largo * alto * ancho;
     }

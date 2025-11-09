@@ -77,11 +77,11 @@ public class UsuarioComprobantePagoViewController {
             lblMetodoPago.setText(factura.getMetodoPago().getTipo() + " (" + factura.getMetodoPago().getAlias() + ")");
 
             // Datos del envío
-            lblIdEnvio.setText(envio.idEnvio());
-            lblFechaCreacion.setText(envio.fecha().toString());
-            lblFechaEntrega.setText(envio.fechaEntregaEstimada().toString());
-            lblOrigenDestino.setText(envio.origen() + " - " + envio.destino());
-            lblEstado.setText(envio.estado());
+            lblIdEnvio.setText(envio.id());
+            lblFechaCreacion.setText(envio.fechaCreacion().toString());
+            lblFechaEntrega.setText(envio.fechaEntrega().toString());
+            lblOrigenDestino.setText(envio.direccionOrigen() + " - " + envio.direccionDestino()); // Corrected line
+            lblEstado.setText(envio.estadoActual());
             lblPeso.setText(String.format("%.2f kg", envio.peso()));
             lblVolumen.setText(String.format("%.0fx%.0fx%.0f cm", envio.largo(), envio.ancho(), envio.alto()));
             lblCosto.setText(String.format("$%,.2f", envio.costo()));

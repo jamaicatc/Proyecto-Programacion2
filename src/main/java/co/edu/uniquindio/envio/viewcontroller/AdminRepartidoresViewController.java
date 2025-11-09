@@ -1,10 +1,8 @@
 package co.edu.uniquindio.envio.viewcontroller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import co.edu.uniquindio.envio.controller.RepartidorController;
+import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.RepartidorDto;
+import co.edu.uniquindio.envio.model.observer.DataUpdateListener;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,14 +10,17 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
 
-public class AdminRepartidoresViewController {
+public class AdminRepartidoresViewController implements DataUpdateListener {
 
-    RepartidorController repartidorController;
-    ObservableList<RepartidorDto> listaRepartidores = FXCollections.observableArrayList();
-    ObservableList<String> listaDisponibilidades = FXCollections.observableArrayList("Activo", "Inactivo", "En ruta");
-    RepartidorDto repartidorSeleccionado;
+    private final ModelFactory modelFactory = ModelFactory.getInstance();
+    private final ObservableList<RepartidorDto> listaRepartidores = FXCollections.observableArrayList();
+    private final ObservableList<String> listaDisponibilidades = FXCollections.observableArrayList("Activo", "Inactivo", "En ruta");
+    private RepartidorDto repartidorSeleccionado;
 
     @FXML
     private ResourceBundle resources;
@@ -86,7 +87,7 @@ public class AdminRepartidoresViewController {
 
     @FXML
     void initialize() {
-        repartidorController = new RepartidorController();
+        modelFactory.addDataUpdateListener(this);
         initView();
         cargarDatos();
     }
@@ -102,7 +103,7 @@ public class AdminRepartidoresViewController {
 
     @FXML
     void onActualizarTabla(ActionEvent event) {
-
+        actualizarTabla();
     }
 
     @FXML
@@ -134,7 +135,7 @@ public class AdminRepartidoresViewController {
     }
 
     private void obtenerRepartidores() {
-        listaRepartidores.addAll(repartidorController.obtenerRepartidores());
+        listaRepartidores.setAll(modelFactory.obtenerRepartidores());
     }
 
     private void initDataBinding() {
@@ -155,51 +156,48 @@ public class AdminRepartidoresViewController {
 
     private void agregarRepartidor() {
         RepartidorDto repartidorDto = crearRepartidorDto();
-        if(datosValidos(repartidorDto)){
-            if(repartidorController.agregarRepartidor(repartidorDto)){
-                listaRepartidores.add(repartidorDto);
+        if (datosValidos(repartidorDto)) {
+            if (modelFactory.agregarRepartidor(repartidorDto)) {
                 limpiarCampos();
                 mostrarMensaje(TITULO_REPARTIDOR_AGREGADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_AGREGADO, Alert.AlertType.INFORMATION);
-            }else{
-                mostrarMensaje(TITULO_REPARTIDOR_NO_AGREGADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_NO_AGREGADO ,Alert.AlertType.ERROR);
+            } else {
+                mostrarMensaje(TITULO_REPARTIDOR_NO_AGREGADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_NO_AGREGADO, Alert.AlertType.ERROR);
             }
-        }else{
-            mostrarMensaje(TITULO_INCOMPLETO, HEADER_NOTIFICACION, BODY_INCOMPLETO,Alert.AlertType.WARNING);
+        } else {
+            mostrarMensaje(TITULO_INCOMPLETO, HEADER_NOTIFICACION, BODY_INCOMPLETO, Alert.AlertType.WARNING);
         }
     }
 
     private void eliminarRepartidor() {
-        if(repartidorSeleccionado != null){
-            if(repartidorController.eliminarRepartidor(repartidorSeleccionado.idRepartidor())){
-                listaRepartidores.remove(repartidorSeleccionado);
+        if (repartidorSeleccionado != null) {
+            if (modelFactory.eliminarRepartidor(repartidorSeleccionado.idRepartidor())) {
                 limpiarCampos();
-                mostrarMensaje(TITULO_REPARTIDOR_ELIMINADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_ELIMINADO,Alert.AlertType.INFORMATION);
-            }else{
-                mostrarMensaje(TITULO_REPARTIDOR_NO_ELIMINADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_NO_ELIMINADO,Alert.AlertType.ERROR);
+                mostrarMensaje(TITULO_REPARTIDOR_ELIMINADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_ELIMINADO, Alert.AlertType.INFORMATION);
+            } else {
+                mostrarMensaje(TITULO_REPARTIDOR_NO_ELIMINADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_NO_ELIMINADO, Alert.AlertType.ERROR);
             }
         }
     }
 
     private void actualizarRepartidor() {
-        if(repartidorSeleccionado != null){
+        if (repartidorSeleccionado != null) {
             RepartidorDto repartidorDto = crearRepartidorDto();
-            if(datosValidos(repartidorDto)){
-                if(repartidorController.actualizarRepartidor(repartidorDto)){
-                    actualizarTabla();
+            if (datosValidos(repartidorDto)) {
+                if (modelFactory.actualizarRepartidor(repartidorDto)) {
                     limpiarCampos();
                     mostrarMensaje(TITULO_REPARTIDOR_ACTUALIZADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_ACTUALIZADO, Alert.AlertType.INFORMATION);
-                }else{
+                } else {
                     mostrarMensaje(TITULO_REPARTIDOR_NO_ACTUALIZADO, HEADER_NOTIFICACION, BODY_REPARTIDOR_NO_ACTUALIZADO, Alert.AlertType.ERROR);
                 }
-            }else{
+            } else {
                 mostrarMensaje(TITULO_INCOMPLETO, HEADER_NOTIFICACION, BODY_INCOMPLETO, Alert.AlertType.WARNING);
             }
         }
     }
 
     private void actualizarTabla() {
-        listaRepartidores.clear();
-        listaRepartidores.addAll(repartidorController.obtenerRepartidores());
+        obtenerRepartidores();
+        tableRepartidor.refresh();
     }
 
     private void nuevoRepartidor() {
@@ -228,21 +226,16 @@ public class AdminRepartidoresViewController {
     }
 
     private boolean datosValidos(RepartidorDto repartidorDto) {
-        if(repartidorDto.idRepartidor().isBlank() ||
-                repartidorDto.nombre().isBlank() ||
-                repartidorDto.documento().isBlank() ||
-                repartidorDto.telefono().isBlank() ||
-                repartidorDto.zona().isBlank() ||
-                repartidorDto.disponibilidad() == null
-        ){
-            return false;
-        }else{
-            return true;
-        }
+        return repartidorDto.idRepartidor() != null && !repartidorDto.idRepartidor().isBlank() &&
+                repartidorDto.nombre() != null && !repartidorDto.nombre().isBlank() &&
+                repartidorDto.documento() != null && !repartidorDto.documento().isBlank() &&
+                repartidorDto.telefono() != null && !repartidorDto.telefono().isBlank() &&
+                repartidorDto.zona() != null && !repartidorDto.zona().isBlank() &&
+                repartidorDto.disponibilidad() != null;
     }
 
     private void mostrarInformacionRepartidor(RepartidorDto repartidorSeleccionado) {
-        if(repartidorSeleccionado != null){
+        if (repartidorSeleccionado != null) {
             txtIdRepartidor.setText(repartidorSeleccionado.idRepartidor());
             txtNombre.setText(repartidorSeleccionado.nombre());
             txtDocumento.setText(repartidorSeleccionado.documento());
@@ -258,5 +251,10 @@ public class AdminRepartidoresViewController {
         aler.setHeaderText(header);
         aler.setContentText(contenido);
         aler.showAndWait();
+    }
+
+    @Override
+    public void onDataChanged() {
+        actualizarTabla();
     }
 }

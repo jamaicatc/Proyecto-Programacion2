@@ -82,6 +82,7 @@ public class UsuarioGestionarMetodosPagoViewController {
 
     @FXML
     void onCancelar(ActionEvent event) {
+        EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuario);
         limpiarCampos();
         activarCampos(false);
         btnGuardar.setDisable(true);

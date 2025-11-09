@@ -61,21 +61,21 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 repartidor.getDocumento(),
                 repartidor.getTelefono(),
                 repartidor.getZonaCobertura(),
-                repartidor.getDisponibilidad().toString()
+                repartidor.getDisponibilidad()
         );
     }
 
     @Override
     public Repartidor repartidorDtoToRepartidor(RepartidorDto repartidorDto) {
         if (repartidorDto == null) return null;
-        return Repartidor.builder()
-                .setIdRepartidor(repartidorDto.idRepartidor())
-                .setNombre(repartidorDto.nombre())
-                .setDocumento(repartidorDto.documento())
-                .setTelefono(repartidorDto.telefono())
-                .setZonaCobertura(repartidorDto.zona())
-                .setDisponibilidad(repartidorDto.disponibilidad())
-                .build();
+        return new Repartidor(
+                repartidorDto.idRepartidor(),
+                repartidorDto.nombre(),
+                repartidorDto.documento(),
+                repartidorDto.telefono(),
+                repartidorDto.disponibilidad(),
+                repartidorDto.zona()
+        );
     }
 
     @Override
@@ -118,44 +118,72 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 .collect(Collectors.toList());
     }
 
+    public FacturaDto facturaToFacturaDto(Factura factura) {
+        if (factura == null) return null;
+        return new FacturaDto(
+                factura.getIdFactura(),
+                factura.getFecha(),
+                factura.getMonto(),
+                metodoPagoToMetodoPagoDto(factura.getMetodoPago())
+        );
+    }
+
+    public Factura facturaDtoToFactura(FacturaDto facturaDto) {
+        if (facturaDto == null) return null;
+        return new Factura(
+                facturaDto.idFactura(),
+                facturaDto.fecha(),
+                facturaDto.monto(),
+                metodoPagoDtoToMetodoPago(facturaDto.metodoPago())
+        );
+    }
+
     @Override
     public EnvioDto envioToEnvioDto(Envio envio) {
         if (envio == null) return null;
+        String ultimaIncidenciaDescripcion = null;
+        if (envio.getIncidencias() != null && !envio.getIncidencias().isEmpty()) {
+            ultimaIncidenciaDescripcion = envio.getIncidencias().get(envio.getIncidencias().size() - 1).getDescripcion();
+        }
         return new EnvioDto(
-                envio.getIdEnvio(),
-                envio.getFecha(),
-                envio.getFechaEntregaEstimada(),
-                envio.getOrigen(),
-                envio.getDestino(),
-                envio.getEstado(),
+                envio.getId(),
+                envio.getFechaCreacion(),
+                envio.getFechaEntrega(),
+                envio.getDireccionOrigen(),
+                envio.getDireccionDestino(),
+                envio.getEstadoActual(),
                 envio.getPeso(),
                 envio.getLargo(),
                 envio.getAncho(),
                 envio.getAlto(),
                 envio.getCosto(),
-                envio.getFactura(),
-                envio.getPago()
+                repartidorToRepartidorDto(envio.getRepartidorAsignado()),
+                envio.getPago(),
+                ultimaIncidenciaDescripcion,
+                facturaToFacturaDto(envio.getFactura())
         );
     }
 
     @Override
     public Envio envioDtoToEnvio(EnvioDto envioDto) {
         if (envioDto == null) return null;
-        return new Envio(
-                envioDto.idEnvio(),
-                envioDto.fecha(),
-                envioDto.fechaEntregaEstimada(),
-                envioDto.origen(),
-                envioDto.destino(),
-                envioDto.estado(),
+        Envio envio = new Envio(
+                envioDto.id(),
+                envioDto.fechaCreacion(),
+                envioDto.fechaEntrega(),
+                envioDto.direccionOrigen(),
+                envioDto.direccionDestino(),
+                envioDto.estadoActual(),
                 envioDto.peso(),
                 envioDto.largo(),
                 envioDto.ancho(),
                 envioDto.alto(),
                 envioDto.costo(),
-                envioDto.factura(),
+                repartidorDtoToRepartidor(envioDto.repartidorAsignado()),
                 envioDto.pago()
         );
+        envio.setFactura(facturaDtoToFactura(envioDto.factura()));
+        return envio;
     }
 
     @Override
@@ -196,5 +224,23 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
         return metodosPago.stream()
                 .map(this::metodoPagoToMetodoPagoDto)
                 .collect(Collectors.toList());
+    }
+
+    public IncidenciaDto incidenciaToIncidenciaDto(Incidencia incidencia) {
+        if (incidencia == null) return null;
+        return new IncidenciaDto(
+                incidencia.getAsunto(),
+                incidencia.getDescripcion(),
+                incidencia.getFecha()
+        );
+    }
+
+    public Incidencia incidenciaDtoToIncidencia(IncidenciaDto incidenciaDto) {
+        if (incidenciaDto == null) return null;
+        return new Incidencia(
+                incidenciaDto.asunto(),
+                incidenciaDto.descripcion(),
+                incidenciaDto.fecha()
+        );
     }
 }

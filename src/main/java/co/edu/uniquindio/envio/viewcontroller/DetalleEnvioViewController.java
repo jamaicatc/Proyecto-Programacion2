@@ -66,19 +66,23 @@ public class DetalleEnvioViewController {
 
     public void init(String nombreUsuario, EnvioDto envioDto) {
         if (envioDto != null) {
-            txtIdEnvio.setText(envioDto.idEnvio());
+            txtIdEnvio.setText(envioDto.id());
             txtUsuario.setText(nombreUsuario);
-            txtOrigen.setText(envioDto.origen());
-            txtDestino.setText(envioDto.destino());
+            txtOrigen.setText(envioDto.direccionOrigen());
+            txtDestino.setText(envioDto.direccionDestino());
             txtPeso.setText(String.format("%.2f kg", envioDto.peso()));
             txtDimensiones.setText(String.format("%.0fx%.0fx%.0f cm", envioDto.largo(), envioDto.ancho(), envioDto.alto()));
             txtCostoTotal.setText(String.format("$%,.2f", envioDto.costo()));
-            txtEstado.setText(envioDto.estado());
-            txtFechaCreacion.setText(envioDto.fecha().toString());
-            txtFechaEstimada.setText(envioDto.fechaEntregaEstimada().toString());
+            txtEstado.setText(envioDto.estadoActual());
+            txtFechaCreacion.setText(envioDto.fechaCreacion().toString());
+            txtFechaEstimada.setText(envioDto.fechaEntrega().toString());
 
-            // Campo de repartidor (a implementar en el futuro)
-            txtRepartidor.setText("No asignado");
+            // Display repartidor name if assigned
+            if (envioDto.repartidorAsignado() != null) {
+                txtRepartidor.setText(envioDto.repartidorAsignado().nombre());
+            } else {
+                txtRepartidor.setText("No asignado");
+            }
         }
     }
 }

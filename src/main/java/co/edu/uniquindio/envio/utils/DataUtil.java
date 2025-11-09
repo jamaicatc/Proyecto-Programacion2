@@ -37,25 +37,33 @@ public class DataUtil {
         usuario2.getMetodosPago().put("Principal", metodoPago1);
         usuario2.getMetodosPago().put("Secundaria", metodoPago2);
 
+        Repartidor repartidor1 = new Repartidor("1234", "juan", "4455", "311", "Activo", "Armenia");
+        Repartidor repartidor2 = new Repartidor("7788", "jose", "7610", "314", "En ruta", "Calarcá");
+        Repartidor repartidor3 = new Repartidor("2971", "isabela", "1098", "350", "Inactivo", "Circasia");
+
         // Agregando envíos para Juan David
-        Envio envio1 = new Envio("env1", LocalDate.now(), LocalDate.now().plusDays(3), "Casa", "Trabajo", "Solicitado", 2.5, 30, 20, 10, 13250.0, null);
+        Envio envio1 = new Envio("env1", LocalDate.now(), LocalDate.now().plusDays(3), "Casa", "Trabajo", "Solicitado", 2.5, 30, 20, 10, 13250.0, repartidor1, false);
         envio1.getHistorial().add("2024-05-20 10:00 - Envío creado");
-        Envio envio2 = new Envio("env2", LocalDate.now().minusDays(1), LocalDate.now().plusDays(2), "Universidad", "Casa", "Entregado", 1.0, 20, 15, 5, 3500.0, null);
+        Envio envio2 = new Envio("env2", LocalDate.now().minusDays(1), LocalDate.now().plusDays(2), "Universidad", "Casa", "Entregado", 1.0, 20, 15, 5, 3500.0, null, false);
         envio2.getHistorial().add("2024-05-19 14:30 - Envío creado");
         envio2.getHistorial().add("2024-05-20 08:00 - En bodega");
         envio2.getHistorial().add("2024-05-20 11:00 - En reparto");
         envio2.getHistorial().add("2024-05-20 16:00 - Entregado");
-        Envio envio3 = new Envio("env3", LocalDate.now().minusDays(2), LocalDate.now().plusDays(1), "Trabajo", "Universidad", "En ruta", 5.0, 50, 40, 20, 82500.0, null);
+        Envio envio3 = new Envio("env3", LocalDate.now().minusDays(2), LocalDate.now().plusDays(1), "Trabajo", "Universidad", "En ruta", 5.0, 50, 40, 20, 82500.0, repartidor2, false);
         envio3.getHistorial().add("2024-05-18 09:00 - Envío creado");
         envio3.getHistorial().add("2024-05-19 12:00 - En bodega");
+        Envio envio4 = new Envio("env4", LocalDate.now(), LocalDate.now().plusDays(5), "Casa", "Universidad", "En bodega", 3.0, 40, 30, 15, 25000.0, null, false);
+        envio4.getHistorial().add("2024-05-21 08:00 - Envío creado");
+        Envio envio5 = new Envio("env5", LocalDate.now().minusDays(1), LocalDate.now().plusDays(4), "Trabajo", "Casa", "En ruta", 1.5, 25, 20, 10, 15000.0, repartidor1, false);
+        envio5.getHistorial().add("2024-05-20 15:00 - Envío creado");
+        envio5.getHistorial().add("2024-05-21 09:00 - En bodega");
+
 
         usuario2.getEnvios().add(envio1);
         usuario2.getEnvios().add(envio2);
         usuario2.getEnvios().add(envio3);
-
-        Repartidor repartidor1 = new Repartidor("1234", "juan", "4455", "311", "Activo", "Armenia");
-        Repartidor repartidor2 = new Repartidor("7788", "jose", "7610", "314", "En ruta", "Calarcá");
-        Repartidor repartidor3 = new Repartidor("2971", "isabela", "1098", "350", "Inactivo", "Circasia");
+        usuario2.getEnvios().add(envio4);
+        usuario2.getEnvios().add(envio5);
 
         empresaLogistica.getListaRepartidores().add(repartidor1);
         empresaLogistica.getListaRepartidores().add(repartidor2);
@@ -68,6 +76,8 @@ public class DataUtil {
         empresaLogistica.getListaEnvios().add(envio1);
         empresaLogistica.getListaEnvios().add(envio2);
         empresaLogistica.getListaEnvios().add(envio3);
+        empresaLogistica.getListaEnvios().add(envio4);
+        empresaLogistica.getListaEnvios().add(envio5);
 
         return empresaLogistica;
     }

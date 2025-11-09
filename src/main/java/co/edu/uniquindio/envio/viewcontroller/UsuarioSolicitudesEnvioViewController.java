@@ -148,11 +148,11 @@ public class UsuarioSolicitudesEnvioViewController {
     }
 
     private void initDataBinding() {
-        tcIdEnvio.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().idEnvio()));
-        tcFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fecha().toString()));
-        tcOrigen.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().origen()));
-        tcDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().destino()));
-        tcEstado.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().estado()));
+        tcIdEnvio.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().id()));
+        tcFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaCreacion().toString()));
+        tcOrigen.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().direccionOrigen()));
+        tcDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().direccionDestino()));
+        tcEstado.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().estadoActual()));
         tcPeso.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().peso())));
     }
 
@@ -177,8 +177,8 @@ public class UsuarioSolicitudesEnvioViewController {
 
     private void mostrarInformacionEnvio(EnvioDto envioSeleccionado) {
         if (envioSeleccionado != null) {
-            txtOrigen.setText(envioSeleccionado.origen());
-            txtDestino.setText(envioSeleccionado.destino());
+            txtOrigen.setText(envioSeleccionado.direccionOrigen());
+            txtDestino.setText(envioSeleccionado.direccionDestino());
             txtPeso.setText(String.valueOf(envioSeleccionado.peso()));
             txtLargo.setText(String.valueOf(envioSeleccionado.largo()));
             txtAncho.setText(String.valueOf(envioSeleccionado.ancho()));
@@ -199,13 +199,13 @@ public class UsuarioSolicitudesEnvioViewController {
                 .filter(envio -> {
                     boolean coincideEstado = true;
                     if (estado != null && !estado.isEmpty() && !estado.equals("Todos")) {
-                        coincideEstado = envio.estado().equalsIgnoreCase(estado);
+                        coincideEstado = envio.estadoActual().equalsIgnoreCase(estado);
                     }
                     return coincideEstado;
                 })
                 .filter(envio -> {
                     boolean coincideFecha = true;
-                    LocalDate fechaEnvio = envio.fecha();
+                    LocalDate fechaEnvio = envio.fechaCreacion();
                     if (fechaDesde != null && fechaHasta != null) {
                         coincideFecha = !fechaEnvio.isBefore(fechaDesde) && !fechaEnvio.isAfter(fechaHasta);
                     } else if (fechaDesde != null) {
@@ -301,7 +301,7 @@ public class UsuarioSolicitudesEnvioViewController {
             return;
         }
 
-        if (!"Solicitado".equals(envioSeleccionado.estado())) {
+        if (!"Solicitado".equals(envioSeleccionado.estadoActual())) {
             mostrarMensaje("Modificar envío", "", "Solo se pueden modificar envíos en estado 'Solicitado'", Alert.AlertType.WARNING);
             return;
         }
@@ -323,7 +323,7 @@ public class UsuarioSolicitudesEnvioViewController {
 
     private void cancelarSolicitud() {
         if (envioSeleccionado != null) {
-            if (envioController.eliminarEnvio(envioSeleccionado.idEnvio())) {
+            if (envioController.eliminarEnvio(envioSeleccionado.id())) {
                 listaEnvios.remove(envioSeleccionado);
                 envioSeleccionado = null;
                 tableEnvios.getSelectionModel().clearSelection();
@@ -363,8 +363,10 @@ public class UsuarioSolicitudesEnvioViewController {
                 ancho,
                 alto,
                 costo,
-                null, // Factura es null al crear un nuevo envío
-                false // Por defecto, un envío no está pagado
+                null,
+                false,
+                null, // ultimaIncidenciaDescripcion
+                null // factura
         );
     }
 
@@ -380,25 +382,27 @@ public class UsuarioSolicitudesEnvioViewController {
         }
         double costo = calcularCosto();
         return new EnvioDto(
-                envioOriginal.idEnvio(),
-                envioOriginal.fecha(),
-                envioOriginal.fechaEntregaEstimada(),
+                envioOriginal.id(),
+                envioOriginal.fechaCreacion(),
+                envioOriginal.fechaEntrega(),
                 txtOrigen.getText(),
                 txtDestino.getText(),
-                envioOriginal.estado(),
+                envioOriginal.estadoActual(),
                 peso,
                 largo,
                 ancho,
                 alto,
                 costo,
-                envioOriginal.factura(), // Se mantiene la factura original si existe
-                envioOriginal.pago() // Se mantiene el estado de pago original
+                envioOriginal.repartidorAsignado(),
+                envioOriginal.pago(),
+                envioOriginal.ultimaIncidenciaDescripcion(),
+                envioOriginal.factura()
         );
     }
 
     private boolean datosValidos(EnvioDto envioDto) {
-        return envioDto.origen() != null && !envioDto.origen().isBlank() &&
-                envioDto.destino() != null && !envioDto.destino().isBlank() &&
+        return envioDto.direccionOrigen() != null && !envioDto.direccionOrigen().isBlank() &&
+                envioDto.direccionDestino() != null && !envioDto.direccionDestino().isBlank() &&
                 envioDto.peso() > 0 &&
                 envioDto.largo() > 0 &&
                 envioDto.ancho() > 0 &&

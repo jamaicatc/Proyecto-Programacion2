@@ -8,21 +8,35 @@ import co.edu.uniquindio.envio.model.strategy.TarifaBase;
 import co.edu.uniquindio.envio.services.IEnvioServices;
 import co.edu.uniquindio.envio.services.IModelFactory;
 import co.edu.uniquindio.envio.services.IUsuarioServices;
+import co.edu.uniquindio.envio.model.observer.DataUpdateListener;
 import co.edu.uniquindio.envio.utils.DataUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServices {
     private static ModelFactory modelFactory;
     private final EmpresaLogistica empresaLogistica;
     private final EmpresaLogisticaMappingImpl mapper;
+    private final List<DataUpdateListener> listeners = new ArrayList<>();
 
     public static SimpleBooleanProperty datosActualizadosProperty = new SimpleBooleanProperty(false);
 
     private ModelFactory() {
         this.mapper = new EmpresaLogisticaMappingImpl();
         this.empresaLogistica = DataUtil.inicializarDatos();
+    }
+
+    public void addDataUpdateListener(DataUpdateListener listener) {
+        listeners.add(listener);
+    }
+
+    public void notifyDataChanged() {
+        for (DataUpdateListener listener : listeners) {
+            listener.onDataChanged();
+        }
     }
 
     public static ModelFactory getInstance() {
@@ -40,6 +54,10 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
         return this;
     }
 
+    public EmpresaLogisticaMappingImpl getMapper() {
+        return mapper;
+    }
+
     @Override
     public List<UsuarioDto> obtenerUsuarios() {
         return mapper.getUsuariosDto(empresaLogistica.getListaUsuarios());
@@ -53,18 +71,30 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     @Override
     public boolean agregarUsuario(UsuarioDto usuarioDto) {
         Usuario usuario = mapper.usuarioDtoToUsuario(usuarioDto);
-        return empresaLogistica.agregarUsuario(usuario);
+        boolean result = empresaLogistica.agregarUsuario(usuario);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public boolean eliminarUsuario(String idUsuario) {
-        return empresaLogistica.eliminarUsuario(idUsuario);
+        boolean result = empresaLogistica.eliminarUsuario(idUsuario);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public boolean actualizarUsuario(UsuarioDto usuarioDto) {
         Usuario usuario = mapper.usuarioDtoToUsuario(usuarioDto);
-        return empresaLogistica.actualizarUsuario(usuario);
+        boolean result = empresaLogistica.actualizarUsuario(usuario);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
@@ -75,18 +105,30 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     @Override
     public boolean agregarRepartidor(RepartidorDto repartidorDto) {
         Repartidor repartidor = mapper.repartidorDtoToRepartidor(repartidorDto);
-        return empresaLogistica.agregarRepartidor(repartidor);
+        boolean result = empresaLogistica.agregarRepartidor(repartidor);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public boolean eliminarRepartidor(String idRepartidor) {
-        return empresaLogistica.eliminarRepartidor(idRepartidor);
+        boolean result = empresaLogistica.eliminarRepartidor(idRepartidor);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public boolean actualizarRepartidor(RepartidorDto repartidorDto) {
         Repartidor repartidor = mapper.repartidorDtoToRepartidor(repartidorDto);
-        return empresaLogistica.actualizarRepartidor(repartidor);
+        boolean result = empresaLogistica.actualizarRepartidor(repartidor);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
@@ -107,24 +149,40 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     @Override
     public boolean agregarEnvio(String idUsuario, EnvioDto envioDto) {
         Envio envio = mapper.envioDtoToEnvio(envioDto);
-        return empresaLogistica.agregarEnvio(idUsuario, envio);
+        boolean result = empresaLogistica.agregarEnvio(idUsuario, envio);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public boolean actualizarEnvio(EnvioDto envioDto) {
         Envio envio = mapper.envioDtoToEnvio(envioDto);
-        return empresaLogistica.actualizarEnvio(envio);
+        boolean result = empresaLogistica.actualizarEnvio(envio);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public boolean eliminarEnvio(String idEnvio) {
-        return empresaLogistica.eliminarEnvio(idEnvio);
+        boolean result = empresaLogistica.eliminarEnvio(idEnvio);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public Factura pagarEnvio(String idEnvio, MetodoPagoDto metodoPagoDto) {
         MetodoPago metodoPago = mapper.metodoPagoDtoToMetodoPago(metodoPagoDto);
-        return empresaLogistica.pagarEnvio(idEnvio, metodoPago);
+        Factura factura = empresaLogistica.pagarEnvio(idEnvio, metodoPago);
+        if (factura != null) {
+            notifyDataChanged();
+        }
+        return factura;
     }
 
     @Override
@@ -135,6 +193,45 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     @Override
     public List<String> obtenerHistorial(String idEnvio) {
         return empresaLogistica.obtenerEnvio(idEnvio).getHistorial();
+    }
+
+    @Override
+    public void asignarEnvio(EnvioDto envioDto, RepartidorDto repartidorDto) {
+        Envio envio = mapper.envioDtoToEnvio(envioDto);
+        Repartidor repartidor = mapper.repartidorDtoToRepartidor(repartidorDto);
+        empresaLogistica.asignarEnvio(envio, repartidor);
+        notifyDataChanged();
+    }
+
+    @Override
+    public void reasignarEnvio(EnvioDto envioDto, RepartidorDto nuevoRepartidorDto) {
+        Envio envio = mapper.envioDtoToEnvio(envioDto);
+        Repartidor nuevoRepartidor = mapper.repartidorDtoToRepartidor(nuevoRepartidorDto);
+        empresaLogistica.reasignarEnvio(envio, nuevoRepartidor);
+        notifyDataChanged();
+    }
+
+    @Override
+    public void registrarIncidencia(EnvioDto envioDto, IncidenciaDto incidenciaDto) {
+        Envio envio = mapper.envioDtoToEnvio(envioDto);
+        Incidencia incidencia = mapper.incidenciaDtoToIncidencia(incidenciaDto);
+        empresaLogistica.registrarIncidencia(envio, incidencia);
+        notifyDataChanged();
+    }
+
+    @Override
+    public List<EnvioDto> obtenerEnviosNoAsignados() {
+        return mapper.getEnviosDto(empresaLogistica.getListaEnvios().stream()
+                .filter(envio -> envio.getRepartidorAsignado() == null)
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public List<EnvioDto> obtenerEnviosPorRepartidor(RepartidorDto repartidorDto) {
+        Repartidor repartidor = mapper.repartidorDtoToRepartidor(repartidorDto);
+        return mapper.getEnviosDto(empresaLogistica.getListaEnvios().stream()
+                .filter(envio -> repartidor.equals(envio.getRepartidorAsignado()))
+                .collect(Collectors.toList()));
     }
 
     public double calcularTarifa(Envio envio, ITarifaStrategy estrategia) {
@@ -151,18 +248,25 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     @Override
     public boolean agregarDireccion(String idUsuario, DireccionDto direccionDto) {
         Direccion direccion = mapper.direccionDtoToDireccion(direccionDto);
-        return empresaLogistica.agregarDireccion(idUsuario, direccion);
+        boolean result = empresaLogistica.agregarDireccion(idUsuario, direccion);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public boolean actualizarDireccion(String idUsuario, DireccionDto direccionDto) {
-        Direccion direccion = mapper.direccionDtoToDireccion(direccionDto);
-        return empresaLogistica.actualizarDireccion(idUsuario, direccion);
+        return agregarDireccion(idUsuario, direccionDto); // La lógica es la misma: reemplazar o agregar.
     }
 
     @Override
     public boolean eliminarDireccion(String idUsuario, String aliasDireccion) {
-        return empresaLogistica.eliminarDireccion(idUsuario, aliasDireccion);
+        boolean result = empresaLogistica.eliminarDireccion(idUsuario, aliasDireccion);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
@@ -173,17 +277,29 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     @Override
     public boolean agregarMetodoPago(String idUsuario, MetodoPagoDto metodoPagoDto) {
         MetodoPago metodoPago = mapper.metodoPagoDtoToMetodoPago(metodoPagoDto);
-        return empresaLogistica.agregarMetodoPago(idUsuario, metodoPago);
+        boolean result = empresaLogistica.agregarMetodoPago(idUsuario, metodoPago);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public boolean actualizarMetodoPago(String idUsuario, MetodoPagoDto metodoPagoDto) {
         MetodoPago metodoPago = mapper.metodoPagoDtoToMetodoPago(metodoPagoDto);
-        return empresaLogistica.actualizarMetodoPago(idUsuario, metodoPago);
+        boolean result = empresaLogistica.actualizarMetodoPago(idUsuario, metodoPago);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override
     public boolean eliminarMetodoPago(String idUsuario, String aliasMetodoPago) {
-        return empresaLogistica.eliminarMetodoPago(idUsuario, aliasMetodoPago);
+        boolean result = empresaLogistica.eliminarMetodoPago(idUsuario, aliasMetodoPago);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 }

@@ -2,6 +2,7 @@ package co.edu.uniquindio.envio.viewcontroller;
 
 import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
+import co.edu.uniquindio.envio.mapping.dto.FacturaDto;
 import co.edu.uniquindio.envio.mapping.dto.MetodoPagoDto;
 import co.edu.uniquindio.envio.model.Factura;
 import javafx.beans.property.SimpleStringProperty;
@@ -98,11 +99,11 @@ public class UsuarioPagarEnvioViewController {
     }
 
     private void initDataBinding() {
-        tcIdEnvio.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().idEnvio()));
-        tcFechaCreacion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fecha().toString()));
-        tcFechaEntrega.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaEntregaEstimada().toString()));
-        tcOrigenDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().origen() + " - " + cellData.getValue().destino()));
-        tcEstado.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().estado()));
+        tcIdEnvio.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().id()));
+        tcFechaCreacion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaCreacion().toString()));
+        tcFechaEntrega.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaEntrega().toString()));
+        tcOrigenDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().direccionOrigen() + " - " + cellData.getValue().direccionOrigen()));
+        tcEstado.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().estadoActual()));
         tcPeso.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f kg", cellData.getValue().peso())));
         tcVolumen.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.0fx%.0fx%.0f cm", cellData.getValue().largo(), cellData.getValue().ancho(), cellData.getValue().alto())));
         tcCosto.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("$%,.2f", cellData.getValue().costo())));
@@ -112,7 +113,9 @@ public class UsuarioPagarEnvioViewController {
         listaEnviosPendientes.clear();
         listaEnviosPendientes.addAll(
                 modelFactory.getEnvioServices().obtenerEnvios(ID_USUARIO_LOGUEADO).stream()
-                        .filter(envio -> !envio.pago())
+                        .filter(envio -> !envio.pago() &&
+                                (envio.estadoActual().equalsIgnoreCase("Solicitado") ||
+                                 envio.estadoActual().equalsIgnoreCase("En Bodega")))
                         .collect(Collectors.toList())
         );
     }
@@ -131,15 +134,49 @@ public class UsuarioPagarEnvioViewController {
             return;
         }
 
-        Factura factura = modelFactory.getEnvioServices().pagarEnvio(envioSeleccionado.idEnvio(), metodoPagoSeleccionado);
+        // Obtener el estado actual del envío desde el modelo para verificar si ya fue pagado o no existe
+        EnvioDto originalEnvioInModel = modelFactory.getEnvioServices().obtenerEnvioDto(envioSeleccionado.id());
 
-        if (factura != null) {
+        if (originalEnvioInModel == null) {
+            mostrarMensaje("Error de Pago", "El envío seleccionado no se encontró en el sistema.", "", Alert.AlertType.ERROR);
+            return;
+        }
+        if (originalEnvioInModel.pago()) {
+            mostrarMensaje("Error de Pago", "El envío seleccionado ya ha sido pagado.", "", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Factura facturaGenerada = modelFactory.getEnvioServices().pagarEnvio(envioSeleccionado.id(), metodoPagoSeleccionado);
+
+        if (facturaGenerada != null) {
+            // Crear un nuevo EnvioDto con la factura actualizada
+            EnvioDto envioActualizado = new EnvioDto(
+                    envioSeleccionado.id(),
+                    envioSeleccionado.fechaCreacion(),
+                    envioSeleccionado.fechaEntrega(),
+                    envioSeleccionado.direccionOrigen(),
+                    envioSeleccionado.direccionDestino(),
+                    envioSeleccionado.estadoActual(), // Mantener el estado actual del envío
+                    envioSeleccionado.peso(),
+                    envioSeleccionado.largo(),
+                    envioSeleccionado.ancho(),
+                    envioSeleccionado.alto(),
+                    envioSeleccionado.costo(),
+                    envioSeleccionado.repartidorAsignado(),
+                    true, // Marcar como pagado
+                    envioSeleccionado.ultimaIncidenciaDescripcion(),
+                    modelFactory.getMapper().facturaToFacturaDto(facturaGenerada) // Asignar la factura generada
+            );
+
+            // Actualizar el envío en el modelo
+            modelFactory.getEnvioServices().actualizarEnvio(envioActualizado);
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/envio/usuario/UsuarioComprobantePago.fxml"));
                 Parent root = loader.load();
 
                 UsuarioComprobantePagoViewController controller = loader.getController();
-                controller.init(factura, envioSeleccionado);
+                controller.init(facturaGenerada, envioActualizado); // Pasar el envioActualizado
 
                 Stage stage = new Stage();
                 stage.initModality(Modality.APPLICATION_MODAL);
@@ -159,7 +196,8 @@ public class UsuarioPagarEnvioViewController {
             cargarEnviosPendientes();
             tableEnviosPendientes.getSelectionModel().clearSelection();
         } else {
-            mostrarMensaje("Error de Pago", "No se pudo procesar el pago. El envío ya podría estar pagado o no existe.", "", Alert.AlertType.ERROR);
+            // Este bloque else solo debería alcanzarse si hay un problema inesperado
+            mostrarMensaje("Error de Pago", "No se pudo procesar el pago por una razón desconocida.", "", Alert.AlertType.ERROR);
         }
     }
 

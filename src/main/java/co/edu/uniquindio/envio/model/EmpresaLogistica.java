@@ -122,7 +122,7 @@ public class EmpresaLogistica {
     // --- Lógica de Negocio para Envios ---
     public boolean agregarEnvio(String idUsuario, Envio envio) {
         Usuario usuario = obtenerUsuario(idUsuario);
-        if (usuario == null || envio == null || obtenerEnvio(envio.getIdEnvio()) != null) {
+        if (usuario == null || envio == null || obtenerEnvio(envio.getId()) != null) {
             return false;
         }
         getListaEnvios().add(envio);
@@ -145,19 +145,20 @@ public class EmpresaLogistica {
 
     public boolean actualizarEnvio(Envio envioActualizado) {
         if (envioActualizado == null) return false;
-        Envio envioEncontrado = obtenerEnvio(envioActualizado.getIdEnvio());
+        Envio envioEncontrado = obtenerEnvio(envioActualizado.getId());
         if (envioEncontrado != null) {
-            envioEncontrado.setFecha(envioActualizado.getFecha());
-            envioEncontrado.setFechaEntregaEstimada(envioActualizado.getFechaEntregaEstimada());
-            envioEncontrado.setOrigen(envioActualizado.getOrigen());
-            envioEncontrado.setDestino(envioActualizado.getDestino());
-            envioEncontrado.setEstado(envioActualizado.getEstado());
+            envioEncontrado.setFechaCreacion(envioActualizado.getFechaCreacion());
+            envioEncontrado.setFechaEntrega(envioActualizado.getFechaEntrega());
+            envioEncontrado.setDireccionOrigen(envioActualizado.getDireccionOrigen());
+            envioEncontrado.setDireccionDestino(envioActualizado.getDireccionDestino());
+            envioEncontrado.setEstadoActual(envioActualizado.getEstadoActual());
             envioEncontrado.setPeso(envioActualizado.getPeso());
             envioEncontrado.setLargo(envioActualizado.getLargo());
             envioEncontrado.setAncho(envioActualizado.getAncho());
             envioEncontrado.setAlto(envioActualizado.getAlto());
             envioEncontrado.setCosto(envioActualizado.getCosto());
-            envioEncontrado.setPago(envioActualizado.getPago());
+            envioEncontrado.setPago(envioActualizado.getPago()); // Actualizar el estado de pago
+            envioEncontrado.setFactura(envioActualizado.getFactura()); // Actualizar la factura
             return true;
         }
         return false;
@@ -165,7 +166,7 @@ public class EmpresaLogistica {
 
     public Envio obtenerEnvio(String idEnvio) {
         return getListaEnvios().stream()
-                .filter(e -> e.getIdEnvio().equalsIgnoreCase(idEnvio))
+                .filter(e -> e.getId().equalsIgnoreCase(idEnvio))
                 .findFirst()
                 .orElse(null);
     }
@@ -178,18 +179,41 @@ public class EmpresaLogistica {
     public Factura pagarEnvio(String idEnvio, MetodoPago metodoPago) {
         Envio envio = obtenerEnvio(idEnvio);
         if (envio != null && !envio.getPago()) {
-            Factura factura = new Factura(
-                    "fact-" + UUID.randomUUID().toString().substring(0, 4),
-                    LocalDateTime.now(),
-                    envio.getCosto(),
-                    metodoPago
-            );
-            envio.setFactura(factura);
             envio.setPago(true);
+            Factura factura = new Factura(UUID.randomUUID().toString(), LocalDateTime.now(), envio.getCosto(), metodoPago);
+            envio.setFactura(factura); // Asignar la factura al envío
             return factura;
         }
         return null;
     }
+
+
+    // --- Lógica de Negocio para Asignaciones e Incidencias ---
+
+    public void asignarEnvio(Envio envio, Repartidor repartidor) {
+        Envio envioEncontrado = obtenerEnvio(envio.getId());
+        if (envioEncontrado != null) {
+            envioEncontrado.setRepartidorAsignado(repartidor);
+            envioEncontrado.setEstadoActual("Asignado");
+        }
+    }
+
+    public void reasignarEnvio(Envio envio, Repartidor nuevoRepartidor) {
+        Envio envioEncontrado = obtenerEnvio(envio.getId());
+        if (envioEncontrado != null) {
+            envioEncontrado.setRepartidorAsignado(nuevoRepartidor);
+            envioEncontrado.setEstadoActual("Reasignado"); // O el estado que corresponda
+        }
+    }
+
+    public void registrarIncidencia(Envio envio, Incidencia incidencia) {
+        Envio envioEncontrado = obtenerEnvio(envio.getId());
+        if (envioEncontrado != null) {
+            envioEncontrado.getIncidencias().add(incidencia);
+            envioEncontrado.setEstadoActual("Incidencia");
+        }
+    }
+
 
     // --- Lógica de Negocio para Direcciones y Métodos de Pago ---
     public List<Direccion> obtenerDireccionesUsuario(String idUsuario) {

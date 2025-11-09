@@ -86,10 +86,10 @@ public class UsuarioConsultarComprobantesViewController {
     }
 
     private void initDataBinding() {
-        tcIdPago.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().factura().getIdFactura()));
-        tcMonto.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("$%,.2f", cellData.getValue().factura().getMonto())));
-        tcFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().factura().getFecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
-        tcMetodo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().factura().getMetodoPago().getTipo()));
+        tcIdPago.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().factura().idFactura()));
+        tcMonto.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("$%,.2f", cellData.getValue().factura().monto())));
+        tcFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().factura().fecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
+        tcMetodo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().factura().metodoPago().tipo()));
         tcResultado.setCellValueFactory(cellData -> new SimpleStringProperty("Exitoso"));
     }
 
@@ -111,7 +111,7 @@ public class UsuarioConsultarComprobantesViewController {
             return false;
         }
 
-        LocalDate fechaFactura = envio.factura().getFecha().toLocalDate();
+        LocalDate fechaFactura = envio.factura().fecha().toLocalDate();
         boolean despuesDeInicio = (fechaInicio == null) || !fechaFactura.isBefore(fechaInicio);
         boolean antesDeFin = (fechaFin == null) || !fechaFactura.isAfter(fechaFin);
 

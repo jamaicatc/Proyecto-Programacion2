@@ -50,9 +50,6 @@ public class UsuarioRastrearEnvioViewController {
     private TableColumn<EnvioDto, String> tcEstado;
 
     @FXML
-    private TableColumn<EnvioDto, String> tcIncidencia;
-
-    @FXML
     private TextField txtNumeroSeguimiento;
 
     @FXML
@@ -80,12 +77,11 @@ public class UsuarioRastrearEnvioViewController {
 
     private void initDataBinding() {
         tableHistorial.setItems(listaEnvios);
-        tcOrigen.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().origen()));
-        tcDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().destino()));
-        tcFechaCreacion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
-        tcFechaLlegada.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaEntregaEstimada().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
-        tcEstado.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().estado()));
-        tcIncidencia.setCellValueFactory(cellData -> new SimpleStringProperty("")); // No hay campo de incidencia en EnvioDto
+        tcOrigen.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().direccionOrigen()));
+        tcDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().direccionDestino()));
+        tcFechaCreacion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaCreacion().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+        tcFechaLlegada.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaEntrega().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+        tcEstado.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().estadoActual()));
     }
 
     private void mostrarMensaje(String titulo, String header, String contenido, Alert.AlertType alertType) {
