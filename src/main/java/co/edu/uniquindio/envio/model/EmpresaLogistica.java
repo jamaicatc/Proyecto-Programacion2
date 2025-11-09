@@ -80,6 +80,8 @@ public class EmpresaLogistica {
             usuarioEncontrado.setNombreCompleto(usuarioActualizado.getNombreCompleto());
             usuarioEncontrado.setCorreo(usuarioActualizado.getCorreo());
             usuarioEncontrado.setTelefono(usuarioActualizado.getTelefono());
+            usuarioEncontrado.setUsuario(usuarioActualizado.getUsuario());
+            usuarioEncontrado.setContrasena(usuarioActualizado.getContrasena());
             return true;
         }
         return false;
@@ -112,8 +114,13 @@ public class EmpresaLogistica {
         if (repartidorActualizado == null) return false;
         Repartidor repartidorExistente = obtenerRepartidor(repartidorActualizado.getIdRepartidor());
         if (repartidorExistente != null) {
-            int index = listaRepartidores.indexOf(repartidorExistente);
-            listaRepartidores.set(index, repartidorActualizado);
+            repartidorExistente.setNombre(repartidorActualizado.getNombre());
+            repartidorExistente.setDocumento(repartidorActualizado.getDocumento());
+            repartidorExistente.setTelefono(repartidorActualizado.getTelefono());
+            repartidorExistente.setUsuario(repartidorActualizado.getUsuario());
+            repartidorExistente.setContrasena(repartidorActualizado.getContrasena());
+            repartidorExistente.setDisponibilidad(repartidorActualizado.getDisponibilidad());
+            repartidorExistente.setZonaCobertura(repartidorActualizado.getZonaCobertura());
             return true;
         }
         return false;
@@ -127,6 +134,13 @@ public class EmpresaLogistica {
         }
         getListaEnvios().add(envio);
         usuario.getEnvios().add(envio);
+        // Si el envío ya tiene un repartidor asignado al crearse, lo añadimos a su lista
+        if (envio.getRepartidorAsignado() != null) {
+            Repartidor repartidorOriginal = obtenerRepartidor(envio.getRepartidorAsignado().getIdRepartidor());
+            if (repartidorOriginal != null) {
+                repartidorOriginal.getEnviosAsignados().add(envio);
+            }
+        }
         return true;
     }
 
@@ -137,6 +151,10 @@ public class EmpresaLogistica {
             // Eliminar la referencia del envío en todos los usuarios
             for (Usuario usuario : listaUsuarios) {
                 usuario.getEnvios().remove(envioEncontrado);
+            }
+            // Eliminar la referencia del envío en el repartidor asignado
+            if (envioEncontrado.getRepartidorAsignado() != null) {
+                envioEncontrado.getRepartidorAsignado().getEnviosAsignados().remove(envioEncontrado);
             }
             return true;
         }
@@ -191,18 +209,35 @@ public class EmpresaLogistica {
     // --- Lógica de Negocio para Asignaciones e Incidencias ---
 
     public void asignarEnvio(Envio envio, Repartidor repartidor) {
-        Envio envioEncontrado = obtenerEnvio(envio.getId());
-        if (envioEncontrado != null) {
-            envioEncontrado.setRepartidorAsignado(repartidor);
-            envioEncontrado.setEstadoActual("Asignado");
+        Envio envioOriginal = obtenerEnvio(envio.getId());
+        Repartidor repartidorOriginal = obtenerRepartidor(repartidor.getIdRepartidor());
+
+        if (envioOriginal != null && repartidorOriginal != null) {
+            envioOriginal.setRepartidorAsignado(repartidorOriginal);
+            envioOriginal.setEstadoActual("Asignado");
+            if (!repartidorOriginal.getEnviosAsignados().contains(envioOriginal)) {
+                repartidorOriginal.getEnviosAsignados().add(envioOriginal);
+            }
         }
     }
 
     public void reasignarEnvio(Envio envio, Repartidor nuevoRepartidor) {
-        Envio envioEncontrado = obtenerEnvio(envio.getId());
-        if (envioEncontrado != null) {
-            envioEncontrado.setRepartidorAsignado(nuevoRepartidor);
-            envioEncontrado.setEstadoActual("Reasignado"); // O el estado que corresponda
+        Envio envioOriginal = obtenerEnvio(envio.getId());
+        Repartidor nuevoRepartidorOriginal = obtenerRepartidor(nuevoRepartidor.getIdRepartidor());
+
+        if (envioOriginal != null && nuevoRepartidorOriginal != null) {
+            // Quitar el envío del repartidor anterior, si existe
+            Repartidor repartidorAnterior = envioOriginal.getRepartidorAsignado();
+            if (repartidorAnterior != null) {
+                repartidorAnterior.getEnviosAsignados().remove(envioOriginal);
+            }
+            // Asignar el nuevo repartidor al envío
+            envioOriginal.setRepartidorAsignado(nuevoRepartidorOriginal);
+            envioOriginal.setEstadoActual("Reasignado");
+            // Añadir el envío a la lista del nuevo repartidor
+            if (!nuevoRepartidorOriginal.getEnviosAsignados().contains(envioOriginal)) {
+                nuevoRepartidorOriginal.getEnviosAsignados().add(envioOriginal);
+            }
         }
     }
 

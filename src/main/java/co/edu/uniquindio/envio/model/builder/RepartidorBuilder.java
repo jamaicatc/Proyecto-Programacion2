@@ -7,6 +7,8 @@ public class RepartidorBuilder {
     private String nombre;
     private String documento;
     private String telefono;
+    private String usuario;
+    private String contrasena;
     private String disponibilidad;
     private String zonaCobertura;
 
@@ -30,6 +32,16 @@ public class RepartidorBuilder {
         return this;
     }
 
+    public RepartidorBuilder setUsuario(String usuario){
+        this.usuario = usuario;
+        return this;
+    }
+
+    public RepartidorBuilder setContrasena(String contrasena){
+        this.contrasena = contrasena;
+        return this;
+    }
+
     public RepartidorBuilder setDisponibilidad(String disponibilidad){
         this.disponibilidad = disponibilidad;
         return this;
@@ -41,6 +53,6 @@ public class RepartidorBuilder {
     }
 
     public Repartidor build(){
-        return new Repartidor(idRepartidor, nombre, documento, telefono,disponibilidad,zonaCobertura);
+        return new Repartidor(idRepartidor, nombre, documento, telefono, usuario, contrasena, disponibilidad,zonaCobertura);
     }
 }

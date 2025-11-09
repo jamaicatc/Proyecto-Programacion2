@@ -4,8 +4,8 @@ import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
 import co.edu.uniquindio.envio.mapping.dto.MetodoPagoDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
+import co.edu.uniquindio.envio.model.Usuario;
 import co.edu.uniquindio.envio.services.IUsuarioServices;
-import co.edu.uniquindio.envio.utils.DataUtil;
 
 import java.util.List;
 
@@ -70,8 +70,15 @@ public class UsuarioController {
         return usuarioServices.eliminarMetodoPago(idUsuario, aliasMetodoPago);
     }
 
-    public static boolean validarCredencialesUsuario(String usuario, String contrasena, String rol){
-        return usuario.equals(DataUtil.USUARIO_USUARIO) && contrasena.equals(DataUtil.USUARIO_CONTRASENA) && rol.equals(DataUtil.USUARIO_ROL);
+    public boolean validarCredencialesUsuario(String usuario, String contrasena) {
+        ModelFactory modelFactory = ModelFactory.getInstance();
+        for (UsuarioDto uDto : modelFactory.obtenerUsuarios()) {
+            if (uDto.usuario().equals(usuario) && uDto.contrasena().equals(contrasena)) {
+                Usuario usuarioEncontrado = modelFactory.obtenerUsuarioOriginal(uDto.idUsuario());
+                modelFactory.setUsuarioActual(usuarioEncontrado);
+                return true;
+            }
+        }
+        return false;
     }
-
 }

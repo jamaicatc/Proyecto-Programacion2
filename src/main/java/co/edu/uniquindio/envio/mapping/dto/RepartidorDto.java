@@ -5,6 +5,8 @@ public record RepartidorDto(
         String nombre,
         String documento,
         String telefono,
+        String usuario,
+        String contrasena,
         String zona,
         String disponibilidad) {
 }

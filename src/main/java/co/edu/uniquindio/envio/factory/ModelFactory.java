@@ -13,6 +13,7 @@ import co.edu.uniquindio.envio.utils.DataUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,8 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     private final EmpresaLogistica empresaLogistica;
     private final EmpresaLogisticaMappingImpl mapper;
     private final List<DataUpdateListener> listeners = new ArrayList<>();
+    private Object usuarioActual;
+
 
     public static SimpleBooleanProperty datosActualizadosProperty = new SimpleBooleanProperty(false);
 
@@ -46,6 +49,14 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
         return modelFactory;
     }
 
+    public Object getUsuarioActual() {
+        return usuarioActual;
+    }
+
+    public void setUsuarioActual(Object usuarioActual) {
+        this.usuarioActual = usuarioActual;
+    }
+
     public IUsuarioServices getUsuarioServices() {
         return this;
     }
@@ -61,6 +72,14 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     @Override
     public List<UsuarioDto> obtenerUsuarios() {
         return mapper.getUsuariosDto(empresaLogistica.getListaUsuarios());
+    }
+
+    public Usuario obtenerUsuarioOriginal(String idUsuario) {
+        return empresaLogistica.obtenerUsuario(idUsuario);
+    }
+    
+    public Repartidor obtenerRepartidorOriginal(String idRepartidor) {
+        return empresaLogistica.obtenerRepartidor(idRepartidor);
     }
 
     @Override
@@ -228,10 +247,14 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
 
     @Override
     public List<EnvioDto> obtenerEnviosPorRepartidor(RepartidorDto repartidorDto) {
-        Repartidor repartidor = mapper.repartidorDtoToRepartidor(repartidorDto);
-        return mapper.getEnviosDto(empresaLogistica.getListaEnvios().stream()
-                .filter(envio -> repartidor.equals(envio.getRepartidorAsignado()))
-                .collect(Collectors.toList()));
+        if (repartidorDto == null) {
+            return Collections.emptyList();
+        }
+        Repartidor repartidor = obtenerRepartidorOriginal(repartidorDto.idRepartidor());
+        if (repartidor != null) {
+            return mapper.getEnviosDto(repartidor.getEnviosAsignados());
+        }
+        return Collections.emptyList();
     }
 
     public double calcularTarifa(Envio envio, ITarifaStrategy estrategia) {

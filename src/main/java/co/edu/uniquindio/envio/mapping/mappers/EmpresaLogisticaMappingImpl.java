@@ -27,7 +27,9 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 usuario.getIdUsuario(),
                 usuario.getNombreCompleto(),
                 usuario.getCorreo(),
-                usuario.getTelefono()
+                usuario.getTelefono(),
+                usuario.getUsuario(),
+                usuario.getContrasena()
         );
     }
 
@@ -38,7 +40,9 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 usuarioDto.idUsuario(),
                 usuarioDto.nombreCompleto(),
                 usuarioDto.correo(),
-                usuarioDto.telefono()
+                usuarioDto.telefono(),
+                usuarioDto.usuario(),
+                usuarioDto.contrasena()
         );
     }
 
@@ -60,6 +64,8 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 repartidor.getNombre(),
                 repartidor.getDocumento(),
                 repartidor.getTelefono(),
+                repartidor.getUsuario(),
+                repartidor.getContrasena(),
                 repartidor.getZonaCobertura(),
                 repartidor.getDisponibilidad()
         );
@@ -73,6 +79,8 @@ public class EmpresaLogisticaMappingImpl implements IEmpresaLogisticaMapping {
                 repartidorDto.nombre(),
                 repartidorDto.documento(),
                 repartidorDto.telefono(),
+                repartidorDto.usuario(),
+                repartidorDto.contrasena(),
                 repartidorDto.disponibilidad(),
                 repartidorDto.zona()
         );

@@ -155,7 +155,22 @@ public class AdminRepartidoresViewController implements DataUpdateListener {
     }
 
     private void agregarRepartidor() {
-        RepartidorDto repartidorDto = crearRepartidorDto();
+        // 1. Recoger datos del formulario
+        String id = txtIdRepartidor.getText();
+        String nombre = txtNombre.getText();
+        String documento = txtDocumento.getText();
+        String telefono = txtTelefono.getText();
+        String zona = txtZona.getText();
+        String disponibilidad = cmbDisponibilidad.getValue();
+
+        // 2. Generar credenciales por defecto
+        String usuario = nombre.split(" ")[0].toLowerCase();
+        String contrasena = "password123";
+
+        // 3. Crear el DTO
+        RepartidorDto repartidorDto = new RepartidorDto(id, nombre, documento, telefono, usuario, contrasena, zona, disponibilidad);
+
+        // 4. Validar y agregar
         if (datosValidos(repartidorDto)) {
             if (modelFactory.agregarRepartidor(repartidorDto)) {
                 limpiarCampos();
@@ -181,7 +196,22 @@ public class AdminRepartidoresViewController implements DataUpdateListener {
 
     private void actualizarRepartidor() {
         if (repartidorSeleccionado != null) {
-            RepartidorDto repartidorDto = crearRepartidorDto();
+            // 1. Recoger datos del formulario
+            String id = txtIdRepartidor.getText();
+            String nombre = txtNombre.getText();
+            String documento = txtDocumento.getText();
+            String telefono = txtTelefono.getText();
+            String zona = txtZona.getText();
+            String disponibilidad = cmbDisponibilidad.getValue();
+
+            // 2. Preservar credenciales existentes
+            String usuario = repartidorSeleccionado.usuario();
+            String contrasena = repartidorSeleccionado.contrasena();
+
+            // 3. Crear el DTO
+            RepartidorDto repartidorDto = new RepartidorDto(id, nombre, documento, telefono, usuario, contrasena, zona, disponibilidad);
+
+            // 4. Validar y actualizar
             if (datosValidos(repartidorDto)) {
                 if (modelFactory.actualizarRepartidor(repartidorDto)) {
                     limpiarCampos();
@@ -212,17 +242,6 @@ public class AdminRepartidoresViewController implements DataUpdateListener {
         txtTelefono.setText("");
         txtZona.setText("");
         cmbDisponibilidad.setValue(null);
-    }
-
-    private RepartidorDto crearRepartidorDto() {
-        return new RepartidorDto(
-                txtIdRepartidor.getText(),
-                txtNombre.getText(),
-                txtDocumento.getText(),
-                txtTelefono.getText(),
-                txtZona.getText(),
-                cmbDisponibilidad.getValue()
-        );
     }
 
     private boolean datosValidos(RepartidorDto repartidorDto) {

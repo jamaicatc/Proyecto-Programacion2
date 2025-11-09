@@ -10,6 +10,8 @@ public class Usuario {
     private String nombreCompleto;
     private String correo;
     private String telefono;
+    private String usuario;
+    private String contrasena;
     private Map<String, Direccion> direccionesFrecuentes;
     private HashMap<String, MetodoPago> metodosPago;
     private List<Envio> envios;
@@ -20,12 +22,30 @@ public class Usuario {
         this.envios = new ArrayList<>();
     }
 
-    public Usuario(String idUsuario, String nombreCompleto, String correo, String telefono) {
+    public Usuario(String idUsuario, String nombreCompleto, String correo, String telefono, String usuario, String contrasena) {
         this();
         this.idUsuario = idUsuario;
         this.nombreCompleto = nombreCompleto;
         this.correo = correo;
         this.telefono = telefono;
+        this.usuario = usuario;
+        this.contrasena = contrasena;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
     public String getIdUsuario() {

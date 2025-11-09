@@ -12,17 +12,25 @@ public class DataUtil {
     public static final String USUARIO_CONTRASENA = "user123";
     public static final String USUARIO_ROL = "Usuario";
     public static final String REPARTIDOR_USUARIO = "oscar";
-    public static final String REPARTIDOR_CONTRASENA = "repartidor123";
+    public static final String REPARTIDOR_CONTRASENA = "r123";
     public static final String REPARTIDOR_ROL = "Repartidor";
 
 
     public static EmpresaLogistica inicializarDatos() {
         EmpresaLogistica empresaLogistica = new EmpresaLogistica();
-        Usuario usuario1 = new Usuario("1234","Santiago Trujillo","santi@gmail.com","3145822540");
-        Usuario usuario2 = new Usuario("2245","Juan David","juancho@gmail.com","3235878540");
-        Usuario usuario3 = new Usuario("4871","Robinson","robin@gmail.com","3505824871");
 
-        // Agregando direcciones para Juan David
+        // Creación de usuarios con credenciales de inicio de sesión
+        Usuario usuario1 = new Usuario("1234", "Santiago Trujillo", "santi@gmail.com", "3145822540", ADMIN_USUARIO, ADMIN_CONTRASENA);
+        Usuario usuario2 = new Usuario("2245", "Juan David", "juancho@gmail.com", "3235878540", USUARIO_USUARIO, USUARIO_CONTRASENA);
+        Usuario usuario3 = new Usuario("4871", "Robinson", "robin@gmail.com", "3505824871", "robin", "robin123");
+
+        // Creación de repartidores con credenciales de inicio de sesión
+        Repartidor repartidor1 = new Repartidor("repartidor1", "Jhon Oscar", "1094556789", "3146789012", REPARTIDOR_USUARIO, REPARTIDOR_CONTRASENA, "Activo", "Armenia");
+        Repartidor repartidor2 = new Repartidor("repartidor2", "Juan David Cardona", "1092345678", "3112345678", "juanc", "juanc123", "En ruta", "Armenia");
+        Repartidor repartidor3 = new Repartidor("repartidor3", "Amerika Esmeralda", "1098765432", "35025401891", "ame", "ame123", "Inactivo", "Montenegro");
+
+
+        // Agregando direcciones para Juan David (usuario2)
         Direccion direccion1 = new Direccion("dir1", "Casa", "Calle 15 #23-45", "Armenia", "4.5467,-75.6673");
         Direccion direccion2 = new Direccion("dir2", "Trabajo", "Carrera 19 #12-34", "Armenia", "4.5412,-75.6721");
         Direccion direccion3 = new Direccion("dir3", "Universidad", "Calle 12 #15-00", "Armenia", "4.5534,-75.6589");
@@ -31,17 +39,14 @@ public class DataUtil {
         usuario2.getDireccionesFrecuentes().put("Trabajo", direccion2);
         usuario2.getDireccionesFrecuentes().put("Universidad", direccion3);
 
-        // Agregando métodos de pago para Juan David
+        // Agregando métodos de pago para Juan David (usuario2)
         MetodoPago metodoPago1 = new MetodoPago("Principal", "**** 1234", "Tarjeta de Crédito");
         MetodoPago metodoPago2 = new MetodoPago("Secundaria", "PSE", "Cuenta de Ahorros");
         usuario2.getMetodosPago().put("Principal", metodoPago1);
         usuario2.getMetodosPago().put("Secundaria", metodoPago2);
 
-        Repartidor repartidor1 = new Repartidor("1234", "juan", "4455", "311", "Activo", "Armenia");
-        Repartidor repartidor2 = new Repartidor("7788", "jose", "7610", "314", "En ruta", "Calarcá");
-        Repartidor repartidor3 = new Repartidor("2971", "isabela", "1098", "350", "Inactivo", "Circasia");
 
-        // Agregando envíos para Juan David
+        // Creación de envíos
         Envio envio1 = new Envio("env1", LocalDate.now(), LocalDate.now().plusDays(3), "Casa", "Trabajo", "Solicitado", 2.5, 30, 20, 10, 13250.0, repartidor1, false);
         envio1.getHistorial().add("2024-05-20 10:00 - Envío creado");
         Envio envio2 = new Envio("env2", LocalDate.now().minusDays(1), LocalDate.now().plusDays(2), "Universidad", "Casa", "Entregado", 1.0, 20, 15, 5, 3500.0, null, false);
@@ -58,13 +63,19 @@ public class DataUtil {
         envio5.getHistorial().add("2024-05-20 15:00 - Envío creado");
         envio5.getHistorial().add("2024-05-21 09:00 - En bodega");
 
+        // Asociar envíos a los repartidores (¡ESTA ES LA PARTE QUE FALTABA!)
+        repartidor1.getEnviosAsignados().add(envio1);
+        repartidor1.getEnviosAsignados().add(envio5);
+        repartidor2.getEnviosAsignados().add(envio3);
 
+        // Asociar envíos al usuario
         usuario2.getEnvios().add(envio1);
         usuario2.getEnvios().add(envio2);
         usuario2.getEnvios().add(envio3);
         usuario2.getEnvios().add(envio4);
         usuario2.getEnvios().add(envio5);
 
+        // Agregar repartidores y usuarios a la empresa
         empresaLogistica.getListaRepartidores().add(repartidor1);
         empresaLogistica.getListaRepartidores().add(repartidor2);
         empresaLogistica.getListaRepartidores().add(repartidor3);
@@ -72,7 +83,7 @@ public class DataUtil {
         empresaLogistica.getListaUsuarios().add(usuario2);
         empresaLogistica.getListaUsuarios().add(usuario3);
 
-        // Agregando todos los envíos a la lista general de envíos de la empresa
+        // Agregar todos los envíos a la lista general de envíos de la empresa
         empresaLogistica.getListaEnvios().add(envio1);
         empresaLogistica.getListaEnvios().add(envio2);
         empresaLogistica.getListaEnvios().add(envio3);

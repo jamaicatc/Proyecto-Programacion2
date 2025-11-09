@@ -1,10 +1,8 @@
 package co.edu.uniquindio.envio.viewcontroller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import co.edu.uniquindio.envio.controller.UsuarioController;
+import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
+import co.edu.uniquindio.envio.model.observer.DataUpdateListener;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,11 +10,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
 
-public class AdminUsuariosViewController {
+public class AdminUsuariosViewController implements DataUpdateListener {
 
-    UsuarioController usuarioController;
+    ModelFactory modelFactory;
     ObservableList<UsuarioDto> listaUsuarios = FXCollections.observableArrayList();
     UsuarioDto usuarioSeleccionado;
 
@@ -67,7 +68,8 @@ public class AdminUsuariosViewController {
 
     @FXML
     void initialize() {
-        usuarioController = new UsuarioController();
+        modelFactory = ModelFactory.getInstance();
+        modelFactory.addDataUpdateListener(this);
         initView();
     }
 
@@ -102,7 +104,7 @@ public class AdminUsuariosViewController {
     }
 
     private void obtenerUsuarios() {
-        listaUsuarios.addAll(usuarioController.obtenerUsuarios());
+        listaUsuarios.setAll(modelFactory.obtenerUsuarios());
     }
 
     private void initDataBinding() {
@@ -120,12 +122,24 @@ public class AdminUsuariosViewController {
     }
 
     private void agregarUsuario() {
-        UsuarioDto usuarioDto = crearUsuarioDto();
+        // 1. Recoger datos del formulario
+        String id = txtIdUsuario.getText();
+        String nombre = txtNombreCompleto.getText();
+        String correo = txtCorreo.getText();
+        String telefono = txtTelefono.getText();
+
+        // 2. Generar credenciales por defecto
+        String usuario = nombre.split(" ")[0].toLowerCase(); // Tomar el primer nombre como usuario
+        String contrasena = "password123"; // Contraseña por defecto
+
+        // 3. Crear el DTO
+        UsuarioDto usuarioDto = new UsuarioDto(id, nombre, correo, telefono, usuario, contrasena);
+
+        // 4. Validar y agregar
         if(datosValidos(usuarioDto)){
-            if(usuarioController.agregarUsuario(usuarioDto)){
-                listaUsuarios.addAll(usuarioDto);
-                limpiarCampos();
+            if(modelFactory.agregarUsuario(usuarioDto)){
                 mostrarMensaje(TITULO_USUARIO_AGREGADO, HEADER_NOTIFICACION, BODY_USUARIO_AGREGADO, Alert.AlertType.INFORMATION);
+                limpiarCampos();
             }else{
                 mostrarMensaje(TITULO_USUARIO_NO_AGREGADO, HEADER_NOTIFICACION, BODY_USUARIO_NO_AGREGADO ,Alert.AlertType.ERROR);
             }
@@ -136,10 +150,9 @@ public class AdminUsuariosViewController {
 
     private void eliminarUsuario() {
         if(usuarioSeleccionado != null){
-            if(usuarioController.eliminarUsuario(usuarioSeleccionado.idUsuario())){
-                listaUsuarios.remove(usuarioSeleccionado);
-                limpiarCampos();
+            if(modelFactory.eliminarUsuario(usuarioSeleccionado.idUsuario())){
                 mostrarMensaje(TITULO_USUARIO_ELIMINADO, HEADER_NOTIFICACION, BODY_USUARIO_ELIMINADO,Alert.AlertType.INFORMATION);
+                limpiarCampos();
             }else{
                 mostrarMensaje(TITULO_USUARIO_NO_ELIMINADO, HEADER_NOTIFICACION, BODY_USUARIO_NO_ELIMINADO,Alert.AlertType.ERROR);
             }
@@ -148,12 +161,24 @@ public class AdminUsuariosViewController {
 
     private void actualizarUsuario() {
         if(usuarioSeleccionado != null){
-            UsuarioDto usuarioDto = crearUsuarioDto();
+            // 1. Recoger datos del formulario
+            String id = txtIdUsuario.getText();
+            String nombre = txtNombreCompleto.getText();
+            String correo = txtCorreo.getText();
+            String telefono = txtTelefono.getText();
+
+            // 2. Preservar credenciales existentes
+            String usuario = usuarioSeleccionado.usuario();
+            String contrasena = usuarioSeleccionado.contrasena();
+
+            // 3. Crear el DTO
+            UsuarioDto usuarioDto = new UsuarioDto(id, nombre, correo, telefono, usuario, contrasena);
+
+            // 4. Validar y actualizar
             if(datosValidos(usuarioDto)){
-                if(usuarioController.actualizarUsuario(usuarioDto)){
-                    actualizarTabla();
-                    limpiarCampos();
+                if(modelFactory.actualizarUsuario(usuarioDto)){
                     mostrarMensaje(TITULO_USUARIO_ACTUALIZADO, HEADER_NOTIFICACION, BODY_USUARIO_ACTUALIZADO, Alert.AlertType.INFORMATION);
+                    limpiarCampos();
                 }else{
                     mostrarMensaje(TITULO_USUARIO_NO_ACTUALIZADO, HEADER_NOTIFICACION, BODY_USUARIO_NO_ACTUALIZADO, Alert.AlertType.ERROR);
                 }
@@ -164,8 +189,8 @@ public class AdminUsuariosViewController {
     }
 
     private void actualizarTabla() {
-        listaUsuarios.clear();
-        listaUsuarios.addAll(usuarioController.obtenerUsuarios());
+        obtenerUsuarios();
+        tableUsuario.refresh();
     }
 
 
@@ -181,19 +206,12 @@ public class AdminUsuariosViewController {
         txtTelefono.setText("");
     }
 
-    private UsuarioDto crearUsuarioDto() {
-        return new UsuarioDto(
-                txtIdUsuario.getText(),
-                txtNombreCompleto.getText(),
-                txtCorreo.getText(),
-                txtTelefono.getText());
-    }
-
     private boolean datosValidos(UsuarioDto usuarioDto) {
-        return !usuarioDto.idUsuario().isBlank() &&
-                !usuarioDto.nombreCompleto().isBlank() &&
-                !usuarioDto.telefono().isBlank() &&
-                !usuarioDto.correo().isBlank();
+        // La validación de credenciales no es necesaria aquí porque se autogeneran o se preservan.
+        return usuarioDto.idUsuario() != null && !usuarioDto.idUsuario().isBlank() &&
+                usuarioDto.nombreCompleto() != null && !usuarioDto.nombreCompleto().isBlank() &&
+                usuarioDto.telefono() != null && !usuarioDto.telefono().isBlank() &&
+                usuarioDto.correo() != null && !usuarioDto.correo().isBlank();
     }
 
     private void mostrarInformacionUsuario(UsuarioDto usuarioSeleccionado) {
@@ -213,5 +231,8 @@ public class AdminUsuariosViewController {
         aler.showAndWait();
     }
 
+    @Override
+    public void onDataChanged() {
+        actualizarTabla();
+    }
 }
-

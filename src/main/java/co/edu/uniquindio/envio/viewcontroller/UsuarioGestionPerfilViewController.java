@@ -5,9 +5,10 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 
 import co.edu.uniquindio.envio.EnvioApplication;
-import co.edu.uniquindio.envio.controller.UsuarioController;
+import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
+import co.edu.uniquindio.envio.model.Usuario;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,7 +21,7 @@ import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
 
 public class UsuarioGestionPerfilViewController {
 
-    UsuarioController usuarioController;
+    ModelFactory modelFactory;
     ObservableList<DireccionDto> listaDirecciones = FXCollections.observableArrayList();
     DireccionDto direccionSeleccionada;
     UsuarioDto usuarioActual;
@@ -69,7 +70,7 @@ public class UsuarioGestionPerfilViewController {
 
     @FXML
     void initialize() {
-        usuarioController = new UsuarioController();
+        modelFactory = ModelFactory.getInstance();
         initView();
     }
 
@@ -89,18 +90,20 @@ public class UsuarioGestionPerfilViewController {
     }
 
     private void cargarDatosUsuario() {
-        // Obtener el usuario Juan David
-        usuarioActual = usuarioController.obtenerUsuarioPorNombre("Juan David");
-        if (usuarioActual != null) {
-            txtNombre.setText(usuarioActual.nombreCompleto());
-            txtCorreo.setText(usuarioActual.correo());
-            txtTelefono.setText(usuarioActual.telefono());
+        Object usuarioSesion = modelFactory.getUsuarioActual();
+        if (usuarioSesion instanceof Usuario) {
+            usuarioActual = modelFactory.getMapper().usuarioToUsuarioDto((Usuario) usuarioSesion);
+            if (usuarioActual != null) {
+                txtNombre.setText(usuarioActual.nombreCompleto());
+                txtCorreo.setText(usuarioActual.correo());
+                txtTelefono.setText(usuarioActual.telefono());
+            }
         }
     }
 
     private void obtenerDirecciones() {
         if (usuarioActual != null) {
-            listaDirecciones.addAll(usuarioController.obtenerDireccionesUsuario(usuarioActual.idUsuario()));
+            listaDirecciones.addAll(modelFactory.obtenerDireccionesUsuario(usuarioActual.idUsuario()));
         }
     }
 
@@ -138,7 +141,7 @@ public class UsuarioGestionPerfilViewController {
                         ciudad,
                         "0,0" // Coordenadas por defecto
                     );
-                    if (usuarioController.agregarDireccion(usuarioActual.idUsuario(), nuevaDireccion)) {
+                    if (modelFactory.agregarDireccion(usuarioActual.idUsuario(), nuevaDireccion)) {
                         listaDirecciones.add(nuevaDireccion);
                         mostrarMensaje("Dirección agregada", "Notificación", "La dirección se ha agregado correctamente", AlertType.INFORMATION);
                     } else {
@@ -171,7 +174,7 @@ public class UsuarioGestionPerfilViewController {
                         nuevaCiudad,
                         direccionSeleccionada.coordenadas()
                     );
-                    if (usuarioController.actualizarDireccion(usuarioActual.idUsuario(), direccionActualizada)) {
+                    if (modelFactory.actualizarDireccion(usuarioActual.idUsuario(), direccionActualizada)) {
                         actualizarTabla();
                         mostrarMensaje("Dirección actualizada", "Notificación", "La dirección se ha actualizado correctamente", AlertType.INFORMATION);
                     } else {
@@ -194,7 +197,7 @@ public class UsuarioGestionPerfilViewController {
 
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    if (usuarioController.eliminarDireccion(usuarioActual.idUsuario(), direccionSeleccionada.alias())) {
+                    if (modelFactory.eliminarDireccion(usuarioActual.idUsuario(), direccionSeleccionada.alias())) {
                         listaDirecciones.remove(direccionSeleccionada);
                         mostrarMensaje("Dirección eliminada", "Notificación", "La dirección se ha eliminado correctamente", AlertType.INFORMATION);
                     } else {
@@ -209,17 +212,26 @@ public class UsuarioGestionPerfilViewController {
 
     @FXML
     void onGuardarCambios(ActionEvent event) {
+        if (usuarioActual == null) {
+            mostrarMensaje("Error", "Error", "No se ha podido identificar al usuario actual.", AlertType.ERROR);
+            return;
+        }
+
         UsuarioDto usuarioActualizado = new UsuarioDto(
             usuarioActual.idUsuario(),
             txtNombre.getText(),
             txtCorreo.getText(),
-            txtTelefono.getText()
+            txtTelefono.getText(),
+            usuarioActual.usuario(),
+            usuarioActual.contrasena()
         );
 
         if (datosValidos(usuarioActualizado)) {
-            if (usuarioController.actualizarUsuario(usuarioActualizado)) {
+            if (modelFactory.actualizarUsuario(usuarioActualizado)) {
                 mostrarMensaje("Cambios guardados", "Notificación", "Los cambios se han guardado correctamente", AlertType.INFORMATION);
-                usuarioActual = usuarioActualizado;
+                // Actualizar el usuario en sesión en el ModelFactory
+                modelFactory.setUsuarioActual(modelFactory.getMapper().usuarioDtoToUsuario(usuarioActualizado));
+                this.usuarioActual = usuarioActualizado;
             } else {
                 mostrarMensaje("Error", "Error", "No se pudieron guardar los cambios", AlertType.ERROR);
             }
@@ -239,10 +251,12 @@ public class UsuarioGestionPerfilViewController {
     }
 
     private boolean datosValidos(UsuarioDto usuario) {
-        return !usuario.idUsuario().isBlank() &&
-               !usuario.nombreCompleto().isBlank() &&
-               !usuario.correo().isBlank() &&
-               !usuario.telefono().isBlank();
+        // No validamos usuario y contraseña porque no se editan en esta vista
+        return usuario != null &&
+               usuario.idUsuario() != null && !usuario.idUsuario().isBlank() &&
+               usuario.nombreCompleto() != null && !usuario.nombreCompleto().isBlank() &&
+               usuario.correo() != null && !usuario.correo().isBlank() &&
+               usuario.telefono() != null && !usuario.telefono().isBlank();
     }
 
     private void mostrarMensaje(String titulo, String header, String contenido, Alert.AlertType alertType) {
