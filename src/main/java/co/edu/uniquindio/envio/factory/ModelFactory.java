@@ -55,6 +55,7 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
 
     public void setUsuarioActual(Object usuarioActual) {
         this.usuarioActual = usuarioActual;
+        notifyDataChanged(); // Notificar a los oyentes cuando el usuario actual se establece
     }
 
     public IUsuarioServices getUsuarioServices() {
@@ -288,7 +289,12 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
 
     @Override
     public boolean actualizarDireccion(String idUsuario, DireccionDto direccionDto) {
-        return agregarDireccion(idUsuario, direccionDto); // La lógica es la misma: reemplazar o agregar.
+        Direccion direccion = mapper.direccionDtoToDireccion(direccionDto);
+        boolean result = empresaLogistica.actualizarDireccion(idUsuario, direccion);
+        if (result) {
+            notifyDataChanged();
+        }
+        return result;
     }
 
     @Override

@@ -64,19 +64,6 @@
                   </AnchorPane>
               </content>
             </Tab>
-            <Tab text="Visualización de métricas">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="321.0" prefWidth="395.0">
-                      <children>
-                          <SplitPane layoutX="2.0" layoutY="7.0" orientation="VERTICAL" prefHeight="550.0" prefWidth="729.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                              <items>
-                                  <fx:include source="AdminVisualizacionMetricas.fxml" />
-                              </items>
-                          </SplitPane>
-                      </children>
-                  </AnchorPane>
-              </content>
-            </Tab>
             </tabs>
         </TabPane>
       <MenuButton fx:id="menuOpciones" layoutX="701.0" layoutY="13.0" mnemonicParsing="false" text="☰" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="2.0">

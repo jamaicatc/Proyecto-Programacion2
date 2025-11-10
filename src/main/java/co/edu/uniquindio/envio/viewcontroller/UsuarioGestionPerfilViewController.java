@@ -9,6 +9,7 @@ import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.DireccionDto;
 import co.edu.uniquindio.envio.mapping.dto.UsuarioDto;
 import co.edu.uniquindio.envio.model.Usuario;
+import co.edu.uniquindio.envio.model.observer.DataUpdateListener;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,7 +20,7 @@ import javafx.scene.control.Alert.AlertType;
 
 import static co.edu.uniquindio.envio.utils.EmpresaConstantes.*;
 
-public class UsuarioGestionPerfilViewController {
+public class UsuarioGestionPerfilViewController implements DataUpdateListener {
 
     ModelFactory modelFactory;
     ObservableList<DireccionDto> listaDirecciones = FXCollections.observableArrayList();
@@ -71,14 +72,12 @@ public class UsuarioGestionPerfilViewController {
     @FXML
     void initialize() {
         modelFactory = ModelFactory.getInstance();
+        modelFactory.addDataUpdateListener(this);
         initView();
     }
 
     private void initView() {
         initDataBinding();
-        cargarDatosUsuario();
-        obtenerDirecciones();
-        tableDireccionesFrecuentes.getItems().clear();
         tableDireccionesFrecuentes.setItems(listaDirecciones);
         listenerSelection();
     }
@@ -92,17 +91,28 @@ public class UsuarioGestionPerfilViewController {
     private void cargarDatosUsuario() {
         Object usuarioSesion = modelFactory.getUsuarioActual();
         if (usuarioSesion instanceof Usuario) {
-            usuarioActual = modelFactory.getMapper().usuarioToUsuarioDto((Usuario) usuarioSesion);
-            if (usuarioActual != null) {
-                txtNombre.setText(usuarioActual.nombreCompleto());
-                txtCorreo.setText(usuarioActual.correo());
-                txtTelefono.setText(usuarioActual.telefono());
-            }
+            this.usuarioActual = modelFactory.getMapper().usuarioToUsuarioDto((Usuario) usuarioSesion);
+        } else if (usuarioSesion instanceof UsuarioDto) {
+            this.usuarioActual = (UsuarioDto) usuarioSesion;
         }
+        if (usuarioActual != null) {
+            txtNombre.setText(usuarioActual.nombreCompleto());
+            txtCorreo.setText(usuarioActual.correo());
+            txtTelefono.setText(usuarioActual.telefono());
+            obtenerDirecciones();
+        } else {
+            mostrarMensaje("Error", "Error de carga", "No se pudo obtener el usuario de la sesión.", AlertType.ERROR);
+        }
+    }
+
+    @Override
+    public void onDataChanged() {
+        cargarDatosUsuario();
     }
 
     private void obtenerDirecciones() {
         if (usuarioActual != null) {
+            listaDirecciones.clear();
             listaDirecciones.addAll(modelFactory.obtenerDireccionesUsuario(usuarioActual.idUsuario()));
         }
     }
@@ -175,7 +185,13 @@ public class UsuarioGestionPerfilViewController {
                         direccionSeleccionada.coordenadas()
                     );
                     if (modelFactory.actualizarDireccion(usuarioActual.idUsuario(), direccionActualizada)) {
-                        actualizarTabla();
+                        // Solución: Actualizar la lista observable para reflejar el cambio en la UI
+                        int index = listaDirecciones.indexOf(direccionSeleccionada);
+                        if (index != -1) {
+                            listaDirecciones.set(index, direccionActualizada);
+                            tableDireccionesFrecuentes.getSelectionModel().clearSelection();
+                            tableDireccionesFrecuentes.getSelectionModel().select(direccionActualizada);
+                        }
                         mostrarMensaje("Dirección actualizada", "Notificación", "La dirección se ha actualizado correctamente", AlertType.INFORMATION);
                     } else {
                         mostrarMensaje("Error", "Error", "No se pudo actualizar la dirección", AlertType.ERROR);
@@ -229,8 +245,7 @@ public class UsuarioGestionPerfilViewController {
         if (datosValidos(usuarioActualizado)) {
             if (modelFactory.actualizarUsuario(usuarioActualizado)) {
                 mostrarMensaje("Cambios guardados", "Notificación", "Los cambios se han guardado correctamente", AlertType.INFORMATION);
-                // Actualizar el usuario en sesión en el ModelFactory
-                modelFactory.setUsuarioActual(modelFactory.getMapper().usuarioDtoToUsuario(usuarioActualizado));
+                // El objeto en sesión se actualiza por referencia, solo actualizamos el DTO local.
                 this.usuarioActual = usuarioActualizado;
             } else {
                 mostrarMensaje("Error", "Error", "No se pudieron guardar los cambios", AlertType.ERROR);
@@ -243,11 +258,6 @@ public class UsuarioGestionPerfilViewController {
     @FXML
     void onCancelar(ActionEvent event) {
         EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuario);
-    }
-
-    private void actualizarTabla() {
-        listaDirecciones.clear();
-        obtenerDirecciones();
     }
 
     private boolean datosValidos(UsuarioDto usuario) {

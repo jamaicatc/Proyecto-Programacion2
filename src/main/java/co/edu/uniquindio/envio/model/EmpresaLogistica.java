@@ -80,8 +80,6 @@ public class EmpresaLogistica {
             usuarioEncontrado.setNombreCompleto(usuarioActualizado.getNombreCompleto());
             usuarioEncontrado.setCorreo(usuarioActualizado.getCorreo());
             usuarioEncontrado.setTelefono(usuarioActualizado.getTelefono());
-            usuarioEncontrado.setUsuario(usuarioActualizado.getUsuario());
-            usuarioEncontrado.setContrasena(usuarioActualizado.getContrasena());
             return true;
         }
         return false;
@@ -266,7 +264,12 @@ public class EmpresaLogistica {
     }
 
     public boolean actualizarDireccion(String idUsuario, Direccion direccion) {
-        return agregarDireccion(idUsuario, direccion); // La lógica es la misma: reemplazar o agregar.
+        Usuario usuario = obtenerUsuario(idUsuario);
+        if (usuario != null && direccion != null && usuario.getDireccionesFrecuentes().containsKey(direccion.getAlias())) {
+            usuario.getDireccionesFrecuentes().put(direccion.getAlias(), direccion);
+            return true;
+        }
+        return false;
     }
 
     public boolean eliminarDireccion(String idUsuario, String aliasDireccion) {
