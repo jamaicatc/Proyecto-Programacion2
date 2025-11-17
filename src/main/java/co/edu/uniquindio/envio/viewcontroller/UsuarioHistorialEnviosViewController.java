@@ -44,9 +44,8 @@ public class UsuarioHistorialEnviosViewController implements DataUpdateListener 
 
     private final UsuarioController usuarioController = new UsuarioController(ModelFactory.getInstance());
     private final ObservableList<EnvioDto> listaEnvios = FXCollections.observableArrayList();
-    private Usuario usuario; // Este campo se establecerá al inicializar
+    private Usuario usuario;
 
-    // Campos FXML - solo se mantienen los que se usan o tienen manejadores de eventos
     @FXML
     private Button btnGenerarReporteCsv;
 
@@ -249,7 +248,7 @@ public class UsuarioHistorialEnviosViewController implements DataUpdateListener 
         dpFechaDesde.setValue(null);
         dpFechaHasta.setValue(null);
         cmbEstado.setValue(null);
-        cargarEnviosUsuario(); // Recargar todos los envíos del usuario sin filtros
+        cargarEnviosUsuario();
     }
 
     @FXML
@@ -281,7 +280,7 @@ public class UsuarioHistorialEnviosViewController implements DataUpdateListener 
         initTable();
         cmbEstado.setItems(FXCollections.observableArrayList("Solicitado", "Asignado", "En Ruta", "Entregado", "Incidencia"));
         ModelFactory.getInstance().addDataUpdateListener(this);
-        onDataChanged(); // Carga inicial de datos
+        onDataChanged();
     }
 
     private void initTable() {
@@ -300,19 +299,17 @@ public class UsuarioHistorialEnviosViewController implements DataUpdateListener 
             if (enviosDelUsuario != null && !enviosDelUsuario.isEmpty()) {
                 actualizarTabla(enviosDelUsuario);
             } else {
-                actualizarTabla(Collections.emptyList()); // Clear table if no shipments or null list
+                actualizarTabla(Collections.emptyList());
                 mostrarMensaje("Información", "Sin Envíos", "El usuario actual no tiene envíos registrados en su historial.", Alert.AlertType.INFORMATION);
             }
         } else {
-            listaEnvios.clear(); // Clear the table if no user
-            mostrarMensaje("Advertencia", "Usuario no disponible", "No se puede cargar el historial de envíos porque no hay un usuario logueado.", Alert.AlertType.WARNING);
+            listaEnvios.clear();
         }
     }
 
     private void actualizarTabla(List<EnvioDto> envios) {
         listaEnvios.clear();
         listaEnvios.addAll(envios);
-        // Forzar un refresco de la tabla si es necesario, aunque setItems debería ser suficiente
         tableEnvios.refresh();
     }
 
@@ -322,7 +319,6 @@ public class UsuarioHistorialEnviosViewController implements DataUpdateListener 
             return;
         }
 
-        // Obtener todos los envíos del usuario y luego aplicar los filtros
         List<EnvioDto> enviosBase = usuarioController.obtenerEnvios(usuario.getIdUsuario());
         List<EnvioDto> enviosFiltrados = enviosBase;
 
@@ -360,13 +356,17 @@ public class UsuarioHistorialEnviosViewController implements DataUpdateListener 
 
     @Override
     public void onDataChanged() {
-        Object usuarioLogueado = ModelFactory.getInstance().getUsuarioActual();
-        if (usuarioLogueado instanceof Usuario) {
+        ModelFactory factory = ModelFactory.getInstance();
+        Object usuarioLogueado = factory.getUsuarioActual();
+
+        // Condición para actuar: que haya un usuario logueado, pero que NO sea ni admin ni repartidor.
+        if (usuarioLogueado instanceof Usuario && factory.getAdministradorActual() == null && factory.getRepartidorActual() == null) {
             this.usuario = (Usuario) usuarioLogueado;
             cargarEnviosUsuario();
         } else {
+            // Si es admin, repartidor, o nadie está logueado, esta vista debe estar vacía.
             this.usuario = null;
-            listaEnvios.clear(); // Asegurarse de que la tabla esté vacía si no hay usuario
+            listaEnvios.clear();
         }
     }
 }

@@ -23,6 +23,8 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     private final EmpresaLogisticaMappingImpl mapper;
     private final List<DataUpdateListener> listeners = new ArrayList<>();
     private Object usuarioActual;
+    private Repartidor repartidorActual;
+    private Usuario administradorActual;
 
 
     public static SimpleBooleanProperty datosActualizadosProperty = new SimpleBooleanProperty(false);
@@ -42,6 +44,12 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
         }
     }
 
+    public void notifyUserChanged() {
+        for (DataUpdateListener listener : listeners) {
+            listener.onDataChanged();
+        }
+    }
+
     public static ModelFactory getInstance() {
         if (modelFactory == null) {
             modelFactory = new ModelFactory();
@@ -55,7 +63,22 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
 
     public void setUsuarioActual(Object usuarioActual) {
         this.usuarioActual = usuarioActual;
-        notifyDataChanged(); // Notificar a los oyentes cuando el usuario actual se establece
+    }
+
+    public Repartidor getRepartidorActual() {
+        return repartidorActual;
+    }
+
+    public void setRepartidorActual(Repartidor repartidorActual) {
+        this.repartidorActual = repartidorActual;
+    }
+
+    public Usuario getAdministradorActual() {
+        return administradorActual;
+    }
+
+    public void setAdministradorActual(Usuario administradorActual) {
+        this.administradorActual = administradorActual;
     }
 
     public IUsuarioServices getUsuarioServices() {
@@ -91,6 +114,20 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     public Usuario obtenerUsuarioPorCredenciales(String usuario, String contrasena) {
         return empresaLogistica.getListaUsuarios().stream()
                 .filter(u -> u.getUsuario().equals(usuario) && u.getContrasena().equals(contrasena))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Repartidor obtenerRepartidorPorCredenciales(String usuario, String contrasena) {
+        return empresaLogistica.getListaRepartidores().stream()
+                .filter(r -> r.getUsuario().equals(usuario) && r.getContrasena().equals(contrasena))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Usuario obtenerAdministradorPorCredenciales(String usuario, String contrasena) {
+        return empresaLogistica.getListaUsuarios().stream()
+                .filter(u -> u.getUsuario().equals(usuario) && u.getContrasena().equals(contrasena) && u.getUsuario().equals(DataUtil.ADMIN_USUARIO))
                 .findFirst()
                 .orElse(null);
     }
@@ -363,7 +400,7 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     }
 
     public List<String> obtenerZonasDeRepartidores() {
-        return empresaLogistica.getRepartidores().stream().map(Repartidor::getZonaCobertura).distinct().collect(Collectors.toList());
+        return empresaLogistica.getListaRepartidores().stream().map(Repartidor::getZonaCobertura).distinct().collect(Collectors.toList());
     }
 
     private Envio obtenerEnvioOriginalDesdeDto(EnvioDto envioDto) {

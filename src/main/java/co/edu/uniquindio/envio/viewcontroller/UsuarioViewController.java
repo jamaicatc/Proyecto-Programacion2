@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.AnchorPane; // Asumiendo AnchorPane como un contenedor común
+import javafx.scene.layout.AnchorPane;
 
 public class UsuarioViewController {
 
@@ -22,26 +22,21 @@ public class UsuarioViewController {
     private URL location;
 
     @FXML
-    private AnchorPane mainContentPane; // Asumiendo que este panel existe en Usuario.fxml para cargar sub-vistas
+    private AnchorPane mainContentPane;
 
     @FXML
     void onCerrarSesion(ActionEvent event) {
-        // Limpiar el usuario logueado de ModelFactory al cerrar sesión
         ModelFactory.getInstance().setUsuarioActual(null);
         EnvioApplication.mainStage.setScene(EnvioApplication.sceneLogin);
     }
 
     @FXML
     void onGestionarMetodosPago(ActionEvent event) {
-        // Esto podría necesitar cargarse en mainContentPane o cambiar de escena
-        // Por ahora, se mantiene el comportamiento original si es un cambio de escena completo
         EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuarioGestionarMetodosPago);
     }
 
     @FXML
     void onGestionarPerfil(ActionEvent event) {
-        // Esto podría necesitar cargarse en mainContentPane o cambiar de escena
-        // Por ahora, se mantiene el comportamiento original si es un cambio de escena completo
         EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuarioGestionPerfil);
     }
 
@@ -49,7 +44,6 @@ public class UsuarioViewController {
     void onVerHistorialEnvios(ActionEvent event) {
         Usuario usuarioLogueado = (Usuario) ModelFactory.getInstance().getUsuarioActual();
         if (usuarioLogueado == null) {
-            // Esto idealmente no debería ocurrir si el login se maneja correctamente, pero como respaldo
             mostrarMensaje("Error", "Usuario no logueado", "No se pudo cargar el historial de envíos. Por favor, inicie sesión nuevamente.", Alert.AlertType.ERROR);
             return;
         }
@@ -59,7 +53,6 @@ public class UsuarioViewController {
             Parent historialEnviosView = loader.load();
             UsuarioHistorialEnviosViewController historialController = loader.getController();
 
-            // Limpiar contenido previo y cargar nuevo contenido
             mainContentPane.getChildren().setAll(historialEnviosView);
             AnchorPane.setTopAnchor(historialEnviosView, 0.0);
             AnchorPane.setBottomAnchor(historialEnviosView, 0.0);
@@ -74,8 +67,6 @@ public class UsuarioViewController {
 
     @FXML
     void initialize() {
-        // Lógica de inicialización para UsuarioViewController en sí
-        // No es necesario cargar el historial de envíos aquí, se cargará al hacer clic en el botón
     }
 
     private void mostrarMensaje(String titulo, String header, String contenido, Alert.AlertType alertType) {

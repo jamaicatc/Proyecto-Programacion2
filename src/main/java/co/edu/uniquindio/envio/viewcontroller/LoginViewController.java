@@ -5,6 +5,7 @@ import co.edu.uniquindio.envio.controller.AdministradorController;
 import co.edu.uniquindio.envio.controller.RepartidorController;
 import co.edu.uniquindio.envio.controller.UsuarioController;
 import co.edu.uniquindio.envio.factory.ModelFactory;
+import co.edu.uniquindio.envio.model.Repartidor;
 import co.edu.uniquindio.envio.model.Usuario;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -52,7 +53,7 @@ public class LoginViewController {
 
     @FXML
     void OnCancelar(ActionEvent event) {
-        // Lógica para cerrar la aplicación o limpiar campos
+        System.exit(0);
     }
 
     @FXML
@@ -79,6 +80,8 @@ public class LoginViewController {
                 if (usuarioController.validarCredencialesUsuario(usuario, contrasena)) {
                     Usuario usuarioLogueado = modelFactory.obtenerUsuarioPorCredenciales(usuario, contrasena);
                     modelFactory.setUsuarioActual(usuarioLogueado);
+                    modelFactory.setAdministradorActual(null);
+                    modelFactory.setRepartidorActual(null);
                     EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuario);
                     EnvioApplication.mainStage.setTitle("Panel Usuario");
                     loginExitoso = true;
@@ -86,6 +89,10 @@ public class LoginViewController {
                 break;
             case "Repartidor":
                 if (repartidorController.validarCredencialesRepartidor(usuario, contrasena)) {
+                    Repartidor repartidorLogueado = modelFactory.obtenerRepartidorPorCredenciales(usuario, contrasena);
+                    modelFactory.setRepartidorActual(repartidorLogueado);
+                    modelFactory.setUsuarioActual(repartidorLogueado);
+                    modelFactory.setAdministradorActual(null);
                     EnvioApplication.mainStage.setScene(EnvioApplication.sceneRepartidor);
                     EnvioApplication.mainStage.setTitle("Panel Repartidor");
                     loginExitoso = true;
@@ -93,6 +100,10 @@ public class LoginViewController {
                 break;
             case "Administrador":
                 if (administradorController.validarCredencialesAdministrador(usuario, contrasena)) {
+                    Usuario administradorLogueado = modelFactory.obtenerAdministradorPorCredenciales(usuario, contrasena);
+                    modelFactory.setAdministradorActual(administradorLogueado);
+                    modelFactory.setUsuarioActual(administradorLogueado);
+                    modelFactory.setRepartidorActual(null);
                     EnvioApplication.mainStage.setScene(EnvioApplication.sceneAdministrador);
                     EnvioApplication.mainStage.setTitle("Panel Administrador");
                     loginExitoso = true;
@@ -102,8 +113,6 @@ public class LoginViewController {
 
         if (loginExitoso) {
             limpiarCampos();
-            // Notificar a todos los listeners (incluido RepartidorEnviosAsignadosViewController)
-            // que los datos han cambiado (porque hay un nuevo usuario en sesión).
             modelFactory.notifyDataChanged();
         } else {
             mostrarMensaje(TITULO_ERROR_AUTENTICACION, HEADER_ERROR, BODY_AUTENTICACION_INCORRECTA, AlertType.ERROR);
