@@ -5,6 +5,9 @@ import co.edu.uniquindio.envio.factory.ModelFactory;
 import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
 import co.edu.uniquindio.envio.model.Usuario;
 import co.edu.uniquindio.envio.model.observer.DataUpdateListener;
+import co.edu.uniquindio.envio.model.adapter.ReportGenerator;
+import co.edu.uniquindio.envio.model.adapter.CsvReportGeneratorAdapter;
+import co.edu.uniquindio.envio.model.adapter.PdfReportGeneratorAdapter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,21 +27,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-
-// Apache PDFBox imports (asegúrate de que estas dependencias estén en tu build.gradle o pom.xml)
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.Standard14Fonts; // Importación necesaria para PDFBox 3.x
 
 public class UsuarioHistorialEnviosViewController implements DataUpdateListener {
 
@@ -99,20 +92,10 @@ public class UsuarioHistorialEnviosViewController implements DataUpdateListener 
         File file = fileChooser.showSaveDialog(btnGenerarReporteCsv.getScene().getWindow());
 
         if (file != null) {
-            try (FileWriter writer = new FileWriter(file)) {
-                // Escribir encabezado
-                writer.append("ID Envio,Fecha,Origen,Destino,Estado,Costo\n");
-
-                // Escribir datos
-                for (EnvioDto envio : listaEnvios) {
-                    writer.append(String.format("%s,%s,%s,%s,%s,%.2f\n",
-                            envio.id(),
-                            envio.fechaCreacion().toString(),
-                            envio.direccionOrigen(),
-                            envio.direccionDestino(),
-                            envio.estadoActual(),
-                            envio.costo()));
-                }
+            try {
+                ReportGenerator csvAdapter = new CsvReportGeneratorAdapter();
+                String reportTitle = "Historial de Envíos del Usuario: " + (usuario != null ? usuario.getNombreCompleto() : "N/A");
+                csvAdapter.generateReport(listaEnvios, reportTitle, file.getAbsolutePath());
                 mostrarMensaje("Reporte CSV", "Generación Exitosa", "Reporte CSV generado exitosamente en: " + file.getAbsolutePath(), Alert.AlertType.INFORMATION);
             } catch (IOException e) {
                 mostrarMensaje("Error", "Error al generar reporte CSV", "Error al generar el reporte CSV: " + e.getMessage(), Alert.AlertType.ERROR);
@@ -132,110 +115,10 @@ public class UsuarioHistorialEnviosViewController implements DataUpdateListener 
         File file = fileChooser.showSaveDialog(btnGenerarReportePdf.getScene().getWindow());
 
         if (file != null) {
-            try (PDDocument document = new PDDocument()) {
-                PDPage page = new PDPage();
-                document.addPage(page);
-
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
-
-                contentStream.beginText();
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 16);
-                contentStream.newLineAtOffset(50, 750);
-                contentStream.showText("Historial de Envíos del Usuario: " + (usuario != null ? usuario.getNombreCompleto() : "N/A"));
-                contentStream.endText();
-
-                contentStream.beginText();
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                contentStream.newLineAtOffset(50, 730);
-                contentStream.showText("Fecha de Generación: " + LocalDate.now());
-                contentStream.endText();
-
-                float yStart = 700;
-                float margin = 50;
-                float yPosition = yStart;
-                int rowsPerPage = 25;
-                int rowCount = 0;
-
-                String[] headers = {"ID Envio", "Fecha", "Origen", "Destino", "Estado", "Costo"};
-                float[] columnWidths = {80, 80, 100, 100, 80, 60};
-
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
-                float x = margin;
-                for (int i = 0; i < headers.length; i++) {
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(x, yPosition);
-                    contentStream.showText(headers[i]);
-                    contentStream.endText();
-                    x += columnWidths[i];
-                }
-                yPosition -= 15;
-
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 8);
-                for (EnvioDto envio : listaEnvios) {
-                    if (rowCount >= rowsPerPage) {
-                        contentStream.close();
-                        page = new PDPage();
-                        document.addPage(page);
-                        contentStream = new PDPageContentStream(document, page);
-                        yPosition = 750;
-                        rowCount = 0;
-
-                        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
-                        x = margin;
-                        for (int i = 0; i < headers.length; i++) {
-                            contentStream.beginText();
-                            contentStream.newLineAtOffset(x, yPosition);
-                            contentStream.showText(headers[i]);
-                            contentStream.endText();
-                            x += columnWidths[i];
-                        }
-                        yPosition -= 15;
-                        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 8);
-                    }
-
-                    x = margin;
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(x, yPosition);
-                    contentStream.showText(envio.id());
-                    contentStream.endText();
-                    x += columnWidths[0];
-
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(x, yPosition);
-                    contentStream.showText(envio.fechaCreacion().toString());
-                    contentStream.endText();
-                    x += columnWidths[1];
-
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(x, yPosition);
-                    contentStream.showText(envio.direccionOrigen());
-                    contentStream.endText();
-                    x += columnWidths[2];
-
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(x, yPosition);
-                    contentStream.showText(envio.direccionDestino());
-                    contentStream.endText();
-                    x += columnWidths[3];
-
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(x, yPosition);
-                    contentStream.showText(envio.estadoActual());
-                    contentStream.endText();
-                    x += columnWidths[4];
-
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(x, yPosition);
-                    contentStream.showText(String.format("%.2f", envio.costo()));
-                    contentStream.endText();
-                    x += columnWidths[5];
-
-                    yPosition -= 12;
-                    rowCount++;
-                }
-
-                contentStream.close();
-                document.save(file);
+            try {
+                ReportGenerator pdfAdapter = new PdfReportGeneratorAdapter();
+                String reportTitle = "Historial de Envíos del Usuario: " + (usuario != null ? usuario.getNombreCompleto() : "N/A");
+                pdfAdapter.generateReport(listaEnvios, reportTitle, file.getAbsolutePath());
                 mostrarMensaje("Reporte PDF", "Generación Exitosa", "Reporte PDF generado exitosamente en: " + file.getAbsolutePath(), Alert.AlertType.INFORMATION);
             } catch (IOException e) {
                 mostrarMensaje("Error", "Error al generar reporte PDF", "Error al generar el reporte PDF: " + e.getMessage(), Alert.AlertType.ERROR);

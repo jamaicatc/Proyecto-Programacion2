@@ -21,4 +21,54 @@ public class Reporte {
         this.formato = formato;
         this.valorTotal = valorTotal;
     }
+
+    // Getters
+    public String getIdReporte() {
+        return idReporte;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public String getFormato() {
+        return formato;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    // Setters
+    public void setIdReporte(String idReporte) {
+        this.idReporte = idReporte;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public void setFormato(String formato) {
+        this.formato = formato;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
 }
