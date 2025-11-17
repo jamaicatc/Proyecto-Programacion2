@@ -1,5 +1,9 @@
 package co.edu.uniquindio.envio.factory;
 
+import co.edu.uniquindio.envio.factory.pago.Pago;
+import co.edu.uniquindio.envio.factory.pago.PagoEfectivo;
+import co.edu.uniquindio.envio.factory.pago.PagoPSE;
+import co.edu.uniquindio.envio.factory.pago.PagoTarjeta;
 import co.edu.uniquindio.envio.mapping.dto.*;
 import co.edu.uniquindio.envio.mapping.mappers.EmpresaLogisticaMappingImpl;
 import co.edu.uniquindio.envio.model.*;
@@ -26,12 +30,22 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
     private Repartidor repartidorActual;
     private Usuario administradorActual;
 
+    // Instancias singleton de los métodos de pago
+    private final Pago pagoTarjeta;
+    private final Pago pagoPSE;
+    private final Pago pagoEfectivo;
+
 
     public static SimpleBooleanProperty datosActualizadosProperty = new SimpleBooleanProperty(false);
 
     private ModelFactory() {
         this.mapper = new EmpresaLogisticaMappingImpl();
         this.empresaLogistica = DataUtil.inicializarDatos();
+
+        // Inicializar las instancias singleton de los métodos de pago
+        this.pagoTarjeta = new PagoTarjeta();
+        this.pagoPSE = new PagoPSE();
+        this.pagoEfectivo = new PagoEfectivo();
     }
 
     public void addDataUpdateListener(DataUpdateListener listener) {
@@ -91,6 +105,19 @@ public class ModelFactory implements IModelFactory, IUsuarioServices, IEnvioServ
 
     public EmpresaLogisticaMappingImpl getMapper() {
         return mapper;
+    }
+
+    // Getters para las instancias singleton de los métodos de pago
+    public Pago getPagoTarjeta() {
+        return pagoTarjeta;
+    }
+
+    public Pago getPagoPSE() {
+        return pagoPSE;
+    }
+
+    public Pago getPagoEfectivo() {
+        return pagoEfectivo;
     }
 
     @Override

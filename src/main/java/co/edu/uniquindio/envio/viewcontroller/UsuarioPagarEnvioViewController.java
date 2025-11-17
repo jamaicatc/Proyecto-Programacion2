@@ -1,6 +1,7 @@
 package co.edu.uniquindio.envio.viewcontroller;
 
 import co.edu.uniquindio.envio.factory.ModelFactory;
+import co.edu.uniquindio.envio.factory.pago.*;
 import co.edu.uniquindio.envio.mapping.dto.EnvioDto;
 import co.edu.uniquindio.envio.mapping.dto.FacturaDto;
 import co.edu.uniquindio.envio.mapping.dto.MetodoPagoDto;
@@ -13,11 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -32,7 +29,7 @@ public class UsuarioPagarEnvioViewController {
 
     ModelFactory modelFactory;
     ObservableList<EnvioDto> listaEnviosPendientes = FXCollections.observableArrayList();
-    ObservableList<MetodoPagoDto> listaMetodosPago = FXCollections.observableArrayList();
+    private Pago pagoSeleccionado;
 
     @FXML
     private ResourceBundle resources;
@@ -42,6 +39,12 @@ public class UsuarioPagarEnvioViewController {
 
     @FXML
     private Button btnPagar;
+
+    @FXML
+    private Button btnRecargar;
+
+    @FXML
+    private Button btnActualizarTabla; // New button
 
     @FXML
     private TableView<EnvioDto> tableEnviosPendientes;
@@ -71,11 +74,29 @@ public class UsuarioPagarEnvioViewController {
     private TableColumn<EnvioDto, String> tcCosto;
 
     @FXML
-    private ComboBox<MetodoPagoDto> cmbMetodoPago;
+    private ComboBox<String> cmbMetodoPago;
+
+    @FXML
+    private TextField txtMontoRecarga;
+
+    @FXML
+    private Label lblSaldo;
 
     @FXML
     void onPagar(ActionEvent event) {
         pagarEnvio();
+    }
+
+    @FXML
+    void onRecargar(ActionEvent event) {
+        recargarSaldo();
+    }
+
+    @FXML
+    void onActualizarTabla(ActionEvent event) { // New method
+        cargarEnviosPendientes();
+        tableEnviosPendientes.getSelectionModel().clearSelection();
+        actualizarEstadoControles();
     }
 
     @FXML
@@ -87,22 +108,27 @@ public class UsuarioPagarEnvioViewController {
     private void initView() {
         initDataBinding();
         cargarEnviosPendientes();
-        cargarMetodosPago();
         tableEnviosPendientes.setItems(listaEnviosPendientes);
-        cmbMetodoPago.setItems(listaMetodosPago);
+        cmbMetodoPago.setItems(FXCollections.observableArrayList("Tarjeta", "PSE", "Efectivo"));
 
-        tableEnviosPendientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            btnPagar.setDisable(newSelection == null || newSelection.costo() <= 0);
+        cmbMetodoPago.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                seleccionarMetodoPago(newSelection);
+            }
         });
 
-        btnPagar.setDisable(true);
+        tableEnviosPendientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            actualizarEstadoControles();
+        });
+
+        actualizarEstadoControles();
     }
 
     private void initDataBinding() {
         tcIdEnvio.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().id()));
         tcFechaCreacion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaCreacion().toString()));
         tcFechaEntrega.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().fechaEntrega().toString()));
-        tcOrigenDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().direccionOrigen() + " - " + cellData.getValue().direccionOrigen()));
+        tcOrigenDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().direccionOrigen() + " - " + cellData.getValue().direccionDestino()));
         tcEstado.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().estadoActual()));
         tcPeso.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f kg", cellData.getValue().peso())));
         tcVolumen.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.0fx%.0fx%.0f cm", cellData.getValue().largo(), cellData.getValue().ancho(), cellData.getValue().alto())));
@@ -120,84 +146,115 @@ public class UsuarioPagarEnvioViewController {
         );
     }
 
-    private void cargarMetodosPago() {
-        listaMetodosPago.clear();
-        listaMetodosPago.addAll(modelFactory.getUsuarioServices().obtenerMetodosPago(ID_USUARIO_LOGUEADO));
+    private void seleccionarMetodoPago(String tipoPago) {
+        switch (tipoPago) {
+            case "Tarjeta":
+                pagoSeleccionado = modelFactory.getPagoTarjeta();
+                break;
+            case "PSE":
+                pagoSeleccionado = modelFactory.getPagoPSE();
+                break;
+            case "Efectivo":
+                pagoSeleccionado = modelFactory.getPagoEfectivo();
+                break;
+            default:
+                pagoSeleccionado = null;
+                break;
+        }
+        actualizarSaldoLabel();
+        actualizarEstadoControles();
     }
 
     private void pagarEnvio() {
         EnvioDto envioSeleccionado = tableEnviosPendientes.getSelectionModel().getSelectedItem();
-        MetodoPagoDto metodoPagoSeleccionado = cmbMetodoPago.getSelectionModel().getSelectedItem();
+        String tipoPagoSeleccionado = cmbMetodoPago.getSelectionModel().getSelectedItem();
 
-        if (envioSeleccionado == null || metodoPagoSeleccionado == null) {
-            mostrarMensaje("Error de Pago", "Debe seleccionar un envío y un método de pago.", "",Alert.AlertType.WARNING);
+        if (envioSeleccionado == null || pagoSeleccionado == null || tipoPagoSeleccionado == null) {
+            mostrarMensaje("Error de Pago", "Debe seleccionar un envío y un método de pago.", "", Alert.AlertType.WARNING);
             return;
         }
 
-        // Obtener el estado actual del envío desde el modelo para verificar si ya fue pagado o no existe
-        EnvioDto originalEnvioInModel = modelFactory.getEnvioServices().obtenerEnvioDto(envioSeleccionado.id());
-
-        if (originalEnvioInModel == null) {
-            mostrarMensaje("Error de Pago", "El envío seleccionado no se encontró en el sistema.", "", Alert.AlertType.ERROR);
-            return;
-        }
-        if (originalEnvioInModel.pago()) {
-            mostrarMensaje("Error de Pago", "El envío seleccionado ya ha sido pagado.", "", Alert.AlertType.WARNING);
+        if (!pagoSeleccionado.pagar(envioSeleccionado.costo())) {
+            mostrarMensaje("Saldo Insuficiente", "El saldo de su método de pago no es suficiente.", "Por favor, recargue saldo.", Alert.AlertType.WARNING);
+            txtMontoRecarga.setDisable(false);
+            btnRecargar.setDisable(false);
             return;
         }
 
-        Factura facturaGenerada = modelFactory.getEnvioServices().pagarEnvio(envioSeleccionado.id(), metodoPagoSeleccionado);
+        String alias = "Pago con " + tipoPagoSeleccionado;
+        String numero = "N/A";
+        MetodoPagoDto metodoPagoDtoParaFactura = new MetodoPagoDto(alias, numero, tipoPagoSeleccionado);
+
+        Factura facturaGenerada = modelFactory.getEnvioServices().pagarEnvio(envioSeleccionado.id(), metodoPagoDtoParaFactura);
 
         if (facturaGenerada != null) {
-            // Crear un nuevo EnvioDto con la factura actualizada
-            EnvioDto envioActualizado = new EnvioDto(
-                    envioSeleccionado.id(),
-                    envioSeleccionado.fechaCreacion(),
-                    envioSeleccionado.fechaEntrega(),
-                    envioSeleccionado.direccionOrigen(),
-                    envioSeleccionado.direccionDestino(),
-                    envioSeleccionado.estadoActual(), // Mantener el estado actual del envío
-                    envioSeleccionado.peso(),
-                    envioSeleccionado.largo(),
-                    envioSeleccionado.ancho(),
-                    envioSeleccionado.alto(),
-                    envioSeleccionado.costo(),
-                    envioSeleccionado.repartidorAsignado(),
-                    true, // Marcar como pagado
-                    envioSeleccionado.ultimaIncidenciaDescripcion(),
-                    modelFactory.getMapper().facturaToFacturaDto(facturaGenerada) // Asignar la factura generada
-            );
-
-            // Actualizar el envío en el modelo
-            modelFactory.getEnvioServices().actualizarEnvio(envioActualizado);
-
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/envio/usuario/UsuarioComprobantePago.fxml"));
-                Parent root = loader.load();
-
-                UsuarioComprobantePagoViewController controller = loader.getController();
-                controller.init(facturaGenerada, envioActualizado); // Pasar el envioActualizado
-
-                Stage stage = new Stage();
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.setTitle("Comprobante de Pago");
-                stage.setScene(new Scene(root));
-                stage.showAndWait();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                mostrarMensaje("Error", "No se pudo cargar la ventana del comprobante.", "", Alert.AlertType.ERROR);
-            }
-
-            // Notificar a toda la aplicación que los datos han cambiado.
-            ModelFactory.datosActualizadosProperty.set(!ModelFactory.datosActualizadosProperty.get());
-
-            // Recargar la lista de envíos pendientes para reflejar el cambio
+            mostrarComprobante(facturaGenerada, envioSeleccionado);
             cargarEnviosPendientes();
             tableEnviosPendientes.getSelectionModel().clearSelection();
+            actualizarSaldoLabel();
+            ModelFactory.datosActualizadosProperty.set(!ModelFactory.datosActualizadosProperty.get()); // Notify data change
         } else {
-            // Este bloque else solo debería alcanzarse si hay un problema inesperado
             mostrarMensaje("Error de Pago", "No se pudo procesar el pago por una razón desconocida.", "", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void recargarSaldo() {
+        try {
+            double monto = Double.parseDouble(txtMontoRecarga.getText());
+            if (monto > 0) {
+                pagoSeleccionado.recargar(monto);
+                actualizarSaldoLabel();
+                txtMontoRecarga.clear();
+                mostrarMensaje("Recarga Exitosa", "El saldo ha sido actualizado.", "", Alert.AlertType.INFORMATION);
+                ModelFactory.datosActualizadosProperty.set(!ModelFactory.datosActualizadosProperty.get()); // Notify data change
+            } else {
+                mostrarMensaje("Error de Recarga", "El monto debe ser positivo.", "", Alert.AlertType.WARNING);
+            }
+        } catch (NumberFormatException e) {
+            mostrarMensaje("Error de Recarga", "Por favor, ingrese un monto válido.", "", Alert.AlertType.WARNING);
+        }
+        actualizarEstadoControles();
+    }
+
+    private void actualizarEstadoControles() {
+        boolean envioSeleccionado = tableEnviosPendientes.getSelectionModel().getSelectedItem() != null;
+        boolean metodoPagoSeleccionado = pagoSeleccionado != null;
+        boolean esEfectivo = pagoSeleccionado instanceof PagoEfectivo;
+
+        btnPagar.setDisable(!envioSeleccionado || !metodoPagoSeleccionado);
+        txtMontoRecarga.setDisable(esEfectivo || !metodoPagoSeleccionado);
+        btnRecargar.setDisable(esEfectivo || !metodoPagoSeleccionado);
+    }
+
+    private void actualizarSaldoLabel() {
+        if (pagoSeleccionado != null) {
+            if (pagoSeleccionado instanceof PagoEfectivo) {
+                lblSaldo.setText("Saldo: N/A");
+            } else {
+                lblSaldo.setText(String.format("Saldo: $%,.2f", pagoSeleccionado.getSaldo()));
+            }
+        } else {
+            lblSaldo.setText("Saldo: ");
+        }
+    }
+
+    private void mostrarComprobante(Factura factura, EnvioDto envio) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/envio/usuario/UsuarioComprobantePago.fxml"));
+            Parent root = loader.load();
+
+            UsuarioComprobantePagoViewController controller = loader.getController();
+            controller.init(factura, envio);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Comprobante de Pago");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarMensaje("Error", "No se pudo cargar la ventana del comprobante.", "", Alert.AlertType.ERROR);
         }
     }
 
