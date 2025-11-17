@@ -1,5 +1,7 @@
 package co.edu.uniquindio.envio.model;
 
+import co.edu.uniquindio.envio.model.state.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +12,18 @@ public class Envio {
     private LocalDate fechaEntrega;
     private String direccionOrigen;
     private String direccionDestino;
-    private String estadoActual;
+    private String estadoActual; // Revertido a String
+    private EnvioState estado; // Objeto de estado interno
     private double peso;
     private double largo;
     private double alto;
     private double ancho;
     private double costo;
     private Repartidor repartidorAsignado;
-    private boolean pago; // Nuevo atributo
+    private boolean pago;
     private List<String> historial;
     private List<Incidencia> incidencias;
-    private Factura factura; // Nuevo atributo para la factura
+    private Factura factura;
 
     public Envio(String id, LocalDate fechaCreacion, LocalDate fechaEntrega, String direccionOrigen, String direccionDestino, String estadoActual, double peso, double largo, double alto, double ancho, double costo, Repartidor repartidorAsignado, boolean pago) {
         this.id = id;
@@ -28,17 +31,19 @@ public class Envio {
         this.fechaEntrega = fechaEntrega;
         this.direccionOrigen = direccionOrigen;
         this.direccionDestino = direccionDestino;
-        this.estadoActual = estadoActual;
+        this.estadoActual = estadoActual; // Asignar el estadoActual del constructor
+        this.estado = getStateFromString(estadoActual); // Inicializar el objeto de estado
         this.peso = peso;
         this.largo = largo;
         this.alto = alto;
         this.ancho = ancho;
         this.costo = costo;
         this.repartidorAsignado = repartidorAsignado;
-        this.pago = pago; // Inicializar el nuevo atributo
+        this.pago = pago;
         this.historial = new ArrayList<>();
         this.incidencias = new ArrayList<>();
-        this.factura = null; // Inicializar la factura como nula
+        this.factura = null;
+        this.historial.add("Envío creado y en estado " + estadoActual + ".");
     }
 
     public String getId() {
@@ -87,6 +92,14 @@ public class Envio {
 
     public void setEstadoActual(String estadoActual) {
         this.estadoActual = estadoActual;
+        this.estado = getStateFromString(estadoActual);
+    }
+
+    // Setter para el objeto de estado (usado por las clases de estado)
+    public void setEstado(EnvioState estado) {
+        this.estado = estado;
+        this.estadoActual = estado.getClass().getSimpleName().replace("State", "");
+        this.historial.add("Estado cambiado a: " + this.estadoActual);
     }
 
     public double getPeso() {
@@ -171,5 +184,47 @@ public class Envio {
 
     public double calcularVolumen() {
         return largo * alto * ancho;
+    }
+
+    // Métodos que delegan al estado actual
+    public void solicitar() {
+        estado.solicitar(this);
+    }
+
+    public void asignar() {
+        estado.asignar(this);
+    }
+
+    public void enRuta() {
+        estado.enRuta(this);
+    }
+
+    public void entregar() {
+        estado.entregar(this);
+    }
+
+    public void reportarIncidencia() {
+        estado.reportarIncidencia(this);
+    }
+
+    // Helper para obtener el objeto de estado a partir del String
+    private EnvioState getStateFromString(String estadoString) {
+        if (estadoString == null) {
+            return new SolicitadoState();
+        }
+        switch (estadoString) {
+            case "Solicitado":
+                return new SolicitadoState();
+            case "Asignado":
+                return new AsignadoState();
+            case "EnRuta":
+                return new EnRutaState();
+            case "Entregado":
+                return new EntregadoState();
+            case "Incidencia":
+                return new IncidenciaState();
+            default:
+                return new SolicitadoState(); // Estado por defecto
+        }
     }
 }
