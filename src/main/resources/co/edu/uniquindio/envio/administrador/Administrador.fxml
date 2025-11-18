@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="584.0" prefWidth="764.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.envio.viewcontroller.AdministradorViewController">
+    <children>
+        <TabPane layoutX="14.0" layoutY="11.0" prefHeight="593.0" prefWidth="732.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <tabs>
+                <Tab text="Usuario">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="321.0" prefWidth="395.0">
+                            <children>
+                                <SplitPane layoutX="2.0" layoutY="7.0" orientation="VERTICAL" prefHeight="550.0" prefWidth="729.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <items>
+                                        <fx:include source="AdminUsuarios.fxml" />
+                                    </items>
+                                </SplitPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Repartidor">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="321.0" prefWidth="395.0">
+                            <children>
+                                <SplitPane layoutX="2.0" layoutY="7.0" orientation="VERTICAL" prefHeight="550.0" prefWidth="729.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <items>
+                                        <fx:include source="AdminRepartidores.fxml" />
+                                    </items>
+                                </SplitPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            <Tab text="Asignaciones e Incidencias">
+              <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="321.0" prefWidth="395.0">
+                      <children>
+                          <SplitPane layoutX="2.0" layoutY="7.0" orientation="VERTICAL" prefHeight="550.0" prefWidth="729.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <items>
+                                  <fx:include source="AdminGestionAsignaciones.fxml" />
+                              </items>
+                          </SplitPane>
+                      </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Panel de Metricas">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="321.0" prefWidth="395.0">
+                      <children>
+                          <SplitPane layoutX="2.0" layoutY="7.0" orientation="VERTICAL" prefHeight="550.0" prefWidth="729.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <items>
+                                  <fx:include source="AdminMetricas.fxml" />
+                              </items>
+                          </SplitPane>
+                      </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            </tabs>
+        </TabPane>
+      <MenuButton fx:id="menuOpciones" layoutX="701.0" layoutY="13.0" mnemonicParsing="false" text="☰" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="2.0">
+        <items>
+          <MenuItem mnemonicParsing="false" onAction="#onCerrarSesion" text="Cerrar Sesion" />
+        </items>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </MenuButton>
+    </children>
+</AnchorPane>

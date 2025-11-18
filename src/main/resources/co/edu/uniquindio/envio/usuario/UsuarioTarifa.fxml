@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="600.0" prefWidth="920.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.envio.viewcontroller.UsuarioTarifaViewController">
+    <children>
+        <VBox alignment="TOP_CENTER" layoutX="-16.0" prefHeight="549.0" prefWidth="920.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Label text="Cotizar Tarifa de Envío">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+                </Label>
+                <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <Label text="Detalles de envío:">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <children>
+                                <Label text="Origen:" />
+                                <TextField fx:id="txtOrigen" maxWidth="1.7976931348623157E308" promptText="Dirección de origen" HBox.hgrow="ALWAYS" />
+                                <Label text="Destino:" />
+                                <TextField fx:id="txtDestino" maxWidth="1.7976931348623157E308" promptText="Dirección de destino" HBox.hgrow="ALWAYS" />
+                            </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <children>
+                                <Label text="Peso (Kg):" />
+                                <TextField fx:id="txtPeso" maxWidth="1.7976931348623157E308" promptText="Ej: 2.5" HBox.hgrow="ALWAYS" />
+                                <Label text="Largo (cm):" />
+                                <TextField fx:id="txtLargo" maxWidth="1.7976931348623157E308" promptText="Ej: 30" HBox.hgrow="ALWAYS" />
+                                <Label text="Ancho (cm):" />
+                                <TextField fx:id="txtAncho" maxWidth="1.7976931348623157E308" promptText="Ej: 20" HBox.hgrow="ALWAYS" />
+                                <Label text="Alto (cm):" />
+                                <TextField fx:id="txtAlto" maxWidth="1.7976931348623157E308" promptText="Ej: 15" HBox.hgrow="ALWAYS" />
+                            </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <children>
+                                <Label text="Prioridad del envío:" />
+                                <ComboBox fx:id="cmbPrioridad" prefWidth="180.0" promptText="Seleccionar prioridad">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </ComboBox>
+                            </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <children>
+                                <Label text="Servicios adicionales:" />
+                                <CheckBox fx:id="chkFragil" text="Frágil">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </CheckBox>
+                                <CheckBox fx:id="chkUrgente" text="Entrega urgente">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </CheckBox>
+                            </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="20.0">
+                            <children>
+                                <Label text="Costo del Envío:" />
+                                <Label fx:id="lblCostoEnvio" text="0.00">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </VBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </VBox>
+    </children>
+</AnchorPane>

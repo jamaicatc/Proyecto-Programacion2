@@ -1,13 +1,17 @@
 package co.edu.uniquindio.envio.viewcontroller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import co.edu.uniquindio.envio.EnvioApplication;
+import co.edu.uniquindio.envio.factory.ModelFactory;
+import co.edu.uniquindio.envio.model.Usuario;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.layout.AnchorPane;
 
 public class UsuarioViewController {
 
@@ -18,68 +22,58 @@ public class UsuarioViewController {
     private URL location;
 
     @FXML
-    private Button btnActualizar;
+    private AnchorPane mainContentPane;
 
     @FXML
-    private Button btnAgregar;
-
-    @FXML
-    private Button btnEliminar;
-
-    @FXML
-    private Button btnNuevo;
-
-    @FXML
-    private TableView<?> tableUsuario;
-
-    @FXML
-    private TableColumn<?, ?> tcCorreo;
-
-    @FXML
-    private TableColumn<?, ?> tcIdUsuario;
-
-    @FXML
-    private TableColumn<?, ?> tcNombreCompleto;
-
-    @FXML
-    private TableColumn<?, ?> tcTelefono;
-
-    @FXML
-    private TextField txtCorreo;
-
-    @FXML
-    private TextField txtIdUsuario;
-
-    @FXML
-    private TextField txtNombreCompleto;
-
-    @FXML
-    private TextField txtTelefono;
-
-    @FXML
-    void onActualizarUsuario(ActionEvent event) {
-
+    void onCerrarSesion(ActionEvent event) {
+        ModelFactory.getInstance().setUsuarioActual(null);
+        EnvioApplication.mainStage.setScene(EnvioApplication.sceneLogin);
     }
 
     @FXML
-    void onAgregarUsuario(ActionEvent event) {
-
+    void onGestionarMetodosPago(ActionEvent event) {
+        EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuarioGestionarMetodosPago);
     }
 
     @FXML
-    void onEliminarUsuario(ActionEvent event) {
-
+    void onGestionarPerfil(ActionEvent event) {
+        EnvioApplication.mainStage.setScene(EnvioApplication.sceneUsuarioGestionPerfil);
     }
 
     @FXML
-    void onNuevoUsuario(ActionEvent event) {
+    void onVerHistorialEnvios(ActionEvent event) {
+        Usuario usuarioLogueado = (Usuario) ModelFactory.getInstance().getUsuarioActual();
+        if (usuarioLogueado == null) {
+            mostrarMensaje("Error", "Usuario no logueado", "No se pudo cargar el historial de envíos. Por favor, inicie sesión nuevamente.", Alert.AlertType.ERROR);
+            return;
+        }
 
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/envio/usuario/UsuarioHistorialEnvios.fxml"));
+            Parent historialEnviosView = loader.load();
+            UsuarioHistorialEnviosViewController historialController = loader.getController();
+
+            mainContentPane.getChildren().setAll(historialEnviosView);
+            AnchorPane.setTopAnchor(historialEnviosView, 0.0);
+            AnchorPane.setBottomAnchor(historialEnviosView, 0.0);
+            AnchorPane.setLeftAnchor(historialEnviosView, 0.0);
+            AnchorPane.setRightAnchor(historialEnviosView, 0.0);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarMensaje("Error", "Error al cargar vista", "No se pudo cargar la vista de historial de envíos.", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
     void initialize() {
-
     }
 
+    private void mostrarMensaje(String titulo, String header, String contenido, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(titulo);
+        alert.setHeaderText(header);
+        alert.setContentText(contenido);
+        alert.showAndWait();
+    }
 }
-

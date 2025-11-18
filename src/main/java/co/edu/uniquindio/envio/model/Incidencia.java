@@ -1,22 +1,39 @@
 package co.edu.uniquindio.envio.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Incidencia {
-    private String idIncidencia;
+    private String asunto;
     private String descripcion;
-    private String tipo;
-    private LocalDateTime fecha;
-    private Envio envio;
+    private LocalDate fecha;
 
-    public Incidencia() {
+    public Incidencia(String asunto, String descripcion, LocalDate fecha) {
+        this.asunto = asunto;
+        this.descripcion = descripcion;
+        this.fecha = fecha;
     }
 
-    public Incidencia(String idIncidencia, String descripcion, String tipo, LocalDateTime fecha, Envio envio) {
-        this.idIncidencia = idIncidencia;
+    public String getAsunto() {
+        return asunto;
+    }
+
+    public void setAsunto(String asunto) {
+        this.asunto = asunto;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-        this.tipo = tipo;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
-        this.envio = envio;
     }
 }

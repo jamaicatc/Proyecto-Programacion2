@@ -8,16 +8,14 @@ public class Pago {
     private double monto;
     private LocalDateTime fechaPago;
     private MetodoPago metodoPago;
-    private EstadoPago estadoPago;
 
     public Pago() {
     }
 
-    public Pago(String idPago, double monto, LocalDateTime fechaPago, MetodoPago metodoPago, EstadoPago estadoPago) {
+    public Pago(String idPago, double monto, LocalDateTime fechaPago, MetodoPago metodoPago) {
         this.idPago = idPago;
         this.monto = monto;
         this.fechaPago = fechaPago;
         this.metodoPago = metodoPago;
-        this.estadoPago = estadoPago;
     }
 }
